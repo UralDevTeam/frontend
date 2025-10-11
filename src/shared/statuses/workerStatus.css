@@ -1,0 +1,13 @@
+.worker-status {
+    border-radius: 10000px;
+    padding: 8px 10px;
+
+    width: max-content;
+    height: max-content;
+
+    font-weight: 500;
+}
+
+.worker-status-work {
+    background-color: var(--color-primary-mint);
+}

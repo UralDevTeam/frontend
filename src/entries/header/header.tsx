@@ -17,7 +17,7 @@ export default function Header() {
                 </nav>
             </div>
             <div className={"right_part"}>
-                <ProfileCircle/>
+                <ProfileCircle size={42}/>
                 <img src={"/icons/ExitButton.svg"} alt="Exit Button"/>
             </div>
         </header>

@@ -1,0 +1,31 @@
+.user-main-properties-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 100px;
+    height: max-content;
+
+    font-weight: 500;
+}
+
+.user-main-properties-name {
+    font-weight: 600;
+    font-size: 40px;
+}
+
+.user-main-properties {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+}
+
+.user-main-properties-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+
+    height: max-content;
+    width: max-content;
+
+}

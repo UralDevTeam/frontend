@@ -1,31 +1,23 @@
 import Header from "../../entries/header/header";
-import SimpleShadowCard from "../../shared/cards/simpleShadowCard";
-import ProfileCircle from "../../shared/profileCircle/profileCircle";
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
-import WorkerStatus from "../../shared/statuses/workerStatus";
+import UserMainProperties from "../../entries/userInfo/userMainProperties";
 
 export default function Page() {
 
     const user = {
         name: "Иванова Анастасия Сергеевна",
-        state: "Работает"
+        status: WorkerStatuses.work,
+        position: "Дизайнер",
+        team: "Security/ Продуктовый офис/ ITM"
     }
 
     return (
         <main className="main">
             <Header/>
-            <SimpleShadowCard>
-                <div>
-                    <ProfileCircle size={106}/>
-                    <div>
-                        <h3>{user.name}</h3>
-                        <div>
-                            <WorkerStatus status={WorkerStatuses.work}/>
-                        </div>
-                    </div>
-                </div>
-
-            </SimpleShadowCard>
+            <div className="simple-shadow-card" style={{padding:'20px'}}>
+                <UserMainProperties {...user} />
+                <div style={{height: 600}}></div>
+            </div>
         </main>
     )
 }

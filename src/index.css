@@ -17,7 +17,6 @@ body {
     font-style: normal;
     min-height: 1200px;
 
-
     background-color: var(--color-primary-white);
 }
 
@@ -37,4 +36,20 @@ p, nav, body {
 a {
     color: black;
     text-decoration: none; /* no underline */
+}
+
+
+.main {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+
+    height: 80vh;
+}
+
+.simple-shadow-card{
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+    border-radius: 32px;
 }

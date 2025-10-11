@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&display=swap');
+
+:root {
+    --color-primary-mint: #00D29D;
+    --color-primary-graphite: #0B2027;
+    --color-primary-white: #f8f9fa;
+
+    --color-secondary-violet: #763186;
+    --color-secondary-light-vio: #DCCFEC;
+    --color-secondary-yellow: #DBF4A7;
+    --color-secondary-dark-blue: #37505C;
+}
+
+body {
+    font-family: "Golos Text", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    min-height: 1200px;
+
+
+    background-color: var(--color-primary-white);
+}
+
+h1 {
+    font-weight: 600;
+}
+
+h2 {
+    font-weight: 500;
+}
+
+p, nav, body {
+    font-size: 16px;
+    margin: 0;
+}
+
+a {
+    color: black;
+    text-decoration: none; /* no underline */
+}

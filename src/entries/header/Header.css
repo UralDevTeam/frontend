@@ -1,0 +1,29 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 120px;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.left_part {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+}
+
+.right_part {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: end;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+    font-weight: 500;
+}

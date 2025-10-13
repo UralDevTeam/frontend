@@ -4,6 +4,8 @@
     display: flex;
     flex-direction: column;
     text-align: right;
+
+    height: max-content;
 }
 
 .user-basic-info-card-line {

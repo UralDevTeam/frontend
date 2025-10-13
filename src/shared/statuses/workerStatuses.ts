@@ -1,3 +1,3 @@
 export enum WorkerStatuses {
-    work = 0,
+    work = "work",
 }

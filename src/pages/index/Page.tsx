@@ -1,8 +1,9 @@
 import Header from "../../entries/header/header";
 import UserMainProperties from "../../entries/userInfo/userMainProperties";
 import UserBasicInfoCard from "../../entries/userInfo/userBasicInfoCard";
-import { UserDTO} from "../../entries/user";
+import {UserDTO} from "../../entries/user";
 import {userFromDto} from "../../entries/user/userFromDto";
+import UserPersonalInfoCard from "../../entries/userInfo/userPersonalInfoCard";
 
 export default function Page() {
 
@@ -23,8 +24,11 @@ export default function Page() {
         <main className="main">
             <Header/>
             <div className="simple-shadow-card" style={{padding: '20px'}}>
-                <UserMainProperties user={user} />
-                <UserBasicInfoCard user={user} />
+                <UserMainProperties user={user}/>
+                <div style={{display: "flex", gap: "20px"}}>
+                    <UserBasicInfoCard user={user}/>
+                    <UserPersonalInfoCard user={user}/>
+                </div>
             </div>
         </main>
     )

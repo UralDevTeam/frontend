@@ -58,3 +58,11 @@ a {
     border: rgba(0, 59, 76, 0.17) 2px solid;
     border-radius: 32px;
 }
+
+hr{
+    width: 100%;
+    height: 1px;
+    color: #CED9DC;
+    background: #CED9DC;
+    border: none;
+}

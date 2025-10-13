@@ -1,22 +1,30 @@
 import Header from "../../entries/header/header";
-import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import UserMainProperties from "../../entries/userInfo/userMainProperties";
+import UserBasicInfoCard from "../../entries/userInfo/userBasicInfoCard";
+import { UserDTO} from "../../entries/user";
+import {userFromDto} from "../../entries/user/userFromDto";
 
 export default function Page() {
 
-    const user = {
-        name: "Иванова Анастасия Сергеевна",
-        status: WorkerStatuses.work,
-        position: "Дизайнер",
-        team: "Security/ Продуктовый офис/ ITM"
+    const userDTO: UserDTO = {
+        id: "udv-001234",
+        fio: "Иванова Анастасия Сергеевна",
+        birthday: "04/03/2005",
+        team: ["Security", "Продуктовый офис", "ITM"],
+        role: "Дизайнер",
+        grade: "Middle+",
+        experience: 777,
+        status: "work",
     }
+
+    const user = userFromDto(userDTO);
 
     return (
         <main className="main">
             <Header/>
-            <div className="simple-shadow-card" style={{padding:'20px'}}>
-                <UserMainProperties {...user} />
-                <div style={{height: 600}}></div>
+            <div className="simple-shadow-card" style={{padding: '20px'}}>
+                <UserMainProperties user={user} />
+                <UserBasicInfoCard user={user} />
             </div>
         </main>
     )

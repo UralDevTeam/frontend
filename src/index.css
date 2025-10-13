@@ -53,3 +53,8 @@ a {
     box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
     border-radius: 32px;
 }
+
+.simple-border-card{
+    border: rgba(0, 59, 76, 0.17) 2px solid;
+    border-radius: 32px;
+}

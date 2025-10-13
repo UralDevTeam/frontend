@@ -1,27 +1,24 @@
 import WorkerStatus from "../../shared/statuses/workerStatus";
-import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import ProfileCircle from "../../shared/profileCircle/profileCircle";
 import "./userMainProperties.css"
+import {User} from "../user";
 
 type UserMainProperties = {
-    name: string;
-    position: string;
-    team: string;
-    status: WorkerStatuses;
+    user: User,
 }
 
-export default function UserMainProperties({name, position, team, status}: UserMainProperties) {
+export default function UserMainProperties({user}: UserMainProperties) {
     return (
         <div className="user-main-properties-container">
             <ProfileCircle size={106}/>
             <div className={"user-main-properties"}>
-                <p className="user-main-properties-name">{name}</p>
+                <p className="user-main-properties-name">{user.fio}</p>
                 <div className="user-main-properties-line">
-                    <WorkerStatus status={status}/>
-                    <img src={"/icons/dot.svg"}/>
-                    {position}
-                    <img src={"/icons/dot.svg"}/>
-                    {team}
+                    <WorkerStatus status={user.status}/>
+                    <img src={"/icons/dot.svg"} alt={"dot icon"} />
+                    {user.role}
+                    <img src={"/icons/dot.svg"} alt={"dot icon"}/>
+                    {user.team.join(" / ")}
                 </div>
             </div>
         </div>

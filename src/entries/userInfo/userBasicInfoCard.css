@@ -1,0 +1,20 @@
+.user-basic-info-card {
+    width: 440px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-basic-info-card-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.user-basic-info-card > hr{
+    width: 100%;
+    height: 1px;
+    color: #CED9DC;
+    background: #CED9DC;
+    border: none;
+}

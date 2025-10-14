@@ -1,6 +1,7 @@
 .user-personal-info-card {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 
     width: 100%;
     padding: 32px;
@@ -15,17 +16,23 @@
 }
 
 .user-personal-info-card-city,
-.user-personal-info-card-phone,
-.user-personal-info-card-mail {
-    width: 100%;
+.user-personal-info-card-contact,
+.user-personal-info-card-about-me {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+.user-personal-info-card-city {
+    min-width: 30%;
+}
+
+.user-personal-info-card-contact {
+    width: 70%;
+}
+
 .user-personal-info-card-city > input,
-.user-personal-info-card-phone > input,
-.user-personal-info-card-mail > input,
+.user-personal-info-card-contact > input,
 .user-personal-info-card-about-me > textarea {
     height: 40px;
     border-radius: 10px;
@@ -40,18 +47,25 @@
     height: 96px;
 }
 
-.user-personal-info-card-3-row{
+.user-personal-info-card-3-row {
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
 }
 
-.user-personal-info-card-status-set {
+.user-personal-info-card-status-set,
+.user-personal-info-card-status-view {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.user-personal-info-card-status-set{
     width: 160px;
+}
+.user-personal-info-card-status-view {
+    width: 200px;
 }
 
 .user-personal-info-card-status-set > select {
@@ -59,4 +73,9 @@
     border-radius: 10px;
     border: 2px solid #CED9DC;
     width: 100%;
+
+    font-size: 18px;
+    color: var(--color-primary-graphite) !important;
+
+    padding-left: 8px;
 }

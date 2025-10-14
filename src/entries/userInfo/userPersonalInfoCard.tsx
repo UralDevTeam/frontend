@@ -16,13 +16,9 @@ export default function UserPersonalInfoCard({user}: UserPersonalInfoCard) {
                     <p>город</p>
                     <input/>
                 </div>
-                <div className="user-personal-info-card-phone">
-                    <p>телефон</p>
-                    <input type="tel"/>
-                </div>
-                <div className="user-personal-info-card-mail">
-                    <p>почта</p>
-                    <input type="email"/>
+                <div className="user-personal-info-card-contact">
+                    <p>контактные данные</p>
+                    <input/>
                 </div>
             </div>
             <div className="user-personal-info-card-about-me">
@@ -41,11 +37,13 @@ export default function UserPersonalInfoCard({user}: UserPersonalInfoCard) {
                         ))}
                     </select>
                 </div>
-                <div className="user-personal-info-card-status-set">
-                    <p>текущий статус</p>
-                    <WorkerStatus status={user.status} />
+                <div className="user-personal-info-card-status-view">
+                    <p>отображение статуса</p>
+                    <WorkerStatus status={user.status}/>
                 </div>
             </div>
+
+            <p style={{fontSize: 14, marginTop: 84}}>нажмите `редактировать` чтобы изменить данные</p>
 
         </div>
     )

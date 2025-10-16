@@ -11,6 +11,12 @@
     --color-secondary-dark-blue: #37505C;
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: "Golos Text", sans-serif;
     font-optical-sizing: auto;
@@ -49,17 +55,17 @@ a {
     height: 80vh;
 }
 
-.simple-shadow-card{
+.simple-shadow-card {
     box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
     border-radius: 32px;
 }
 
-.simple-border-card{
+.simple-border-card {
     border: rgba(0, 59, 76, 0.17) 2px solid;
     border-radius: 32px;
 }
 
-hr{
+hr {
     width: 100%;
     height: 1px;
     color: #CED9DC;

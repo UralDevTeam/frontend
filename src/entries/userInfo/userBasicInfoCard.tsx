@@ -29,8 +29,8 @@ export default function UserBasicInfoCard({user}: UserBasicInfoCard) {
             </div>
             <hr/>
             <div className="user-basic-info-card-line">
-                <div>дата родждения</div>
-                <div>{user.birthday.toLocaleDateString("ru-RU")}</div>
+                <div>почта</div>
+                <div>{user.mail}</div>
             </div>
             <hr/>
             <div className="user-basic-info-card-line">
@@ -39,13 +39,13 @@ export default function UserBasicInfoCard({user}: UserBasicInfoCard) {
             </div>
             <hr/>
             <div className="user-basic-info-card-line">
-                <div>роль</div>
-                <div>{user.role}</div>
+                <div>руководитель</div>
+                <div><a style={{textDecoration: "underline", color: "var(--color-primary-mint)"}} href={user.boss.id}>{user.boss.shortName}</a></div>
             </div>
             <hr/>
             <div className="user-basic-info-card-line">
-                <div>грейд</div>
-                <div>{user.grade}</div>
+                <div>роль</div>
+                <div>{user.role}</div>
             </div>
             <hr/>
             <div className="user-basic-info-card-line">

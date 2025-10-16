@@ -1,26 +1,32 @@
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 
-export type User = {
+export type UserLinkDTO = {
     id: string;
-    fio: string;
-    birthday: Date;
-    team: string[];
-    role: string;
-    grade: string;
-    experience: number; // days
-    status: keyof typeof WorkerStatuses;
-
-    formatTeam: string;
+    fullName: string; // Траблона Е.К.
+    shortName: string; // Иванова Анастасия Сергеевна
 }
 
 export type UserDTO = {
     id: string;
     fio: string;
+    mail: string;
+    phone?: string;
+    mattermost: string;
+    tg?: string;
+
     birthday: string;
     team: string[];
+    boss: UserLinkDTO;
     role: string;
-    grade: string;
     experience: number; // days
     status: keyof typeof WorkerStatuses;
+
+    city: string;
+    aboutMe: string;
 }
 
+
+export type User = Omit<UserDTO, "birthday" | "formatTeam"> & {
+    birthday: Date;
+    formatTeam: string;
+}

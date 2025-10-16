@@ -1,9 +1,10 @@
 .user-basic-info-card {
-    min-width: 400px;
-    padding: 32px;
+    min-width: 440px;
+    padding: 28px;
     display: flex;
     flex-direction: column;
     text-align: right;
+    gap: 10px;
 
     height: max-content;
 }

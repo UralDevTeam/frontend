@@ -10,9 +10,6 @@ type IUserPersonalInfoCard = {
 }
 
 export default function UserPersonalInfoCard({user, isEdit}: IUserPersonalInfoCard) {
-
-  console.log(user.birthday.toLocaleDateString("RU-ru"))
-
   return (
     <div className="simple-border-card user-personal-info-card">
 

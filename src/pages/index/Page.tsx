@@ -5,8 +5,9 @@ import {UserDTO} from "../../entries/user";
 import {userFromDto} from "../../entries/user/userFromDto";
 import UserPersonalInfoCard from "../../entries/userInfo/userPersonalInfoCard";
 import "./profile.css"
+import {useState} from "react";
 
-export default function Page() {
+export function Page() {
 
   const userDTO: UserDTO = {
     id: "udv-001234",
@@ -31,6 +32,7 @@ export default function Page() {
   }
 
   const user = userFromDto(userDTO);
+  const [isEdit, setEdit] = useState(false)
 
   return (
     <>
@@ -44,8 +46,14 @@ export default function Page() {
               <UserBasicInfoCard user={user}/>
             </div>
             <div className="user-profile-section">
-              <p className="user-profile-section-title">Личное</p>
-              <UserPersonalInfoCard user={user} isEdit={true}/>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <p className="user-profile-section-title">Личное</p>
+                <button className="edit-mode-button" onClick={() => setEdit(p => !p)}>
+                  {isEdit ? "Сохранить" : "Изменить"}
+                  <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
+                </button>
+              </div>
+              <UserPersonalInfoCard user={user} isEdit={isEdit}/>
             </div>
           </div>
         </div>

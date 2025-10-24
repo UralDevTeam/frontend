@@ -45,5 +45,28 @@
     /* Primary/White */
     color: var(--color-primary-white);
 
+}
+
+.undo-edit-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: flex-end;
+    padding: 14px 18px;
+    gap: 6px;
+
+    background: var(--color-primary-white);
+    border: 2px solid var(--color-secondary-dark-blue);
+    border-radius: 12px;
+
+    font-family: 'Golos Text', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: var(--color-secondary-dark-blue);
 
 }

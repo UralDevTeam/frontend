@@ -8,6 +8,10 @@
     color: var(--color-secondary-dark-blue);
 }
 
+.user-personal-info-card-edit{
+    background-color: #EFEFEF;
+}
+
 .user-personal-info-card-1-row {
     display: flex;
     width: 100%;
@@ -28,6 +32,7 @@
     border-radius: 10px;
     border: 2px solid #CED9DC;
     width: 100%;
+    background: var(--color-primary-white);
 
     color: var(--color-secondary-dark-blue);
     font-size: 18px;

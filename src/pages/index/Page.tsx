@@ -31,8 +31,18 @@ export function Page() {
     aboutMe: "Катаюсь на сноуборде, люблю кофе. Учусь дополнительно в высшей школе моды."
   }
 
-  const user = userFromDto(userDTO);
+  const [user, setUser] = useState(userFromDto(userDTO));
   const [isEdit, setEdit] = useState(false)
+
+  const handleUndo = () => {
+    console.log(user);
+    setUser(userFromDto(userDTO));
+    setEdit(false)
+  }
+
+  const handleSave = () => {
+    setEdit(false)
+  }
 
   return (
     <>
@@ -46,12 +56,23 @@ export function Page() {
               <UserBasicInfoCard user={user}/>
             </div>
             <div className="user-profile-section">
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{display: "flex", justifyContent: "space-between"}}>
                 <p className="user-profile-section-title">Личное</p>
-                <button className="edit-mode-button" onClick={() => setEdit(p => !p)}>
-                  {isEdit ? "Сохранить" : "Изменить"}
-                  <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
-                </button>
+                {isEdit ? <div style={{display: "flex", gap: 18, height: 48}}>
+                    <button className="undo-edit-button" onClick={handleUndo}>
+                      отменить
+                    </button>
+                    <button className="edit-mode-button" onClick={handleSave}>
+                      сохранить
+                      <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
+                    </button>
+                  </div>
+                  :
+                  <button className="edit-mode-button" onClick={() => setEdit(true)}>
+                    редактировать
+                    <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
+                  </button>
+                }
               </div>
               <UserPersonalInfoCard user={user} isEdit={isEdit}/>
             </div>

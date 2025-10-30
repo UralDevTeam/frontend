@@ -1,57 +1,47 @@
 import "./userBasicInfoCard.css"
 import {User} from "../user";
+import React from "react";
+import RowInfo from "./RowInfo";
 
 type UserBasicInfoCard = {
-    user: User;
+  user: User;
 }
 
-function parseDays (value: number) {
-    const YEAR = 365, MONTH = 30;
-    let year, months, days: number;
+function parseDays(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return `0 г. 0 м. 0 д.`;
+  const YEAR = 365, MONTH = 30;
+  let year = Math.floor(value / YEAR);
+  let rest = value - year * YEAR;
+  let months = Math.floor(rest / MONTH);
+  let days = rest - months * MONTH;
 
-    year = value >= YEAR ? Math.floor(value / YEAR) : 0;
-    value = year ? value - (year * YEAR) : value;
-
-    months = value >= MONTH ? Math.floor((value % YEAR) / MONTH) : 0;
-    value = months ? value - (months * MONTH) : value;
-
-    days = value;
-
-    return `${year} г. ${months} м. ${days} д.`;
+  return `${year} г. ${months} м. ${days} д.`;
 }
 
 export default function UserBasicInfoCard({user}: UserBasicInfoCard) {
-    return (
-        <div className="simple-border-card user-basic-info-card">
-            <div className="user-basic-info-card-line">
-                <div>фио</div>
-                <div>{user.fio}</div>
-            </div>
-            <hr/>
-            <div className="user-basic-info-card-line">
-                <div>почта</div>
-                <div>{user.mail}</div>
-            </div>
-            <hr/>
-            <div className="user-basic-info-card-line">
-                <div>команда</div>
-                <div>{user.formatTeam}</div>
-            </div>
-            <hr/>
-            <div className="user-basic-info-card-line">
-                <div>руководитель</div>
-                <div><a style={{textDecoration: "underline", color: "var(--color-primary-mint)"}} href={user.boss.id}>{user.boss.shortName}</a></div>
-            </div>
-            <hr/>
-            <div className="user-basic-info-card-line">
-                <div>роль</div>
-                <div>{user.role}</div>
-            </div>
-            <hr/>
-            <div className="user-basic-info-card-line">
-                <div>стаж</div>
-                <div>{parseDays(user.experience)}</div>
-            </div>
-        </div>
-    )
+
+  const rows = [
+    {label: 'почта', content: user.mail || '-'},
+    {label: 'стаж', content: parseDays(user.experience || 0)},
+    {
+      label: 'руководитель', content: (
+        <a style={{textDecoration: "underline", color: "var(--color-primary-mint)"}} href={user.boss?.id || '#'}>
+          {user.boss?.shortName || '-'}
+        </a>
+      )
+    },
+    {label: 'роль', content: user.role || '-'},
+    {label: 'команда', content: user.formatTeam || '-'},
+  ];
+
+  return (
+    <div className="user-basic-info-card">
+      {rows.map((r, idx) => (
+        <React.Fragment key={r.label}>
+          <RowInfo label={r.label}>{r.content}</RowInfo>
+          {idx !== rows.length - 1 && <hr/>}
+        </React.Fragment>
+      ))}
+    </div>
+  )
 }

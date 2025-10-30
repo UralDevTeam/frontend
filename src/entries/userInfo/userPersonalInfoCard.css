@@ -1,29 +1,12 @@
 .user-personal-info-card {
+    min-width: 440px;
+    padding: 28px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 
-    width: 100%;
-    padding: 32px;
-    color: var(--color-secondary-dark-blue);
-}
-
-.user-personal-info-card-edit{
-    background-color: #EFEFEF;
-}
-
-.user-personal-info-card-1-row {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.user-personal-info-card-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
+    height: max-content;
+    width: max-content;
 }
 
 .user-personal-info-card-item > input,
@@ -31,7 +14,7 @@
     height: 40px;
     border-radius: 10px;
     border: 2px solid #CED9DC;
-    width: 100%;
+    width: 460px;
     background: var(--color-primary-white);
 
     color: var(--color-secondary-dark-blue);
@@ -42,20 +25,6 @@
 
 .user-personal-info-card-item > textarea {
     height: 96px;
-}
-
-.user-personal-info-card-2-row {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 100px;
-}
-
-.user-personal-info-card-3-row {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
 }
 
 .user-personal-info-card-status-set,
@@ -83,4 +52,40 @@
     color: var(--color-primary-graphite) !important;
 
     padding-left: 8px;
+}
+
+/* styled select to match input appearance */
+.styled-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid #CED9DC;
+    background: var(--color-primary-white);
+    padding: 0 12px;
+    padding-right: 36px; /* space for arrow */
+    font-size: 18px;
+    color: var(--color-secondary-dark-blue);
+    width: 460px; /* match input width */
+
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20'%3E%3Cpath fill='%23808B94' d='M5.25 7.5L10 12.25 14.75 7.5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 12px;
+}
+
+/* make select inside status-set take full width when using styled-select */
+.user-personal-info-card-status-set .styled-select {
+    width: 100%;
+}
+
+/* small responsive tweak: if container narrow, shrink to fit */
+@media (max-width: 520px) {
+    .user-personal-info-card-item > input,
+    .user-personal-info-card-item > textarea,
+    .styled-select {
+        width: 100%;
+    }
 }

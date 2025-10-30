@@ -4,8 +4,8 @@
 
 .user-profile-content {
     display: flex;
-    flex-direction: row;
-    gap: 20px;
+    flex-direction: column;
+    gap: 64px;
     margin-top: 20px;
 }
 
@@ -44,6 +44,7 @@
 
     /* Primary/White */
     color: var(--color-primary-white);
+    cursor: pointer;
 
 }
 
@@ -68,5 +69,6 @@
     line-height: 19px;
 
     color: var(--color-secondary-dark-blue);
+    cursor: pointer;
 
 }

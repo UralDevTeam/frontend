@@ -1,16 +1,45 @@
 import {User} from "../user";
 import "./userPersonalInfoCard.css"
-import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
-import getWorkerStatusRussian from "../../shared/statuses/getWorkerStatusRussian";
-import WorkerStatus from "../../shared/statuses/workerStatus";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import RowInfo from "./RowInfo";
+import WorkerStatusSelector from "../../shared/statuses/workerStatusSelector";
 
 type IUserPersonalInfoCard = {
   user: User,
   isEdit: boolean,
+  onChange?: (user: User) => void,
 }
 
-export default function UserPersonalInfoCard({user, isEdit}: IUserPersonalInfoCard) {
+function Field(props: {
+  value: string;
+  disabled: boolean;
+  type?: string;
+  onChangeValue: (v: string) => void;
+  textarea?: boolean;
+}) {
+  const {value, disabled, type = 'text', onChangeValue, textarea} = props;
+  return (
+    <div className="user-personal-info-card-item">
+      {textarea ? (
+        <textarea
+          value={value}
+          disabled={disabled}
+          onChange={e => onChangeValue(e.target.value)}
+        />
+      ) : (
+        <input
+          value={value}
+          disabled={disabled}
+          type={type}
+          onChange={e => onChangeValue(e.target.value)}
+        />
+      )}
+    </div>
+  )
+}
+
+
+export default function UserPersonalInfoCard({user, isEdit, onChange}: IUserPersonalInfoCard) {
 
   const [editedUser, setEditedUser] = useState<User>(user);
 
@@ -18,98 +47,61 @@ export default function UserPersonalInfoCard({user, isEdit}: IUserPersonalInfoCa
     setEditedUser(user);
   }, [user])
 
+  const update = (key: keyof User, value: any) => {
+    const newUser = {...editedUser} as any;
+    if (key === 'birthday') {
+      newUser[key] = value ? new Date(value) : undefined;
+    } else {
+      newUser[key] = value;
+    }
+    setEditedUser(newUser);
+    if (onChange) onChange(newUser);
+  }
+
+  const rows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
+    {key: "city", label: 'город'},
+    {key: "birthday", label: 'дата рождения', inputType: 'date'},
+    {key: "phone", label: 'телефон', inputType: 'tel'},
+    {key: "mattermost", label: 'mattermost'},
+    {key: "tg", label: 'ник tg'},
+    {key: "aboutMe", label: 'о себе', textarea: true},
+  ];
+
+  if (!isEdit) {
+    return (
+      <div className="user-personal-info-card">
+        {rows.map((r, idx) => (
+          <React.Fragment key={String(r.key)}>
+            <RowInfo label={r.label}>
+              {String(user[r.key] || '-')}
+            </RowInfo>
+            {idx !== rows.length - 1 && <hr/>}
+          </React.Fragment>
+        ))}
+      </div>
+    )
+  }
+
   return (
-    <div className={`simple-border-card user-personal-info-card ${isEdit ? "user-personal-info-card-edit" : ""}`}>
-
-      <div className="user-personal-info-card-1-row">
-        <div className="user-personal-info-card-item">
-          <label htmlFor={"city"}>город*</label>
-          <input
-            id="city"
-            value={editedUser.city}
-            disabled={!isEdit}
-            onChange={e => setEditedUser(p => ({...p, city: e.target.value}))}
-          />
-        </div>
-        <div className="user-personal-info-card-item">
-          <label htmlFor={"birthday"}>дата рождения*</label>
-          <input
-            id="birthday"
-            value={editedUser.birthday.toISOString().slice(0, 10)}
-            disabled={!isEdit}
-            type={"date"}
-            onChange={e => setEditedUser(p => ({...p, birthday: new Date(e.target.value)}))}
-          />
-        </div>
-        <div className="user-personal-info-card-item">
-          <label htmlFor="phone">телефон</label>
-          <input
-            id="phone"
-            value={editedUser.phone}
-            disabled={!isEdit}
-            type={"tel"}
-            onChange={e => setEditedUser(p => ({...p, phone: e.target.value}))}
-          />
-        </div>
-      </div>
-
-      <div className="user-personal-info-card-2-row">
-        <div className="user-personal-info-card-item">
-          <label htmlFor="mattermost">mattermost*</label>
-          <input
-            id="mattermost"
-            value={editedUser.mattermost}
-            disabled={!isEdit}
-            onChange={e => setEditedUser(p => ({...p, mattermost: e.target.value}))}
-          />
-        </div>
-        <div className="user-personal-info-card-item">
-          <label htmlFor='tg'>ник telegram</label>
-          <input
-            id="tg"
-            value={editedUser.tg}
-            disabled={!isEdit}
-            onChange={e => setEditedUser(p => ({...p, tg: e.target.value}))}
-          />
-        </div>
-      </div>
-
-      <div className="user-personal-info-card-item">
-        <label htmlFor="aboutMe">обо мне</label>
-        <textarea
-          id="aboutMe"
-          value={editedUser.aboutMe}
-          disabled={!isEdit}
-          onChange={e => setEditedUser(p => ({...p, aboutMe: e.target.value}))}
-        />
-      </div>
-
-      <hr/>
-
-      <div className="user-personal-info-card-3-row">
-        <div className="user-personal-info-card-status-set">
-          <label htmlFor={"status"}>текущий статус</label>
-          <select
-            id="status"
-            value={editedUser.status}
-            disabled={!isEdit}
-            onChange={e => setEditedUser(p => ({...p, status: e.target.value as keyof typeof WorkerStatuses}))}
-          >
-            {Object.keys(WorkerStatuses).map((entry) => (
-              <option key={entry} value={entry}>{getWorkerStatusRussian(entry)}</option>
-            ))}
-          </select>
-        </div>
-        <div className="user-personal-info-card-status-view" style={isEdit ? {display: "none"} : {}}>
-          <p>отображение статуса</p>
-          <WorkerStatus status={editedUser.status}/>
-        </div>
-      </div>
-
-      <p style={{fontSize: 14, marginTop: 30}}>
-        {isEdit ? "нажмите `сохранить` чтобы данные изменились" : "нажмите `редактировать` чтобы изменить данные"}
-      </p>
-
+    <div className="user-personal-info-card">
+      {rows.map((r, idx) => (
+        <React.Fragment key={String(r.key)}>
+          <RowInfo label={r.label}>
+            <Field
+              onChangeValue={v => update(r.key, v)}
+              value={(() => {
+                const val = editedUser[r.key] as any;
+                if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
+                return String(val ?? '');
+              })()}
+              disabled={false}
+              type={r.inputType || 'text'}
+              textarea={r.textarea}
+            />
+          </RowInfo>
+        </React.Fragment>
+      ))}
+      <WorkerStatusSelector status={user.status} onChange={v => update("status", v)}/>
     </div>
   )
 }

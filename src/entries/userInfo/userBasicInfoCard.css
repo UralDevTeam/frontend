@@ -3,14 +3,9 @@
     padding: 28px;
     display: flex;
     flex-direction: column;
-    text-align: right;
     gap: 10px;
 
     height: max-content;
+    width: max-content;
 }
 
-.user-basic-info-card-line {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}

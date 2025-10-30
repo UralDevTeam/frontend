@@ -1,14 +1,6 @@
-import React, {useState} from 'react';
 import {User} from '../../entries/user';
 import UserMainProperties from "../../entries/userInfo/userMainProperties";
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-
-// Простая заглушка для сохранения — в реальном приложении тут будет API
-async function saveUserApi(user: User): Promise<User> {
-  // имитация задержки
-  await new Promise(r => setTimeout(r, 300));
-  return user;
-}
 
 type Props = {
   initialUser: User;

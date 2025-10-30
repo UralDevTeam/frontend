@@ -1,8 +1,24 @@
 import {User} from "../user";
 import UserPersonalInfoCard from "./userPersonalInfoCard";
 import {NavLink} from "react-router";
+import React, {useState} from "react";
+import Modal from "../../shared/modal/Modal";
 
-const UserPersonalInfoController = ({user, isEdit}: { user: User, isEdit: boolean }) => {
+
+function SuccessSaveModal({onClose}: { onClose: () => void }) {
+  return (
+    <Modal onClose={onClose} closeOnBackdrop={false}>
+            <div className="modal-body">Ваши данные успешно изменены в личном кабинете</div>
+      <div className="modal-actions">
+        <button className="edit-mode-button" onClick={onClose}>Хорошо</button>
+      </div>
+    </Modal>
+  )
+}
+
+const UserPersonalInfoCardController = ({user, isEdit}: { user: User, isEdit: boolean }) => {
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleUndo = () => {
     console.log(user);
@@ -11,11 +27,12 @@ const UserPersonalInfoController = ({user, isEdit}: { user: User, isEdit: boolea
   }
 
   const handleSave = () => {
-    // setEdit(false)
+    setShowSuccess(true);
   }
 
   return (
     <div style={{display: "flex", justifyContent: "space-between", flexDirection: "column", width: "max-content"}}>
+      {showSuccess && <SuccessSaveModal onClose={() => setShowSuccess(false)}/>}
       <div style={{display: "flex", justifyContent: "space-between", flexDirection: "row"}}>
         <p className="user-profile-section-title">Личное</p>
         {!isEdit && <NavLink to={"/profile/edit"}>
@@ -26,20 +43,23 @@ const UserPersonalInfoController = ({user, isEdit}: { user: User, isEdit: boolea
         </NavLink>
         }
       </div>
-      <UserPersonalInfoCard user={user} isEdit={isEdit}/>
-      {isEdit && <NavLink to={"/profile/view"} style={{display: "flex", gap: 18, height: 48}}>
-        <button className="undo-edit-button" onClick={handleUndo}>
-          отменить
-        </button>
+      <UserPersonalInfoCard user={user} isEdit={isEdit} onChange={handleSave}/>
+      {isEdit && <div style={{display: "flex", gap: 18, height: 48}}>
+        <NavLink to={"/profile/view"}>
+          <button className="undo-edit-button" onClick={handleUndo}>
+            отменить
+          </button>
+        </NavLink>
         <button className="edit-mode-button" onClick={() => {
           handleSave();
         }}>
           сохранить
           <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
         </button>
-      </NavLink>
+      </div>
       }
+
     </div>
   )
 }
-export default UserPersonalInfoController;
+export default UserPersonalInfoCardController;

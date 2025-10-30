@@ -1,0 +1,19 @@
+.employees-title {
+    font-family: 'Golos Text', serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 48px;
+    color: var(--color-primary-graphite);
+
+}
+
+
+main {
+    width: 100%;
+}
+
+thead{
+    color: var(--color-primary-graphite);
+    text-align: left;
+}

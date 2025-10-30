@@ -11,7 +11,7 @@ export default function Header() {
                 <LightLogo/>
                 <nav>
                     <NavLink to={"/"}><p>оргструктура</p></NavLink>
-                    <NavLink to={"/"}><p>сотрудники</p></NavLink>
+                    <NavLink to={"/employees"}><p>сотрудники</p></NavLink>
                     <NavLink to={"/"}><p>о нас</p></NavLink>
                     <NavLink to={"/profile/view"}><p>мой профиль</p></NavLink>
                     <NavLink to={"/profile/edit"}><p>редактировать профиль</p></NavLink>

@@ -1,8 +1,8 @@
 import {User} from "../user";
-import UserPersonalInfoCard from "./userPersonalInfoCard";
 import {NavLink} from "react-router";
 import React, {useState} from "react";
 import Modal from "../../shared/modal/Modal";
+import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 
 
 function SuccessSaveModal({onClose}: { onClose: () => void }) {

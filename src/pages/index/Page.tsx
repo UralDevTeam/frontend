@@ -1,7 +1,6 @@
 import Header from "../../entries/header/header";
-import {User, UserDTO} from "../../entries/user";
+import {UserDTO} from "../../entries/user";
 import {userFromDto} from "../../entries/user/userFromDto";
-import UserPersonalInfoCard from "../../entries/userInfo/userPersonalInfoCard";
 import "./profile.css"
 import {useState} from "react";
 import {Navigate, Route, Routes} from 'react-router';

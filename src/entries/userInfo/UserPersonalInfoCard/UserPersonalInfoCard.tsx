@@ -1,8 +1,9 @@
-import {User} from "../user";
+import {User} from "../../user";
+import {useEffect, useState} from "react";
+import React from "react";
+import WorkerStatusSelector from "../../../shared/statuses/workerStatusSelector";
+import RowInfo from "../RowInfo/RowInfo";
 import "./userPersonalInfoCard.css"
-import React, {useEffect, useState} from "react";
-import RowInfo from "./RowInfo";
-import WorkerStatusSelector from "../../shared/statuses/workerStatusSelector";
 
 type IUserPersonalInfoCard = {
   user: User,
@@ -84,7 +85,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange}: IUserPers
 
   return (
     <div className="user-personal-info-card">
-      {rows.map((r, idx) => (
+      {rows.map((r) => (
         <React.Fragment key={String(r.key)}>
           <RowInfo label={r.label}>
             <Field

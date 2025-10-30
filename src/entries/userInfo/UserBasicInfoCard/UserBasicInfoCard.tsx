@@ -1,7 +1,7 @@
 import "./userBasicInfoCard.css"
-import {User} from "../user";
+import {User} from "../../user";
 import React from "react";
-import RowInfo from "./RowInfo";
+import RowInfo from "../RowInfo/RowInfo";
 
 type UserBasicInfoCard = {
   user: User;
@@ -45,3 +45,4 @@ export default function UserBasicInfoCard({user}: UserBasicInfoCard) {
     </div>
   )
 }
+

@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import "./teams.css";
-import UserLineFigma from "./UserLine";
+import UserLine from "./UserLine";
 
 type User = {
   id: string;
@@ -85,12 +85,13 @@ export default function Teams() {
     setExpanded(prev => ({...prev, [id]: !prev[id]}));
   }
 
-  function renderTree(nodes: TeamNode[]) {
+  // 0.5 для падинга слева
+  function renderTree(nodes: TeamNode[], depth = 0.5) {
     return (
       <div className="teams-tree-list">
         {nodes.map(n => (
           <div key={n.id} className="teams-tree-item">
-            <div className="teams-tree-row">
+            <div className="teams-tree-row" style={{paddingLeft: 24 * depth}}>
               {(n.children && n.children.length) || (n.users && n.users.length) ? (
                 <button className="teams-tree-toggler" onClick={() => toggle(n.id)} aria-label="toggle">
                   {expanded[n.id] ? "▼" : "▶"}
@@ -104,20 +105,19 @@ export default function Teams() {
 
             {n.children && expanded[n.id] && (
               <div className="teams-tree-children">
-                {renderTree(n.children)}
-              </div>
-            )}
-
-            {expanded[n.id] && n.users && n.users.length > 0 && (
-              <div className="teams-users-list">
-                {n.users.map(u => (
-                  <div key={u.id} className="teams-user-row">
-                    <UserLineFigma
-                      title={u.name}
-                      about={["Роль: " + u.role, "Email: " + u.mail]}
-                    />
+                {renderTree(n.children, depth + 1)}
+                {expanded[n.id] && n.users && n.users.length > 0 && (
+                  <div className="teams-users-list">
+                    {n.users.map(u => (
+                      <UserLine
+                        key={u.id}
+                        title={u.name}
+                        about={["Роль: " + u.role]}
+                        depth={depth + 1}
+                      />
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>

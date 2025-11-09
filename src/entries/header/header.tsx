@@ -7,18 +7,17 @@ export default function Header() {
     return (
         <header>
             <div className={"left_part"}>
-                <h1 style={{display: "none"}}>UDV|GROUP</h1>
                 <LightLogo/>
                 <nav>
                     <NavLink to={"/teams"}><p>оргструктура</p></NavLink>
                     <NavLink to={"/employees"}><p>сотрудники</p></NavLink>
-                    <NavLink to={"/about"}><p>о системе</p></NavLink>
-                    <NavLink to={"/profile/view"}><p>мой профиль</p></NavLink>
-                    <NavLink to={"/profile/edit"}><p>редактировать профиль</p></NavLink>
+                    <NavLink to={"/about"}><p>о&nbsp;системе</p></NavLink>
                 </nav>
             </div>
             <div className={"right_part"}>
-                <ProfileCircle size={42}/>
+                <NavLink to={"/profile/view"}>
+                    <ProfileCircle size={42}/>
+                </NavLink>
                 <img src={"/icons/ExitButton.svg"} alt="Exit Button"/>
             </div>
         </header>

@@ -1,5 +1,6 @@
 .user-profile-card {
-    padding: 20px 50px;
+    padding-top: 24px;
+    margin-left: 170px;
 }
 
 .user-profile-content {
@@ -7,6 +8,7 @@
     flex-direction: column;
     gap: 64px;
     margin-top: 20px;
+    margin-left: 137px;
 }
 
 .user-profile-section {

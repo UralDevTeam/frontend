@@ -8,7 +8,7 @@ type Props = {
 
 export default function UserProfileEdit({initialUser}: Props) {
   return (
-    <div className="simple-shadow-card user-profile-card">
+    <div className="user-profile-card">
       <UserMainProperties user={initialUser}/>
       <div className={"user-profile-content"}>
         <UserPersonalInfoCardController user={initialUser} isEdit={true}/>

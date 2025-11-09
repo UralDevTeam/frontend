@@ -5,7 +5,7 @@ export default function WorkerStatus({status}: { status: keyof typeof WorkerStat
     if (status === "work") {
         return (
             <div className="worker-status worker-status-work">
-                <p>работает</p>
+                <p>на связи</p>
             </div>
         )
     }

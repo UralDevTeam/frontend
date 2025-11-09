@@ -31,6 +31,8 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
       )
     },
     {label: 'роль', content: user.role || '-'},
+    {label: 'юр.лицо', content: user.legalEntity || '-'},
+    {label: 'подразделение', content: user.department || '-'},
     {label: 'команда', content: user.formatTeam || '-'},
   ];
 

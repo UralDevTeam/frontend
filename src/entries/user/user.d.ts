@@ -11,22 +11,24 @@ export type UserDTO = {
     fio: string;
     mail: string;
     phone?: string;
-    mattermost: string;
+    mattermost?: string;
     tg?: string;
 
-    birthday: string;
+    birthday?: string;
     team: string[];
+    legalEntity: string;
+    department: string;
     boss: UserLinkDTO;
     role: string;
     experience: number; // days
     status: keyof typeof WorkerStatuses;
 
-    city: string;
-    aboutMe: string;
+    city?: string;
+    aboutMe?: string;
 }
 
 
 export type User = Omit<UserDTO, "birthday" | "formatTeam"> & {
-    birthday: Date;
+    birthday?: Date;
     formatTeam: string;
 }

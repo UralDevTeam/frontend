@@ -18,11 +18,13 @@ export const userDTO: UserDTO = {
   mattermost: "ссылочка",
 
   birthday: "04/03/2005",
-  team: ["Security", "Продуктовый офис", "ITM"],
+  legalEntity: "ВНЕОЧЕРЕДИ ООО",
+  department: "Продуктовая разработка",
+  team: ["Продуктовый офис", "ITM"],
   boss: {
     id: "udv-000000",
     shortName: "Самый К. Б.",
-    fullName: "Самый Круой Босс",
+    fullName: "Самый Крутой Босс",
   },
   role: "Дизайнер",
   experience: 777,

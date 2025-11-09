@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import React from "react";
 import WorkerStatusSelector from "../../../shared/statuses/workerStatusSelector";
 import RowInfo from "../RowInfo/RowInfo";
+import {formatDateRussian} from "../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
 
 type IUserPersonalInfoCard = {
@@ -74,7 +75,14 @@ export default function UserPersonalInfoCard({user, isEdit, onChange}: IUserPers
         {rows.map((r, idx) => (
           <React.Fragment key={String(r.key)}>
             <RowInfo label={r.label}>
-              {String(user[r.key] || '-')}
+                {(() => {
+                    const value = user[r.key];
+                    if (r.key === "birthday") {
+                        const formatted = formatDateRussian(value as Date | string | undefined);
+                        return formatted || "-";
+                    }
+                    return String(value ?? "-");
+                })()}
             </RowInfo>
             {idx !== rows.length - 1 && <hr/>}
           </React.Fragment>

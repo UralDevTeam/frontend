@@ -1,8 +1,8 @@
 import React from 'react';
 import { User } from '../../entries/user';
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/UserMainProperties";
-import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/UserBasicInfoCard";
+import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
+import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard";
 
 type Props = {
   user: User;

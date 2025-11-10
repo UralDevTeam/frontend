@@ -1,6 +1,6 @@
 import {User} from '../../entries/user';
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/UserMainProperties";
+import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
 
 type Props = {
   initialUser: User;

@@ -3,11 +3,11 @@ import {User} from "../../user";
 import ProfileCircle from "../../../shared/profileCircle/profileCircle";
 import WorkerStatus from "../../../shared/statuses/workerStatus";
 
-type UserMainProperties = {
+type IUserMainProperties = {
   user: User,
 }
 
-export default function UserMainProperties({user}: UserMainProperties) {
+export default function UserMainProperties({user}: IUserMainProperties) {
   return (
     <div className="user-main-properties-container">
       <ProfileCircle size={106}/>

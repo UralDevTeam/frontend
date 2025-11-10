@@ -34,8 +34,6 @@ export const userDTO: UserDTO = {
 
 export function Page() {
 
-  const user = useState(userFromDto(userDTO))[0];
-
   return (
     <>
       <Header/>
@@ -45,8 +43,8 @@ export function Page() {
             <Navigate to="/profile/view" replace={true}/>
           )}/>
 
-          <Route path="/profile/view" element={<UserProfileView user={user}/>}/>
-          <Route path="/profile/edit" element={<UserProfileEdit initialUser={user}/>}/>
+          <Route path="/profile/view" element={<UserProfileView/>}/>
+          <Route path="/profile/edit" element={<UserProfileEdit />}/>
           <Route path="/employees" element={<Employees />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/about" element={<About />} />

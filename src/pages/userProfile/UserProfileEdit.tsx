@@ -1,12 +1,16 @@
-import {User} from '../../entries/user';
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
 import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
+import {userStore} from "../../entities/user";
+import React from "react";
+import {observer} from "mobx-react-lite";
 
-type Props = {
-  initialUser: User;
-}
 
-export default function UserProfileEdit({initialUser}: Props) {
+function UserProfileEditInner() {
+
+  const initialUser = userStore.user;
+
+  if (!initialUser) return <div>No user</div>;
+
   return (
     <div className="simple-shadow-card user-profile-card">
       <UserMainProperties user={initialUser}/>
@@ -16,3 +20,8 @@ export default function UserProfileEdit({initialUser}: Props) {
     </div>
   );
 }
+
+const UserProfileEdit = observer(UserProfileEditInner);
+
+export default UserProfileEdit;
+

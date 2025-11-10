@@ -48,7 +48,7 @@ export default function Teams() {
                   key={item.id}
                   id={item.id}
                   title={item.name}
-                  about={[`Роль: ${item.role}`]}
+                  about={item.role}
                   depth={item.depth + 0.5}
                   matched={matchedIds[item.id]}
                 />

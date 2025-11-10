@@ -6,7 +6,7 @@ import ProfileCircle from "../../shared/profileCircle/profileCircle";
 type Props = {
     id: string;
     title: string;
-    about: string[];
+    about: string;
     depth: number;
     matched?: boolean;
 };
@@ -23,9 +23,7 @@ export default function UserLine({id, title, about, depth, matched}: Props) {
             <ProfileCircle size={20}/>
             <div className="user-line-title">{title}</div>
             <div className="user-line-metrics">
-                {about.map((item) => (
-                    <div className="user-line-metric" key={title + item}>{item}</div>
-                ))}
+                <div className="user-line-metric">{about}</div>
             </div>
         </Link>
     );

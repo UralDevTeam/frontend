@@ -5,11 +5,12 @@ type Props = {
   agg: any;
   expanded: Record<string, boolean>;
   toggle: (id: string) => void;
+  matched?: boolean;
 };
 
-export default function TeamRow({ item, agg, expanded, toggle }: Props) {
+export default function TeamRow({ item, agg, expanded, toggle, matched }: Props) {
   return (
-    <div className="teams-row" style={{ paddingLeft: 24 * (item.depth + 0.5) }}>
+    <div className="teams-row" style={{ paddingLeft: 24 * (item.depth + 0.5), background: matched ? '#E5F6F3' : undefined }}>
       <div className="teams-row-left">
         {(item.hasChildren || item.hasUsers) ? (
           <button className="teams-tree-toggler" onClick={() => toggle(item.id)} aria-label="toggle">

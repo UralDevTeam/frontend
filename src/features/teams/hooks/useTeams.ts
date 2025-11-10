@@ -30,6 +30,10 @@ export function useTeams() {
   const [teams, setTeams] = useState<TeamNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // set of ids that match current search
+  const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let mounted = true;
@@ -114,6 +118,48 @@ export function useTeams() {
     return ancestors.every(a => expanded[a]);
   }
 
-  return { teams, loading, flatList, aggregates, expanded, toggle, isVisible };
-}
+  // вычисление совпадений по searchTerm
+  useEffect(() => {
+    if (!searchTerm) {
+      setMatchedIds({});
+      return;
+    }
 
+    const q = searchTerm.trim().toLowerCase();
+    const matched: Record<string, boolean> = {};
+
+    for (const it of flatList) {
+      if (it.type === 'folder') {
+        if (it.name.toLowerCase().includes(q)) {
+          matched[it.id] = true;
+        }
+      } else {
+        // user
+        if (it.name.toLowerCase().includes(q) || it.role.toLowerCase().includes(q)) {
+          matched[it.id] = true;
+        }
+      }
+    }
+
+    setMatchedIds(matched);
+
+    // автоматически раскрываем родителей найденных элементов
+    const toExpand: Record<string, boolean> = {};
+    for (const it of flatList) {
+      if (matched[it.id]) {
+        // раскрываем всех предков
+        for (const a of it.ancestors) {
+          if (a) toExpand[a] = true;
+        }
+        // если найденная папка сама — раскрыть её
+        if (it.type === 'folder') toExpand[it.id] = true;
+      }
+    }
+
+    if (Object.keys(toExpand).length) {
+      setExpanded(prev => ({...prev, ...toExpand}));
+    }
+  }, [searchTerm, flatList]);
+
+  return { teams, loading, flatList, aggregates, expanded, toggle, isVisible, searchTerm, setSearchTerm, matchedIds };
+}

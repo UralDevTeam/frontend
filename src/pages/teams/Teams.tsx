@@ -1,17 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./teams.css";
 import { useTeams } from "../../features/teams/hooks/useTeams";
 import TeamRow from "../../features/teams/components/TeamRow";
 import UserLine from "./UserLine";
+import {useDebounce} from "../../shared/helper/debounce";
 
 export default function Teams() {
-  const { loading, flatList, aggregates, expanded, toggle, isVisible } = useTeams();
+  const { loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds } = useTeams();
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchTerm = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    setSearchTerm(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   if (loading) return <div>Loading...</div>;
+
 
   return (
     <main className="main teams-page">
       <h2 className="teams-title">Все сотрудники</h2>
+
+      <div className="teams-search">
+        <input
+          className="teams-search-input"
+          placeholder="Поиск по имени или роли"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
 
       <div className="teams-layout">
         <div className="simple-border-card teams-tree-card">
@@ -22,7 +39,7 @@ export default function Teams() {
               if (item.type === "folder") {
                 const agg = aggregates[item.id] || { employees: 0, groups: 0, departments: 0, legalEntities: 0, domains: 0 };
                 return (
-                  <TeamRow key={item.id} item={item} agg={agg} expanded={expanded} toggle={toggle} />
+                  <TeamRow key={item.id} item={item} agg={agg} expanded={expanded} toggle={toggle} matched={matchedIds[item.id]} />
                 );
               }
 
@@ -32,6 +49,7 @@ export default function Teams() {
                   title={item.name}
                   about={[`Роль: ${item.role}`]}
                   depth={item.depth + 0.5}
+                  matched={matchedIds[item.id]}
                 />
               );
             })}

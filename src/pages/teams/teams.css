@@ -88,6 +88,25 @@
     font-size: 14px;
 }
 
+/* подсветка найденного */
+.matched, .teams-row[style*="#E5F6F3"] {
+    background: #E5F6F3;
+}
+
+/* поиск наверху */
+.teams-search{
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.teams-search-input{
+    width: 420px;
+    padding: 8px 12px;
+    border: 1px solid #dcefe9;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
 .user-line{
     justify-content: left;
 }

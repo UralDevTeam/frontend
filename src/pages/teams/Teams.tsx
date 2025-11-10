@@ -1,138 +1,59 @@
-import React, {useMemo, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./teams.css";
+import { useTeams } from "../../features/teams/hooks/useTeams";
+import TeamRow from "../../features/teams/components/TeamRow";
 import UserLine from "./UserLine";
-
-type User = {
-  id: string;
-  name: string;
-  role: string;
-  mail: string;
-};
-
-type TeamNode = {
-  id: string;
-  name: string;
-  children?: TeamNode[];
-  users: User[];
-};
-
-// Генератор sample data: создаёт иерархию команд и пользователей
-function generateSampleTeams(teamCount = 6, maxDepth = 2, usersPerTeam = 5): TeamNode[] {
-  const teamNames = [
-    "Platform",
-    "Frontend",
-    "Backend",
-    "Design",
-    "QA",
-    "Mobile",
-    "Security",
-    "Product",
-    "Support",
-  ];
-  const firstNames = ["Иван", "Пётр", "Анна", "Ольга", "Сергей", "Мария", "Дмитрий", "Елена"];
-  const lastNames = ["Иванов", "Петров", "Сидоров", "Кузнецова", "Смирнов", "Ковалёва", "Козлов", "Морозова"];
-  const roles = ["Разработчик", "Тестировщик", "Дизайнер", "Менеджер", "Аналитик"];
-
-  let teamIndex = 0;
-  let userIndex = 0;
-
-  function makeNode(depth: number): TeamNode {
-    const name = teamNames[teamIndex % teamNames.length] + (depth > 0 ? ` ${teamIndex}` : "");
-    const id = `team-${teamIndex++}`;
-
-    const users: User[] = [];
-    for (let i = 0; i < usersPerTeam; i++) {
-      const first = firstNames[userIndex % firstNames.length];
-      const last = lastNames[userIndex % lastNames.length];
-      const role = roles[userIndex % roles.length];
-      users.push({
-        id: `u-${userIndex}`,
-        name: `${last} ${first}`,
-        role,
-        mail: `${first.toLowerCase()}.${last.toLowerCase().replace(/ё/g, 'e')}@example.com`
-      });
-      userIndex++;
-    }
-
-    const node: TeamNode = {id, name, users};
-
-    if (depth < maxDepth && teamIndex < teamCount) {
-      const childrenCount = Math.min(2, teamCount - teamIndex);
-      if (childrenCount > 0) {
-        node.children = [];
-        for (let i = 0; i < childrenCount; i++) {
-          node.children.push(makeNode(depth + 1));
-        }
-      }
-    }
-
-    return node;
-  }
-
-  const roots: TeamNode[] = [];
-  while (teamIndex < teamCount) {
-    roots.push(makeNode(0));
-  }
-  return roots;
-}
+import {useDebounce} from "../../shared/helper/debounce";
 
 export default function Teams() {
-  const teams = useMemo(() => generateSampleTeams(10, 4, 6), []);
+  const { loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds } = useTeams();
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchTerm = useDebounce(searchInput, 300);
 
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    setSearchTerm(debouncedSearchTerm);
+  }, [debouncedSearchTerm, setSearchTerm]);
 
-  function toggle(id: string) {
-    setExpanded(prev => ({...prev, [id]: !prev[id]}));
-  }
+  if (loading) return <div>Loading...</div>;
 
-  // 0.5 для падинга слева
-  function renderTree(nodes: TeamNode[], depth = 0.5) {
-    return (
-      <div className="teams-tree-list">
-        {nodes.map(n => (
-          <div key={n.id} className="teams-tree-item">
-            <div className="teams-tree-row" style={{paddingLeft: 24 * depth}}>
-              {(n.children && n.children.length) || (n.users && n.users.length) ? (
-                <button className="teams-tree-toggler" onClick={() => toggle(n.id)} aria-label="toggle">
-                  {expanded[n.id] ? "▼" : "▶"}
-                </button>
-              ) : (
-                <span className="teams-tree-empty"/>
-              )}
-              <img src={"./icons/folder.svg"} alt="folder" className="teams-tree-icon"/>
-              <span className="teams-tree-name">{n.name}</span>
-            </div>
-
-            {n.children && expanded[n.id] && (
-              <div className="teams-tree-children">
-                {renderTree(n.children, depth + 1)}
-                {expanded[n.id] && n.users && n.users.length > 0 && (
-                  <div className="teams-users-list">
-                    {n.users.map(u => (
-                      <UserLine
-                        key={u.id}
-                        title={u.name}
-                        about={["Роль: " + u.role]}
-                        depth={depth + 1}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <main className="main teams-page">
       <h2 className="teams-title">Все сотрудники</h2>
 
+      <div className="teams-search">
+        <input
+          className="teams-search-input"
+          placeholder="Поиск по имени или роли"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
+
       <div className="teams-layout">
         <div className="simple-border-card teams-tree-card">
-          {renderTree(teams)}
+          <div className="teams-list">
+            {flatList.map(item => {
+              if (!isVisible(item.ancestors)) return null;
+
+              if (item.type === "folder") {
+                const agg = aggregates[item.id] || { employees: 0, groups: 0, departments: 0, legalEntities: 0, domains: 0 };
+                return (
+                  <TeamRow key={item.id} item={item} agg={agg} expanded={expanded} toggle={toggle} matched={matchedIds[item.id]} />
+                );
+              }
+
+              return (
+                <UserLine
+                  key={item.id}
+                  title={item.name}
+                  about={[`Роль: ${item.role}`]}
+                  depth={item.depth + 0.5}
+                  matched={matchedIds[item.id]}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </main>

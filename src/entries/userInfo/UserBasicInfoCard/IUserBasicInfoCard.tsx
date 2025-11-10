@@ -3,7 +3,7 @@ import {User} from "../../user";
 import React from "react";
 import RowInfo from "../RowInfo/RowInfo";
 
-type UserBasicInfoCard = {
+type IUserBasicInfoCard = {
   user: User;
 }
 
@@ -18,7 +18,7 @@ function parseDays(value: number) {
   return `${year} г. ${months} м. ${days} д.`;
 }
 
-export default function UserBasicInfoCard({user}: UserBasicInfoCard) {
+export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
 
   const rows = [
     {label: 'почта', content: user.mail || '-'},

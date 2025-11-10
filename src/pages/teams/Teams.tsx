@@ -16,7 +16,6 @@ type TeamNode = {
   users: User[];
 };
 
-// Генератор sample data: создаёт иерархию команд и пользователей
 function generateSampleTeams(teamCount = 6, maxDepth = 2, usersPerTeam = 5): TeamNode[] {
   const teamNames = [
     "Platform",
@@ -76,6 +75,28 @@ function generateSampleTeams(teamCount = 6, maxDepth = 2, usersPerTeam = 5): Tea
   return roots;
 }
 
+type FlatFolder = {
+  type: "folder";
+  id: string;
+  name: string;
+  depth: number;
+  ancestors: string[];
+  hasChildren: boolean;
+  hasUsers: boolean;
+};
+
+type FlatUser = {
+  type: "user";
+  id: string;
+  name: string;
+  role: string;
+  mail: string;
+  depth: number;
+  ancestors: string[];
+};
+
+type FlatItem = FlatFolder | FlatUser;
+
 export default function Teams() {
   const teams = useMemo(() => generateSampleTeams(10, 4, 6), []);
 
@@ -85,46 +106,55 @@ export default function Teams() {
     setExpanded(prev => ({...prev, [id]: !prev[id]}));
   }
 
-  // 0.5 для падинга слева
-  function renderTree(nodes: TeamNode[], depth = 0.5) {
-    return (
-      <div className="teams-tree-list">
-        {nodes.map(n => (
-          <div key={n.id} className="teams-tree-item">
-            <div className="teams-tree-row" style={{paddingLeft: 24 * depth}}>
-              {(n.children && n.children.length) || (n.users && n.users.length) ? (
-                <button className="teams-tree-toggler" onClick={() => toggle(n.id)} aria-label="toggle">
-                  {expanded[n.id] ? "▼" : "▶"}
-                </button>
-              ) : (
-                <span className="teams-tree-empty"/>
-              )}
-              <img src={"./icons/folder.svg"} alt="folder" className="teams-tree-icon"/>
-              <span className="teams-tree-name">{n.name}</span>
-            </div>
+  const flatList = useMemo<FlatItem[]>(() => {
+    const out: FlatItem[] = [];
 
-            {n.children && expanded[n.id] && (
-              <div className="teams-tree-children">
-                {renderTree(n.children, depth + 1)}
-                {expanded[n.id] && n.users && n.users.length > 0 && (
-                  <div className="teams-users-list">
-                    {n.users.map(u => (
-                      <UserLine
-                        key={u.id}
-                        title={u.name}
-                        about={["Роль: " + u.role]}
-                        depth={depth + 1}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
+    function walk(nodes: TeamNode[], depth: number, ancestors: string[]) {
+      for (const n of nodes) {
+        const hasChildren = Array.isArray(n.children) && n.children.length > 0;
+        const hasUsers = Array.isArray(n.users) && n.users.length > 0;
+
+        out.push({
+          type: "folder",
+          id: n.id,
+          name: n.name,
+          depth,
+          ancestors: [...ancestors],
+          hasChildren,
+          hasUsers,
+        });
+
+        // Сначала дети (они будут следовать за папкой в плоском списке)
+        if (hasChildren) {
+          walk(n.children!, depth + 1, [...ancestors, n.id]);
+        }
+
+        // Затем пользователи команды
+        if (hasUsers) {
+          for (const u of n.users) {
+            out.push({
+              type: "user",
+              id: u.id,
+              name: u.name,
+              role: u.role,
+              mail: u.mail,
+              depth: depth + 1,
+              ancestors: [...ancestors, n.id],
+            });
+          }
+        }
+      }
+    }
+
+    walk(teams, 0, []);
+    return out;
+  }, [teams]);
+
+  function isVisible(ancestors: string[]) {
+    return ancestors.every(a => expanded[a]);
   }
+
+  //+0.5 depth для элеменов - чтобы у низ был отступ слева
 
   return (
     <main className="main teams-page">
@@ -132,7 +162,37 @@ export default function Teams() {
 
       <div className="teams-layout">
         <div className="simple-border-card teams-tree-card">
-          {renderTree(teams)}
+          <div className="teams-list">
+            {flatList.map(item => {
+              if (!isVisible(item.ancestors)) return null;
+
+              if (item.type === "folder") {
+                return (
+                  <div className="teams-row" style={{paddingLeft: 24 * (item.depth + 0.5)}}>
+                    {(item.hasChildren || item.hasUsers) ? (
+                      <button className="teams-tree-toggler" onClick={() => toggle(item.id)} aria-label="toggle">
+                        {expanded[item.id] ? "▼" : "▶"}
+                      </button>
+                    ) : (
+                      <span className="teams-tree-empty"/>
+                    )}
+
+                    <img src={"./icons/folder.svg"} alt="folder" className="teams-tree-icon"/>
+                    <span className="teams-tree-name">{item.name}</span>
+                  </div>
+                );
+              }
+
+              return (
+                <UserLine
+                  key={item.id}
+                  title={item.name}
+                  about={[`Роль: ${item.role}`]}
+                  depth={item.depth + 0.5}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </main>

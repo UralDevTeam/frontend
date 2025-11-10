@@ -10,7 +10,7 @@ type Props = {
 
 export default function UserLine({title, about, depth}: Props) {
   return (
-    <div className="user-line" role="group" aria-label={title} style={{paddingLeft: 24 * depth}}>
+    <div className="teams-row user-line" role="group" aria-label={title} style={{paddingLeft: 24 * depth}}>
       <ProfileCircle size={20}/>
       <div className="user-line-title">{title}</div>
       <div className="user-line-metrics">

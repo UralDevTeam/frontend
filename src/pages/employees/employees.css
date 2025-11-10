@@ -70,3 +70,7 @@ main {
 .employees-table {
     margin-top: 8px;
 }
+
+.employees-table-link {
+    text-decoration: underline;
+}

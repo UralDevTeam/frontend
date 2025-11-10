@@ -1,59 +1,61 @@
 import Header from "../../entries/header/header";
-import {UserDTO} from "../../entries/user";
-import {userFromDto} from "../../entries/user/userFromDto";
-import "./profile.css"
-import {useState} from "react";
-import {Navigate, Route, Routes} from 'react-router';
+import {Navigate, Route, Routes, useParams} from 'react-router';
+import "./profile.css";
 import UserProfileView from '../userProfile/UserProfileView';
 import UserProfileEdit from '../userProfile/UserProfileEdit';
 import Employees from "../employees/Employees";
 import Teams from "../teams/Teams";
+import {currentUser, mockUsersById} from "../../mocks/users";
+import {User} from "../../entries/user";
 import About from "./About";
 
-export const userDTO: UserDTO = {
-  id: "udv-001234",
-  fio: "Иванова Анастасия Сергеевна",
-  mail: "corporate@mail.ru",
-  phone: "+7 (902) 123-45-67",
-  mattermost: "ссылочка",
 
-  birthday: "04/03/2005",
-  legalEntity: "ВНЕОЧЕРЕДИ ООО",
-  department: "Продуктовая разработка",
-  team: ["Продуктовый офис", "ITM"],
-  boss: {
-    id: "udv-000000",
-    shortName: "Самый К. Б.",
-    fullName: "Самый Крутой Босс",
-  },
-  role: "Дизайнер",
-  experience: 777,
-  status: "work",
+function UserProfileByIdView() {
+    const {id} = useParams<{ id: string }>();
+    const user: User | undefined = id ? mockUsersById[id] : undefined;
+    if (!user) {
+        return <Navigate to="/me" replace={true}/>;
+    }
 
-  city: "Екатеринбург",
-  aboutMe: "Катаюсь на сноуборде, люблю кофе. Учусь дополнительно в высшей школе моды. Катаюсь на сноуборде, люблю кофе. Учусь дополнительно в высшей школе моды. Катаюсь на сноуборде, люблю кофе. Учусь дополнительно в высшей школе моды. Катаюсь на сноуборде, люблю кофе. Учусь дополнительно в высшей школе моды. "
+    return (
+        <UserProfileView
+            user={user}
+            canEdit={false}
+            viewPath={`/profile/view/${id}`}
+        />
+    );
 }
 
 export function Page() {
+    return (
+        <>
+            <Header/>
+            <main className="main">
+                <Routes>
+                    <Route path="/" element={<Navigate to="/me" replace={true}/>}/>
 
-  const user = useState(userFromDto(userDTO))[0];
-
-  return (
-    <>
-      <Header/>
-      <main className="main">
-        <Routes>
-          <Route path="/" element={(
-            <Navigate to="/profile/view" replace={true}/>
-          )}/>
-
-          <Route path="/profile/view" element={<UserProfileView user={user}/>}/>
-          <Route path="/profile/edit" element={<UserProfileEdit initialUser={user}/>}/>
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/teams" element={<Teams />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </main>
-    </>
-  )
+                    <Route
+                        path="/me"
+                        element={(
+                            <UserProfileView
+                                user={currentUser}
+                                canEdit={true}
+                                viewPath="/me"
+                                editPath="/me/edit"
+                            />
+                        )}
+                    />
+                    <Route
+                        path="/me/edit"
+                        element={<UserProfileEdit initialUser={currentUser} viewPath="/me"/>}
+                    />
+                    <Route path="/profile/view/:id" element={<UserProfileByIdView/>}/>
+                    <Route path="/employees" element={<Employees/>}/>
+                    <Route path="/teams" element={<Teams/>}/>
+                    <Route path="/about" element={<About />} />
+                    <Route path="*" element={<Navigate to="/me" replace={true}/>}/>
+                </Routes>
+            </main>
+        </>
+    );
 }

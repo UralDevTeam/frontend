@@ -29,7 +29,6 @@ export class UserStore {
 
     updateField<K extends keyof User>(key: K, value: User[K]) {
         if (!this.user) return;
-        // @ts-ignore
         this.user[key] = value;
     }
 

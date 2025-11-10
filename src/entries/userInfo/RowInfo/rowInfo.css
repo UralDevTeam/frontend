@@ -11,4 +11,5 @@
 
 .row-info > .value {
     max-width: 640px;
+    font-weight: 500;
 }

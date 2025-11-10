@@ -30,4 +30,13 @@ nav {
 
 .header-link {
     font-size: 16px;
+    transition: color 0.2s ease-in-out;
+}
+
+.header-link:hover {
+    color: var(--color-primary-mint);
+}
+
+.header-link--active {
+    color: var(--color-primary-mint);
 }

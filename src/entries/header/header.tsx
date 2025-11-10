@@ -3,22 +3,35 @@ import LightLogo from "../../shared/logo/Light";
 import ProfileCircle from "../../shared/profileCircle/profileCircle";
 import "./Header.css"
 
+const navItems = [
+    {to: "/teams", label: "оргструктура"},
+    {to: "/employees", label: "сотрудники"},
+    {to: "/about", label: "о\u00A0системе"},
+];
+
+
 export default function Header() {
     return (
         <header>
             <div className={"left_part"}>
                 <LightLogo/>
                 <nav>
-                    <NavLink to={"/teams"}><p className="header-link">оргструктура</p></NavLink>
-                    <NavLink to={"/employees"}><p className="header-link">сотрудники</p></NavLink>
-                    <NavLink to={"/about"}><p className="header-link">о&nbsp;системе</p></NavLink>
+                    {navItems.map(item => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            className={({isActive}) => `header-link${isActive ? " header-link--active" : ""}`}
+                        >
+                            {item.label}
+                        </NavLink>
+                    ))}
                 </nav>
             </div>
             <div className={"right_part"}>
                 <NavLink to={"/me"}>
                     <ProfileCircle size={42}/>
                 </NavLink>
-                <img src={"/icons/ExitButton.svg"} alt="Exit Button"/>
+                {/*<img src={"/icons/ExitButton.svg"} alt="Exit Button"/>*/}
             </div>
         </header>
     )

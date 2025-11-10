@@ -30,20 +30,25 @@ const statusOptions: Array<keyof typeof WorkerStatuses> = Array.from(
     new Set(employees.map(e => e.status))
 );
 
+const roleOptions: string[] = Array.from(new Set(employees.map(e => e.role))).sort((a, b) => a.localeCompare(b));
+
+const departmentOptions: string[] = Array.from(new Set(employees.map(e => e.department))).sort((a, b) => a.localeCompare(b));
+
 export default function Employees() {
     const [nameFilter, setNameFilter] = useState("");
     const [roleFilter, setRoleFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("");
+    const [departmentFilter, setDepartmentFilter] = useState("");
 
     const filteredData = useMemo(() => {
         const name = nameFilter.trim().toLowerCase();
-        const role = roleFilter.trim().toLowerCase();
         return employees.filter(e => (
             (!name || e.name.toLowerCase().includes(name)) &&
-            (!role || e.role.toLowerCase().includes(role)) &&
-            (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses))
+            (!roleFilter || e.role === roleFilter) &&
+            (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses)) &&
+            (!departmentFilter || e.department === departmentFilter)
         ));
-    }, [employees, nameFilter, roleFilter, statusFilter]);
+    }, [nameFilter, roleFilter, statusFilter, departmentFilter]);
 
     return (
         <main className={"main"}>
@@ -57,6 +62,10 @@ export default function Employees() {
                 status={statusFilter}
                 onStatusChange={setStatusFilter}
                 statuses={statusOptions}
+                roles={roleOptions}
+                department={departmentFilter}
+                onDepartmentChange={setDepartmentFilter}
+                departments={departmentOptions}
             />
 
             <div className={"simple-border-card"} style={{marginTop: 16}}>
@@ -77,7 +86,10 @@ export default function Employees() {
                         <tr key={e.id} className={"employees-table-row"}>
                             <td>
                                 <Link to={`/profile/view/${e.id}`} className="employees-table-link">
-                                    {e.name.split(' ')[0]} {e.name.split(' ')[1]}
+                                    <div className="employees-profile">
+                                        <span className="employees-avatar-placeholder" aria-hidden="true"/>
+                                        <span>{e.name.split(' ')[0]} {e.name.split(' ')[1]}</span>
+                                    </div>
                                 </Link>
                             </td>
                             <td>{e.role}</td>

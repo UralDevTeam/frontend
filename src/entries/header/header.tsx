@@ -9,9 +9,9 @@ export default function Header() {
             <div className={"left_part"}>
                 <LightLogo/>
                 <nav>
-                    <NavLink to={"/teams"}><p>оргструктура</p></NavLink>
-                    <NavLink to={"/employees"}><p>сотрудники</p></NavLink>
-                    <NavLink to={"/about"}><p>о&nbsp;системе</p></NavLink>
+                    <NavLink to={"/teams"}><p className="header-link">оргструктура</p></NavLink>
+                    <NavLink to={"/employees"}><p className="header-link">сотрудники</p></NavLink>
+                    <NavLink to={"/about"}><p className="header-link">о&nbsp;системе</p></NavLink>
                 </nav>
             </div>
             <div className={"right_part"}>

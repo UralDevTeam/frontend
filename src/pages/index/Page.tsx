@@ -8,6 +8,7 @@ import UserProfileView from '../userProfile/UserProfileView';
 import UserProfileEdit from '../userProfile/UserProfileEdit';
 import Employees from "../employees/Employees";
 import Teams from "../teams/Teams";
+import About from "./About";
 
 export const userDTO: UserDTO = {
   id: "udv-001234",
@@ -48,6 +49,7 @@ export function Page() {
           <Route path="/profile/edit" element={<UserProfileEdit initialUser={user}/>}/>
           <Route path="/employees" element={<Employees />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </main>
     </>

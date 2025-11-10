@@ -42,13 +42,54 @@
     width: 100%;
     border-bottom: rgba(0, 59, 76, 0.17) 2px solid;
     display: flex;
+    justify-content: space-between;
     gap: 16px;
-    height: 40px;
+    height: 48px;
     align-items: center;
+    box-sizing: border-box;
+    padding-right: 12px;
 }
 
 .teams-row:last-child {
     border-bottom: none;
+}
+
+/* левый блок: иконка, название */
+.teams-row-left{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.teams-tree-icon{
+    width: 18px;
+    height: 18px;
+}
+
+.teams-tree-name{
+    font-family: 'Golos Text', serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--color-primary-graphite);
+}
+
+/* правый блок: метрики */
+.teams-row-right{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-secondary-dark-blue, #4b646b);
+    font-size: 14px;
+}
+
+.teams-metric{
+    white-space: nowrap;
+    color: var(--color-secondary-dark-blue, #4b646b);
+    font-size: 14px;
+}
+
+.user-line{
+    justify-content: left;
 }
 
 .user-line-title {

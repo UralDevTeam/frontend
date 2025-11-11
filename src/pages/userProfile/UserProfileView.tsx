@@ -1,4 +1,5 @@
 import React from 'react';
+import {User} from '../../entries/user';
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
 import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
 import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard";
@@ -6,17 +7,34 @@ import { observer } from 'mobx-react-lite';
 import { userStore } from '../../entities/user';
 import "./profile.css"
 
-function UserProfileViewInner() {
-  const user = userStore.user;
+type Props = {
+  user?: User;
+  canEdit?: boolean;
+  editPath?: string;
+  viewPath?: string;
+}
+
+function UserProfileViewInner(props: Props) {
+  const user = props.user ?? userStore.user;
 
   if (!user) return <div>No user</div>;
+
+  const canEdit = props.canEdit ?? true;
+  const editPath = props.editPath ?? "/me/edit";
+  const viewPath = props.viewPath ?? "/me";
 
   return (
     <div className="simple-shadow-card user-profile-card">
       <UserMainProperties user={user}/>
       <div className={"user-profile-content"}>
         <UserBasicInfoCard user={user}/>
-        <UserPersonalInfoCardController user={user} isEdit={false}/>
+        <UserPersonalInfoCardController
+          user={user}
+          isEdit={false}
+          canEdit={canEdit}
+          editPath={editPath}
+          viewPath={viewPath}
+        />
       </div>
     </div>
   );

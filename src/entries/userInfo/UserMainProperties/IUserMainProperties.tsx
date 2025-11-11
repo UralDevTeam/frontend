@@ -14,11 +14,11 @@ export default function UserMainProperties({user}: IUserMainProperties) {
       <div className={"user-main-properties"}>
         <p className="user-main-properties-name">{user.fio}</p>
         <div className="user-main-properties-line">
-          <WorkerStatus status={user.status}/>
-          <img src={"/icons/dot.svg"} alt={"dot icon"} />
           {user.role}
           <img src={"/icons/dot.svg"} alt={"dot icon"}/>
           {user.team.join(" / ")}
+          <img src={"/icons/dot.svg"} alt={"dot icon"} />
+          <WorkerStatus status={user.status}/>
         </div>
       </div>
     </div>

@@ -6,9 +6,10 @@ import React from "react";
 interface Props {
   status: keyof typeof WorkerStatuses;
   onChange: (value: keyof typeof WorkerStatuses) => void;
+    disabled?: boolean;
 }
 
-export default function WorkerStatusSelector({status, onChange}: Props) {
+export default function WorkerStatusSelector({status, onChange, disabled}: Props) {
   return (
     <RowInfo label="текущий статус">
       <select
@@ -16,6 +17,7 @@ export default function WorkerStatusSelector({status, onChange}: Props) {
         className="styled-select"
         value={status}
         onChange={e=>onChange(e.target.value as keyof typeof WorkerStatuses)}
+        disabled={disabled}
       >
         {Object.keys(WorkerStatuses).map((entry) => (
           <option key={entry} value={entry}>{getWorkerStatusRussian(entry)}</option>

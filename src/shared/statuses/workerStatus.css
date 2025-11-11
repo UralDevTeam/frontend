@@ -13,3 +13,11 @@
 .worker-status-work {
     background-color: var(--color-primary-mint);
 }
+
+.worker-status-vacation {
+    background-color: var(--color-secondary-light-vio);
+}
+
+.worker-status-sick {
+    background-color: var(--color-secondary-yellow);
+}

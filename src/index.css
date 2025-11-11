@@ -21,7 +21,8 @@ body {
     font-family: "Golos Text", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
-    min-height: 1200px;
+    min-height: 600px;
+    padding-top: 70px;
 
     background-color: var(--color-primary-white);
 }
@@ -35,7 +36,7 @@ h2 {
 }
 
 p, nav, body {
-    font-size: 16px;
+    font-size: 14px;
     margin: 0;
 }
 

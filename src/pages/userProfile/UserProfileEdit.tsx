@@ -3,26 +3,27 @@ import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserM
 import {userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";
+import {User} from "../../entries/user";
 import "./profile.css"
 
+type Props = {
+  initialUser?: User;
+  viewPath?: string;
+}
 
-function UserProfileEditInner() {
+function UserProfileEdit({initialUser, viewPath = "/me"}: Props) {
+  const user = initialUser ?? userStore.user;
 
-  const initialUser = userStore.user;
-
-  if (!initialUser) return <div>No user</div>;
+  if (!user) return <div>No user</div>;
 
   return (
-    <div className="simple-shadow-card user-profile-card">
-      <UserMainProperties user={initialUser}/>
+    <div className="user-profile-card">
+      <UserMainProperties user={user}/>
       <div className={"user-profile-content"}>
-        <UserPersonalInfoCardController user={initialUser} isEdit={true}/>
+        <UserPersonalInfoCardController user={user} isEdit={true}  viewPath={viewPath}/>
       </div>
     </div>
   );
 }
 
-const UserProfileEdit = observer(UserProfileEditInner);
-
-export default UserProfileEdit;
-
+export default observer(UserProfileEdit);

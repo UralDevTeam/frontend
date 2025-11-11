@@ -2,6 +2,7 @@ import "./userBasicInfoCard.css"
 import {User} from "../../user";
 import React from "react";
 import RowInfo from "../RowInfo/RowInfo";
+import {NavLink} from "react-router";
 
 type IUserBasicInfoCard = {
   user: User;
@@ -21,17 +22,22 @@ function parseDays(value: number) {
 export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
 
   const rows = [
-    {label: 'почта', content: user.email || '-'},
+    {label: 'почта', content: (user as any).mail || (user as any).email || '-'},
     {label: 'стаж', content: parseDays(user.experience || 0)},
     {
-      label: 'руководитель', content: (
-        <a style={{textDecoration: "underline", color: "var(--color-primary-mint)"}} href={user.boss?.id || '#'}>
-          {user.boss?.shortName || '-'}
-        </a>
-      )
+      label: 'руководитель',
+      content: user.boss ? (
+        <NavLink
+          style={{textDecoration: "underline", color: "var(--color-primary-mint)"}}
+          to={`/profile/view/${user.boss.id}`}>
+          {user.boss.shortName}
+        </NavLink>
+      ) : '-'
     },
     {label: 'роль', content: user.role || '-'},
-    {label: 'команда', content: user.formatTeam || '-'},
+    {label: 'юр.лицо', content: (user as any).legalEntity || '-'},
+    {label: 'подразделение', content: (user as any).department || '-'},
+    {label: 'команда', content: (user as any).formatTeam || '-'},
   ];
 
   return (
@@ -45,4 +51,3 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
     </div>
   )
 }
-

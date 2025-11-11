@@ -31,7 +31,7 @@ main {
 
 .employees-table-row td:first-child,
 .employees-table-head th:first-child {
-    padding-left: 60px;
+    padding-left: 30px;
 }
 
 .employees-table-row:last-child td {
@@ -55,8 +55,8 @@ main {
 .employees-filters select {
     height: 36px;
     padding: 6px 10px;
-    border: 1px solid #CED9DC;
-    border-radius: 6px;
+    border: 2px solid #CED9DC;
+    border-radius: 15px;
     background: #fff;
     font-size: 14px;
     color: var(--color-primary-graphite);
@@ -69,4 +69,24 @@ main {
 
 .employees-table {
     margin-top: 8px;
+}
+
+.employees-table-link {
+    text-decoration: underline;
+    display: inline-flex;
+    color: inherit;
+}
+
+.employees-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.employees-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #CED9DC;
+    flex-shrink: 0;
 }

@@ -29,4 +29,3 @@ export async function fetchUsers(): Promise<UserDTO[]> {
     return [];
   }
 }
-

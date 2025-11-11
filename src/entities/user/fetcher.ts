@@ -1,5 +1,6 @@
 import {UserDTO} from "../../entries/user";
 import { API_BASE } from '../../shared/apiConfig';
+import { WorkerStatuses } from '../../shared/statuses/workerStatuses';
 
 // Временный тип для данных, которые будет возвращать бэкенд (будет меняться).
 type BackendUserDTO = {
@@ -22,7 +23,19 @@ type BackendUserDTO = {
   city?: string;
   aboutMe?: string;
   isAdmin?: boolean;
+  legalEntity?: string;
+  department?: string;
 };
+
+function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
+  if (!s) return WorkerStatuses.active;
+  const normalized = s.trim().toLowerCase();
+  if (normalized === 'work' || normalized === 'active' || normalized === 'on') return WorkerStatuses.active;
+  if (normalized === 'vacation' || normalized === 'vac') return WorkerStatuses.vacation;
+  if (normalized === 'sick' || normalized === 'sickleave' || normalized === 'sick_leave' || normalized === 'sickleave') return WorkerStatuses.sickLeave;
+  // fallback
+  return WorkerStatuses.active;
+}
 
 function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   return {
@@ -31,21 +44,25 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     // стараемся взять email/mail/contact в порядке приоритета
     email: u.email ?? u.mail ?? u.contact ?? "",
     phone: u.phone ?? undefined,
-    mattermost: u.mattermost ?? "",
+    mattermost: u.mattermost ?? undefined,
     tg: u.tg ?? undefined,
 
-    birthday: u.birthday ?? new Date().toISOString(),
+    // если бэкенд не прислал дату — оставляем undefined (frontend умеет обрабатывать отсутствие)
+    birthday: u.birthday ?? undefined,
     team: u.team ?? [],
     // фронтенд ожидает не-null boss, поэтому подставляем пустой объект если null
     boss: u.boss ?? { id: "", fullName: "", shortName: "" },
     role: u.role ?? "",
     experience: u.experience ?? 0,
-    // привести status к тому, что ожидает фронтенд (по умолчанию 'work')
-    status: (u.status as any) ?? "work",
+    // привести status к тому, что ожидает фронтенд
+    status: mapStatusToWorkerStatus(u.status),
 
     city: u.city ?? "",
     aboutMe: u.aboutMe ?? "",
-  };
+    // обязательные поля фронтенда — поставим дефолты, если не пришли
+    legalEntity: u.legalEntity ?? "",
+    department: u.department ?? "",
+  } as UserDTO;
 }
 
 export async function fetchCurrentUser(): Promise<UserDTO> {

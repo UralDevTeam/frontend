@@ -1,6 +1,6 @@
 .user-basic-info-card {
     min-width: 440px;
-    padding: 28px;
+    padding: 28px 0;
     display: flex;
     flex-direction: column;
     gap: 10px;

@@ -1,8 +1,10 @@
-import React, {useMemo, useState} from "react";
+import React, {useMemo, useState, useEffect} from "react";
 import WorkerStatus from "../../shared/statuses/workerStatus";
 import "./employees.css";
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import EmployeesFilters from "./EmployeesFilters";
+import { observer } from 'mobx-react-lite';
+import { usersStore } from "../../entities/users";
 
 type EmployeeTableInfo = {
   id: string;
@@ -13,33 +15,25 @@ type EmployeeTableInfo = {
   mail: string;
 };
 
-function generateSampleData(count: number = 3): EmployeeTableInfo[] {
-  const firstNames = ['Иван', 'Пётр', 'Анна', 'Ольга', 'Сергей', 'Мария'];
-  const lastNames = ['Иванов', 'Петров', 'Сидоров', 'Кузнецова', 'Смирнов', 'Ковалёв'];
-  const roles = ['Разработчик', 'Тестировщик', 'Дизайнер', 'Менеджер', 'Аналитик'];
-  const teams = ['Team A', 'Team B', 'Design', 'Platform', 'Mobile'];
-  const statuses = Object.keys(WorkerStatuses) as Array<keyof typeof WorkerStatuses>;
-
-  const result: EmployeeTableInfo[] = [];
-  for (let i = 0; i < count; i++) {
-    const first = firstNames[i % firstNames.length];
-    const last = lastNames[(i * 3) % lastNames.length];
-    const name = `${last} ${first}`;
-    const role = roles[i % roles.length];
-    const status = statuses[i % statuses.length];
-    const team = teams[i % teams.length];
-    const mail = `${first.toLowerCase()}.${last.toLowerCase().replace(/ё/g, 'e')}@example.com`;
-    result.push({ id: String(i + 1), name, role, status, team, mail });
-  }
-  return result;
-}
-
-const sampleData: EmployeeTableInfo[] = generateSampleData(100);
-
-export default function Employees() {
+function EmployeesComponent() {
   const [nameFilter, setNameFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
+
+  useEffect(() => {
+    // загружаем список сотрудников при монтировании
+    usersStore.loadFromApi();
+  }, []);
+
+  // конвертация usersStore.users в удобный для таблицы формат
+  const sampleData: EmployeeTableInfo[] = usersStore.users.map(u => ({
+    id: u.id,
+    name: u.fio,
+    role: u.role || '—',
+    status: u.status as keyof typeof WorkerStatuses,
+    team: u.team.join(' / '),
+    mail: u.mail || ''
+  }));
 
   const filteredData = useMemo(() => {
     const name = nameFilter.trim().toLowerCase();
@@ -93,3 +87,5 @@ export default function Employees() {
     </main>
   )
 }
+
+export default observer(EmployeesComponent);

@@ -49,6 +49,16 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
 }
 
 export async function fetchCurrentUser(): Promise<UserDTO> {
+  // Если мы уже на странице логина/регистрации/аутентификации — не шлём запрос на /api/me
+  if (typeof window !== 'undefined') {
+    const path = window.location && window.location.pathname ? window.location.pathname : '';
+    const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+    if (onAuthPage) {
+      // Сохраняем поведение — бросаем ошибку 'Unauthorized', чтобы вызывающий код мог обработать состояние неавторизованного пользователя.
+      throw new Error('Unauthorized');
+    }
+  }
+
   const res = await fetch(`${API_BASE}/api/me`, {
     method: 'GET',
     credentials: 'include',
@@ -60,8 +70,13 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   if (res.status === 401 || res.status === 403) {
     // Не авторизован — перенаправляем на страницу логина.
     // Используем полноценный переход, чтобы сбросить состояние приложения.
+    // Но не делаем redirect, если уже на странице логина/регистрации/аутентификации.
     if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+      const path = window.location && window.location.pathname ? window.location.pathname : '';
+      const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+      if (!onAuthPage) {
+        window.location.href = '/login';
+      }
     }
     throw new Error('Unauthorized');
   }

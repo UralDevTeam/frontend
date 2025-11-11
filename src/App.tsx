@@ -14,10 +14,10 @@ export default function App() {
     <Routes>
       {/* Main application routes (with header) */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={(<Navigate to="/profile/view" replace={true}/>)} />
+        <Route path="/" element={(<Navigate to="/me" replace={true}/>)} />
 
-        <Route path="/profile/view" element={<UserProfileView/>}/>
-        <Route path="/profile/edit" element={<UserProfileEdit />}/>
+        <Route path="/me" element={<UserProfileView/>}/>
+        <Route path="/me/edit" element={<UserProfileEdit />}/>
         <Route path="/employees" element={<Employees />} />
         <Route path="/teams" element={<Teams />} />
         <Route path="/about" element={<About />} />

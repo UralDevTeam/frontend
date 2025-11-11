@@ -29,7 +29,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     id: u.id,
     fio: u.fio ?? u.fullName ?? "",
     // стараемся взять email/mail/contact в порядке приоритета
-    mail: u.email ?? u.mail ?? u.contact ?? "",
+    email: u.email ?? u.mail ?? u.contact ?? "",
     phone: u.phone ?? undefined,
     mattermost: u.mattermost ?? "",
     tg: u.tg ?? undefined,

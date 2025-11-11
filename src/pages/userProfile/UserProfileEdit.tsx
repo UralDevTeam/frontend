@@ -3,6 +3,7 @@ import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserM
 import {userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";
+import "./profile.css"
 
 
 function UserProfileEditInner() {

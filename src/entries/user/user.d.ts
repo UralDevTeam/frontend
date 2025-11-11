@@ -9,7 +9,7 @@ export type UserLinkDTO = {
 export type UserDTO = {
     id: string;
     fio: string;
-    mail: string;
+    email: string;
     phone?: string;
     mattermost: string;
     tg?: string;

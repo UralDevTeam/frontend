@@ -4,6 +4,7 @@ import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserM
 import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard";
 import { observer } from 'mobx-react-lite';
 import { userStore } from '../../entities/user';
+import "./profile.css"
 
 function UserProfileViewInner() {
   const user = userStore.user;

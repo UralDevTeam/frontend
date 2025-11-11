@@ -1,5 +1,5 @@
 export enum WorkerStatuses {
-    work = "work",
+    active = "active",
     vacation = "vacation",
     sickLeave = "sickLeave",
 }

@@ -1,6 +1,7 @@
-import { Navigate, Route, Routes } from 'react-router';
+import {Navigate, Route, Routes} from 'react-router';
 import UserProfileView from './pages/userProfile/UserProfileView';
 import UserProfileEdit from './pages/userProfile/UserProfileEdit';
+import UserProfileByIdView from './pages/userProfile/UserProfileByIdView';
 import Employees from "./pages/employees/Employees";
 import Teams from "./pages/teams/Teams";
 import About from "./pages/index/About";
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/employees" element={<Employees />} />
         <Route path="/teams" element={<Teams />} />
         <Route path="/about" element={<About />} />
+        <Route path="/profile/view/:id" element={<UserProfileByIdView/>}/>
       </Route>
 
       {/* Auth routes (no header) */}

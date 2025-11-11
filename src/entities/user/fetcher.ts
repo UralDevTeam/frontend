@@ -106,3 +106,24 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   const raw = (await res.json()) as BackendUserDTO;
   return adaptBackendUserToFrontend(raw);
 }
+
+// Добавлена функция для получения пользователя по id
+export async function fetchUserById(id: string): Promise<UserDTO> {
+  if (!id) throw new Error('Missing id');
+
+  const res = await fetch(`${API_BASE}/api/users/${encodeURIComponent(id)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Failed to fetch /api/users/${id}: ${res.status} ${text}`);
+  }
+
+  const raw = (await res.json()) as BackendUserDTO;
+  return adaptBackendUserToFrontend(raw);
+}

@@ -102,8 +102,6 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
 }
 
 export function useTeams() {
-  // teams now computed from usersStore.users
-  const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -123,7 +121,7 @@ export function useTeams() {
     return () => disposer();
   }, []);
 
-  // derive teams from users
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const teams = useMemo(() => buildTreeFromUsers(usersStore.users || []), [usersVersion]);
 
   function toggle(id: string) {

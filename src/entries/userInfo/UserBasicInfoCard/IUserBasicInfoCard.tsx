@@ -21,7 +21,7 @@ function parseDays(value: number) {
 export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
 
   const rows = [
-    {label: 'почта', content: user.mail || '-'},
+    {label: 'почта', content: user.email || '-'},
     {label: 'стаж', content: parseDays(user.experience || 0)},
     {
       label: 'руководитель', content: (

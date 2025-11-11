@@ -1,8 +1,10 @@
-import React, {useMemo, useState} from "react";
+import React, {useState, useEffect} from "react";
 import WorkerStatus from "../../shared/statuses/workerStatus";
 import "./employees.css";
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import EmployeesFilters from "./EmployeesFilters";
+import { observer } from 'mobx-react-lite';
+import { usersStore } from "../../entities/users";
 
 type EmployeeTableInfo = {
   id: string;
@@ -13,43 +15,36 @@ type EmployeeTableInfo = {
   mail: string;
 };
 
-function generateSampleData(count: number = 3): EmployeeTableInfo[] {
-  const firstNames = ['Иван', 'Пётр', 'Анна', 'Ольга', 'Сергей', 'Мария'];
-  const lastNames = ['Иванов', 'Петров', 'Сидоров', 'Кузнецова', 'Смирнов', 'Ковалёв'];
-  const roles = ['Разработчик', 'Тестировщик', 'Дизайнер', 'Менеджер', 'Аналитик'];
-  const teams = ['Team A', 'Team B', 'Design', 'Platform', 'Mobile'];
-  const statuses = Object.keys(WorkerStatuses) as Array<keyof typeof WorkerStatuses>;
-
-  const result: EmployeeTableInfo[] = [];
-  for (let i = 0; i < count; i++) {
-    const first = firstNames[i % firstNames.length];
-    const last = lastNames[(i * 3) % lastNames.length];
-    const name = `${last} ${first}`;
-    const role = roles[i % roles.length];
-    const status = statuses[i % statuses.length];
-    const team = teams[i % teams.length];
-    const mail = `${first.toLowerCase()}.${last.toLowerCase().replace(/ё/g, 'e')}@example.com`;
-    result.push({ id: String(i + 1), name, role, status, team, mail });
-  }
-  return result;
-}
-
-const sampleData: EmployeeTableInfo[] = generateSampleData(100);
-
-export default function Employees() {
+function EmployeesComponent() {
   const [nameFilter, setNameFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
-  const filteredData = useMemo(() => {
-    const name = nameFilter.trim().toLowerCase();
-    const role = roleFilter.trim().toLowerCase();
-    return sampleData.filter(e => (
-      (!name || e.name.toLowerCase().includes(name)) &&
-      (!role || e.role.toLowerCase().includes(role)) &&
-      (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses))
-    ));
-  }, [nameFilter, roleFilter, statusFilter]);
+  useEffect(() => {
+    // загружаем список сотрудников при монтировании, только если ещё нет данных
+    if (!usersStore.users || usersStore.users.length === 0) {
+      usersStore.loadFromApi();
+    }
+  }, []);
+
+  // конвертация и фильтрация usersStore.users в удобный для таблицы формат
+  const sampleData: EmployeeTableInfo[] = usersStore.users.map(u => ({
+    id: u.id,
+    name: u.fio,
+    role: u.role || '—',
+    status: u.status as keyof typeof WorkerStatuses,
+    team: u.team.join(' / '),
+    mail: u.email || ''
+  }));
+
+  const name = nameFilter.trim().toLowerCase();
+  const role = roleFilter.trim().toLowerCase();
+
+  const filteredData = sampleData.filter(e => (
+    (!name || e.name.toLowerCase().includes(name)) &&
+    (!role || e.role.toLowerCase().includes(role)) &&
+    (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses))
+  ));
 
   return (
     <main className={"main"}>
@@ -79,7 +74,7 @@ export default function Employees() {
           </thead>
           <tbody>
           {filteredData.map(e => (
-            <tr key={e.id} className={"employees-table-row"}>
+            <tr key={e.id} className={"employe  es-table-row"}>
               <td>{e.name}</td>
               <td>{e.role}</td>
               <td><WorkerStatus status={e.status}/></td>
@@ -93,3 +88,5 @@ export default function Employees() {
     </main>
   )
 }
+
+export default observer(EmployeesComponent);

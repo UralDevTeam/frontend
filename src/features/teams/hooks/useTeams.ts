@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { TeamNode } from "../../../entries/team/model";
-import { fetchTeams } from "../../../entries/team/api";
+import { usersStore } from '../../../entities/users';
+import { autorun } from 'mobx';
+
+// Локальное определение TeamNode (ранее было в entries/team/model)
+type TeamNode = {
+  id: string;
+  name: string;
+  children?: TeamNode[];
+  users: { id: string; name: string; role: string; mail: string }[];
+};
 
 type Agg = { employees: number; groups: number; departments: number; legalEntities: number; domains: number };
 
@@ -26,8 +34,75 @@ type FlatUser = {
 
 export type FlatItem = FlatFolder | FlatUser;
 
+// build tree of TeamNode from users list
+function buildTreeFromUsers(users: Array<any>): TeamNode[] {
+  // nodes stored by path key, e.g. 'dev' or 'dev/ui'
+  const map = new Map<string, TeamNode & { parentKey?: string }>();
+
+  function ensureNode(key: string, name: string, parentKey?: string) {
+    if (!map.has(key)) {
+      map.set(key, { id: key, name, users: [], children: [] , parentKey });
+    }
+    return map.get(key)!;
+  }
+
+  for (const u of users || []) {
+    const teamPath = Array.isArray(u.team) ? u.team : [];
+    if (teamPath.length === 0) {
+      // user without team: attach to root node named 'No team'
+      const rootKey = '__no_team__';
+      const node = ensureNode(rootKey, 'No team');
+      node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+      continue;
+    }
+
+    // build nodes along the path
+    let pathKeyParts: string[] = [];
+    for (let i = 0; i < teamPath.length; i++) {
+      const segment = String(teamPath[i]);
+      pathKeyParts.push(segment);
+      const key = pathKeyParts.join('/');
+      const parentKey = pathKeyParts.length > 1 ? pathKeyParts.slice(0, -1).join('/') : undefined;
+      ensureNode(key, segment, parentKey);
+
+      // if last segment, attach user
+      if (i === teamPath.length - 1) {
+        const node = map.get(key)!;
+        node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+      }
+    }
+  }
+
+  // wire children arrays based on parentKey
+  map.forEach((node, key) => {
+    if (node.parentKey) {
+      const parent = map.get(node.parentKey);
+      if (parent) {
+        // avoid duplicate child entries
+        if (!parent.children) parent.children = [];
+        if (!parent.children.find((c: any) => c.id === node.id)) parent.children.push(node);
+      }
+    }
+  });
+
+  // collect roots (nodes without parentKey)
+  const roots: TeamNode[] = [];
+  map.forEach((node, key) => {
+    if (!node.parentKey) {
+      // remove parentKey helper before returning
+      const copy: TeamNode = { id: node.id, name: node.name, users: node.users || [] };
+      if (node.children && node.children.length) {
+        copy.children = node.children.map((c: any) => ({ id: c.id, name: c.name, users: c.users || [], children: c.children }));
+      }
+      roots.push(copy);
+    }
+  });
+
+  return roots;
+}
+
 export function useTeams() {
-  const [teams, setTeams] = useState<TeamNode[]>([]);
+  // teams now computed from usersStore.users
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,16 +110,21 @@ export function useTeams() {
   // set of ids that match current search
   const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
 
+  // локальный счётчик версии пользователей, увеличивается при изменении usersStore.users
+  const [usersVersion, setUsersVersion] = useState(0);
+
   useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    fetchTeams().then(data => {
-      if (!mounted) return;
-      setTeams(data);
-      setLoading(false);
+    const disposer = autorun(() => {
+      // читаем usersStore.users чтобы autorun подписался
+      void usersStore.users;
+      // форсим обновление версии
+      setUsersVersion(v => v + 1);
     });
-    return () => { mounted = false; };
+    return () => disposer();
   }, []);
+
+  // derive teams from users
+  const teams = useMemo(() => buildTreeFromUsers(usersStore.users || []), [usersVersion]);
 
   function toggle(id: string) {
     setExpanded(prev => ({...prev, [id]: !prev[id]}));
@@ -90,10 +170,6 @@ export function useTeams() {
           hasUsers,
         });
 
-        if (hasChildren) {
-          walk(n.children!, depth + 1, [...ancestors, n.id]);
-        }
-
         if (hasUsers) {
           for (const u of n.users) {
             out.push({
@@ -106,6 +182,10 @@ export function useTeams() {
               ancestors: [...ancestors, n.id],
             });
           }
+        }
+
+        if (hasChildren) {
+          walk(n.children!, depth + 1, [...ancestors, n.id]);
         }
       }
     }
@@ -161,5 +241,5 @@ export function useTeams() {
     }
   }, [searchTerm, flatList]);
 
-  return { teams, loading, flatList, aggregates, expanded, toggle, isVisible, searchTerm, setSearchTerm, matchedIds };
+  return { teams, loading: usersStore.loading, flatList, aggregates, expanded, toggle, isVisible, searchTerm, setSearchTerm, matchedIds };
 }

@@ -3,6 +3,9 @@ import {NavLink, useNavigate} from "react-router";
 import React, {useCallback, useEffect, useState} from "react";
 import Modal from "../../shared/modal/Modal";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
+import {API_BASE} from "../../shared/apiConfig";
+import {userStore} from "../../entities/user";
+import {fetchCurrentUser} from "../../entities/user/fetcher";
 
 
 function SuccessSaveModal({onClose}: { onClose: () => void }) {
@@ -45,20 +48,52 @@ const UserPersonalInfoCardController = ({
         console.log("Отмена редактирования пользователя", draftUser);
     }, [draftUser]);
 
-    const simulateSaveRequest = useCallback(async (updatedUser: User) => {
-        console.log("Отправка данных пользователя (заглушка)", updatedUser);
-        return new Promise<void>((resolve) => setTimeout(resolve, 800));
+    const saveRequest = useCallback(async (updatedUser: User) => {
+        const url = `${API_BASE}/api/me`;
+        const payload = {
+            city: (updatedUser as any).city ?? "",
+            phone: (updatedUser as any).phone ?? "",
+            mattermost: (updatedUser as any).mattermost ?? "",
+            tg: (updatedUser as any).tg ?? "",
+            aboutMe: (updatedUser as any).aboutMe ?? ""
+        };
+
+        const headers: Record<string, string> = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        };
+
+        const basicToken = localStorage.getItem("basicAuth");
+        if (basicToken) {
+            headers["Authorization"] = `Basic ${basicToken}`;
+        }
+
+        const res = await fetch(url, {
+            method: "PUT",
+            headers,
+            body: JSON.stringify(payload),
+            credentials: "include" // включает cookie если используется сессионная авторизация
+        });
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => "");
+            throw new Error(`Save failed: ${res.status} ${text}`);
+        }
+
+        return await res.json();
     }, []);
+
 
     const handleSave = useCallback(async () => {
         setIsSaving(true);
         try {
-            await simulateSaveRequest(draftUser);
+            await saveRequest(draftUser);
+            await userStore.loadUserFromApi(fetchCurrentUser);
             setShowSuccess(true);
         } finally {
             setIsSaving(false);
         }
-    }, [draftUser, simulateSaveRequest]);
+    }, [draftUser, saveRequest]);
 
     const handleSuccessClose = useCallback(() => {
         setShowSuccess(false);

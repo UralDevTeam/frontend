@@ -20,7 +20,7 @@ function UserProfileEdit({initialUser, viewPath = "/me"}: Props) {
     <div className="user-profile-card">
       <UserMainProperties user={user}/>
       <div className={"user-profile-content"}>
-        <UserPersonalInfoCardController user={user} isEdit={true}  viewPath={viewPath}/>
+        <UserPersonalInfoCardController user={user} isEdit={true} viewPath={viewPath}/>
       </div>
     </div>
   );

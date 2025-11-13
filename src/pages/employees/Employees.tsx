@@ -25,9 +25,7 @@ function EmployeesComponent() {
   const [departmentFilter, setDepartmentFilter] = useState("");
 
   useEffect(() => {
-    // загружаем список сотрудников при монтировании, только если ещё нет данных
     if (!usersStore.users || usersStore.users.length === 0) {
-      // если API доступен - загрузим, иначе оставим mock
       usersStore.loadFromApi();
     }
   }, []);

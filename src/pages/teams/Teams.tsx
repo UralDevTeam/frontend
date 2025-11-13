@@ -4,11 +4,18 @@ import { useTeams } from "../../features/teams/hooks/useTeams";
 import TeamRow from "../../features/teams/components/TeamRow";
 import UserLine from "./UserLine";
 import {useDebounce} from "../../shared/helper/debounce";
+import {usersStore} from "../../entities/users";
 
 export default function Teams() {
   const { loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds } = useTeams();
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    if (!usersStore.users || usersStore.users.length === 0) {
+      usersStore.loadFromApi();
+    }
+  }, []);
 
   useEffect(() => {
     setSearchTerm(debouncedSearchTerm);

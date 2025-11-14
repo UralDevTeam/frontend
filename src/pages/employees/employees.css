@@ -13,7 +13,7 @@ main {
 }
 
 .employees-table-head {
-    height: 46px;
+    height: 43px;
     color: var(--color-primary-graphite);
     text-align: left;
 }
@@ -26,7 +26,12 @@ main {
 .employees-table-row td,
 .employees-table-head th {
     border-bottom: 2px solid #CED9DC;
-    height: 46px;
+    max-width: 200px;
+    overflow: hidden;
+}
+
+.employees-table-row td {
+    height: 48px;
 }
 
 .employees-table-row td:first-child,
@@ -59,8 +64,10 @@ main {
     border-radius: 15px;
     background: #fff;
     font-size: 14px;
-    color: var(--color-primary-graphite);
+    color: #CED9DC;
     min-width: 180px;
+    max-width: 200px;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
 }
 
 .employees-filters input::placeholder {

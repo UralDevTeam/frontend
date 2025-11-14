@@ -33,7 +33,7 @@ export default function UserProfileByIdView() {
   if (!user) return <div>No user</div>;
 
   return (
-    <div className="simple-shadow-card user-profile-card">
+    <div className="user-profile-card">
       <UserMainProperties user={user} />
       <div className={"user-profile-content"}>
         <UserBasicInfoCard user={user} />

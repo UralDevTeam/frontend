@@ -102,9 +102,13 @@
 .teams-search-input{
     width: 420px;
     padding: 8px 12px;
-    border: 1px solid #dcefe9;
-    border-radius: 8px;
-    background: #ffffff;
+    border-radius: 15px;
+    max-width: 300px;
+    color: #CED9DC;
+    background-color: #F8F9FA;
+    border: 2px solid #CED9DC;
+    margin-top: 14px;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
 }
 
 .user-line{

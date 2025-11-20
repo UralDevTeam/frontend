@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
-import { usersStore } from '../../../entities/users';
-import { autorun } from 'mobx';
+import {useEffect, useMemo, useState} from "react";
+import {usersStore} from '../../../entities/users';
+import {autorun} from 'mobx';
 
 // Локальное определение TeamNode (ранее было в entries/team/model)
 type TeamNode = {
   id: string;
   name: string;
   children?: TeamNode[];
-  users: { id: string; name: string; role: string; mail: string }[];
+  users: { id: string; name: string; role: string; mail: string, isAdmin: boolean }[];
 };
 
 type Agg = { employees: number; groups: number; departments: number; legalEntities: number; domains: number };
@@ -25,6 +25,7 @@ type FlatFolder = {
 type FlatUser = {
   type: "user";
   id: string;
+  isAdmin: boolean;
   name: string;
   role: string;
   mail: string;
@@ -41,7 +42,7 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
 
   function ensureNode(key: string, name: string, parentKey?: string) {
     if (!map.has(key)) {
-      map.set(key, { id: key, name, users: [], children: [] , parentKey });
+      map.set(key, {id: key, name, users: [], children: [], parentKey});
     }
     return map.get(key)!;
   }
@@ -52,7 +53,13 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
       // user without team: attach to root node named 'No team'
       const rootKey = '__no_team__';
       const node = ensureNode(rootKey, 'No team');
-      node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+      node.users.push({
+        id: u.id,
+        name: u.fio || u.fullName || '',
+        role: u.role || '',
+        mail: u.mail || u.email || '',
+        isAdmin: u.isAdmin ?? false
+      });
       continue;
     }
 
@@ -68,13 +75,19 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
       // if last segment, attach user
       if (i === teamPath.length - 1) {
         const node = map.get(key)!;
-        node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+        node.users.push({
+          id: u.id,
+          name: u.fio || u.fullName || '',
+          role: u.role || '',
+          mail: u.mail || u.email || '',
+          isAdmin: u.isAdmin ?? false
+        });
       }
     }
   }
 
   // wire children arrays based on parentKey
-  map.forEach((node, key) => {
+  map.forEach((node) => {
     if (node.parentKey) {
       const parent = map.get(node.parentKey);
       if (parent) {
@@ -87,12 +100,17 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
 
   // collect roots (nodes without parentKey)
   const roots: TeamNode[] = [];
-  map.forEach((node, key) => {
+  map.forEach((node) => {
     if (!node.parentKey) {
       // remove parentKey helper before returning
-      const copy: TeamNode = { id: node.id, name: node.name, users: node.users || [] };
+      const copy: TeamNode = {id: node.id, name: node.name, users: node.users || []};
       if (node.children && node.children.length) {
-        copy.children = node.children.map((c: any) => ({ id: c.id, name: c.name, users: c.users || [], children: c.children }));
+        copy.children = node.children.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          users: c.users || [],
+          children: c.children
+        }));
       }
       roots.push(copy);
     }
@@ -173,6 +191,7 @@ export function useTeams() {
             out.push({
               type: "user",
               id: u.id,
+              isAdmin: u.isAdmin,
               name: u.name,
               role: u.role,
               mail: u.mail,
@@ -239,5 +258,16 @@ export function useTeams() {
     }
   }, [searchTerm, flatList]);
 
-  return { teams, loading: usersStore.loading, flatList, aggregates, expanded, toggle, isVisible, searchTerm, setSearchTerm, matchedIds };
+  return {
+    teams,
+    loading: usersStore.loading,
+    flatList,
+    aggregates,
+    expanded,
+    toggle,
+    isVisible,
+    searchTerm,
+    setSearchTerm,
+    matchedIds
+  };
 }

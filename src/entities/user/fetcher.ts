@@ -46,6 +46,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     phone: u.phone ?? undefined,
     mattermost: u.mattermost ?? undefined,
     tg: u.tg ?? undefined,
+    isAdmin: u.isAdmin ?? false,
 
     // если бэкенд не прислал дату — оставляем undefined (frontend умеет обрабатывать отсутствие)
     birthday: u.birthday ?? undefined,

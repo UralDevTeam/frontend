@@ -9,6 +9,7 @@ type IUserMainProperties = {
 }
 
 export default function UserMainProperties({user, toSelf = false}: IUserMainProperties) {
+  console.log("UserMainProperties", user);
   return (
     <div className="user-main-properties-container">
       <ProfileCircle size={106} userId={user.id} toSelf={toSelf} isAdmin={user.isAdmin}/>

@@ -1,14 +1,16 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Link} from "react-router";
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import WorkerStatus from "../../shared/statuses/workerStatus";
 import "./employees.css";
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import EmployeesFilters from "./EmployeesFilters";
-import { usersStore } from "../../entities/users";
+import {usersStore} from "../../entities/users";
+import ProfileCircle from "../../shared/profileCircle/profileCircle";
 
 type EmployeeTableInfo = {
   id: string;
+  isAdmin: boolean;
   name: string;
   role: string;
   status: keyof typeof WorkerStatuses;
@@ -34,6 +36,7 @@ function EmployeesComponent() {
 
   const tableData: EmployeeTableInfo[] = sourceUsers.map(u => ({
     id: u.id,
+    isAdmin: u.isAdmin,
     name: u.fio,
     role: u.role || '—',
     status: (u as any).status as keyof typeof WorkerStatuses,
@@ -104,7 +107,7 @@ function EmployeesComponent() {
                 <td>
                   <Link to={`/profile/view/${e.id}`} className="employees-table-link">
                     <div className="employees-profile">
-                      <span className="employees-avatar-placeholder" aria-hidden="true"/>
+                      <ProfileCircle size={32} toSelf={false} isAdmin={e.isAdmin}/>
                       <span>{displayName}</span>
                     </div>
                   </Link>

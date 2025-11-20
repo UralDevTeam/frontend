@@ -54,6 +54,7 @@ export default function Teams() {
                 <UserLine
                   key={item.id}
                   id={item.id}
+                  isAdmin={item.isAdmin}
                   title={item.name}
                   about={item.role}
                   depth={item.depth + 0.5}

@@ -27,36 +27,83 @@ type BackendUserDTO = {
 };
 
 function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
-  if (!s) return WorkerStatuses.active;
-  const normalized = s.trim().toLowerCase();
-  if (normalized === 'work' || normalized === 'active' || normalized === 'on') return WorkerStatuses.active;
-  if (normalized === 'vacation' || normalized === 'vac') return WorkerStatuses.vacation;
-  if (normalized === 'sick' || normalized === 'sickleave' || normalized === 'sick_leave' || normalized === 'sickleave') return WorkerStatuses.sickLeave;
+  // Нормализуем вход и используем словарь для простого расширения
+  const normalized = (s ?? '').toString().trim().toLowerCase();
+  const statusMap: Record<string, keyof typeof WorkerStatuses> = {
+    'work': WorkerStatuses.active,
+    'working': WorkerStatuses.active,
+    'active': WorkerStatuses.active,
+    'on': WorkerStatuses.active,
+    'vacation': WorkerStatuses.vacation,
+    'vac': WorkerStatuses.vacation,
+    'vocation': WorkerStatuses.vacation,
+    'sick': WorkerStatuses.sickLeave,
+    'sickleave': WorkerStatuses.sickLeave,
+    'sick_leave': WorkerStatuses.sickLeave,
+    'sick-leave': WorkerStatuses.sickLeave,
+  };
 
-  return WorkerStatuses.active;
+  if (!normalized) return WorkerStatuses.active;
+  return statusMap[normalized] ?? WorkerStatuses.active;
+}
+
+function safeTrim(s?: string | null) {
+  if (s === null || s === undefined) return undefined;
+  const t = String(s).trim();
+  return t === '' ? undefined : t;
+}
+
+function safeString(s?: string | null) {
+  if (s === null || s === undefined) return '';
+  return String(s).trim();
+}
+
+function parseDateSafe(d?: string | null): string | undefined {
+  if (!d) return undefined;
+  const dt = new Date(d);
+  return Number.isNaN(dt.getTime()) ? undefined : dt.toISOString();
 }
 
 function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
-  return {
-    id: u.id,
-    fio: u.fio ?? u.fullName ?? "",
-    email: u.email ?? u.mail ?? u.contact ?? "",
-    phone: u.phone ?? undefined,
-    mattermost: u.mattermost ?? undefined,
-    tg: u.tg ?? undefined,
-    isAdmin: u.isAdmin ?? false,
+  const fio = safeString(u.fio ?? u.fullName);
+  const email = safeTrim(u.email ?? u.mail ?? u.contact) ?? '';
 
-    birthday: u.birthday ?? undefined,
-    team: u.team ?? [],
-    boss: u.boss ?? { id: "", fullName: "", shortName: "" },
-    role: u.role ?? "",
-    experience: u.experience ?? 0,
+  const team = Array.isArray(u.team) ? u.team.filter(Boolean).map(String) : [];
+
+  const boss = u.boss
+    ? {
+        id: safeString(u.boss.id),
+        fullName: safeString(u.boss.fullName),
+        shortName: safeString(u.boss.shortName),
+      }
+    : { id: '', fullName: '', shortName: '' };
+
+  const birthdayIso = parseDateSafe(u.birthday ?? undefined);
+
+  const experience = typeof u.experience === 'number' && Number.isFinite(u.experience) ? u.experience : Number(u.experience) || 0;
+
+  const isAdmin = Boolean(u.isAdmin);
+
+  return {
+    id: safeString(u.id),
+    fio,
+    email,
+    phone: safeTrim(u.phone ?? undefined),
+    mattermost: safeTrim(u.mattermost ?? undefined),
+    tg: safeTrim(u.tg ?? undefined),
+    isAdmin,
+
+    birthday: birthdayIso ?? undefined,
+    team,
+    boss,
+    role: safeString(u.role),
+    experience,
     status: mapStatusToWorkerStatus(u.status),
 
-    city: u.city ?? "",
-    aboutMe: u.aboutMe ?? "",
-    legalEntity: u.legalEntity ?? "",
-    department: u.department ?? "",
+    city: safeString(u.city),
+    aboutMe: safeString(u.aboutMe),
+    legalEntity: safeString(u.legalEntity),
+    department: safeString(u.department),
   } as UserDTO;
 }
 
@@ -65,7 +112,7 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
     const path = window.location && window.location.pathname ? window.location.pathname : '';
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
     if (onAuthPage) {
-      throw new Error('Unauthorized');
+            throw new Error('Cannot fetch current user while on authentication page');
     }
   }
 

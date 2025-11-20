@@ -9,3 +9,7 @@
     width: max-content;
 }
 
+.user-basic-info-card__boss-link {
+  text-decoration: underline;
+  color: var(--color-primary-mint);
+}

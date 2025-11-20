@@ -1,10 +1,9 @@
 import React from 'react';
-import {User} from '../../entries/user';
-import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
-import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard";
+import UserPersonalInfoCardController from "../../entities/user/ui/UserPersonalInfoCardController";
+import UserMainProperties from "../../entities/user/ui/UserMainProperties/IUserMainProperties";
+import UserBasicInfoCard from "../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard";
 import { observer } from 'mobx-react-lite';
-import { userStore } from '../../entities/user';
+import {User, userStore} from '../../entities/user';
 import "./profile.css"
 
 type Props = {
@@ -25,7 +24,7 @@ function UserProfileViewInner(props: Props) {
 
   return (
     <div className="user-profile-card">
-      <UserMainProperties user={user}/>
+      <UserMainProperties user={user} toSelf={true}/>
       <div className={"user-profile-content"}>
         <UserBasicInfoCard user={user}/>
         <UserPersonalInfoCardController

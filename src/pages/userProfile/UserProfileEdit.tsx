@@ -1,9 +1,8 @@
-import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
-import {userStore} from "../../entities/user";
+import UserPersonalInfoCardController from "../../entities/user/ui/UserPersonalInfoCardController";
+import UserMainProperties from "../../entities/user/ui/UserMainProperties/IUserMainProperties";
+import {User, userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";
-import {User} from "../../entries/user";
 import "./profile.css"
 
 type Props = {
@@ -18,7 +17,7 @@ function UserProfileEdit({initialUser, viewPath = "/me"}: Props) {
 
   return (
     <div className="user-profile-card">
-      <UserMainProperties user={user}/>
+      <UserMainProperties user={user} toSelf={true}/>
       <div className={"user-profile-content"}>
         <UserPersonalInfoCardController user={user} isEdit={true} viewPath={viewPath}/>
       </div>

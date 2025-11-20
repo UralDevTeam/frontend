@@ -1,8 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { UserDTO, User } from "../../entries/user";
-import { userFromDto } from "../../entries/user/userFromDto";
+import {User, UserDTO} from "./types/user";
+import {userFromDto} from "./types/userFromDto";
 
-// Простая реализация UserStore по FSD: entities/user
 export class UserStore {
     user: User | null = null;
     loading: boolean = false;

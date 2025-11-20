@@ -1,8 +1,7 @@
-import {UserDTO} from "../../entries/user";
 import { API_BASE } from '../../shared/apiConfig';
 import { WorkerStatuses } from '../../shared/statuses/workerStatuses';
+import {UserDTO} from "./types/user";
 
-// Временный тип для данных, которые будет возвращать бэкенд (будет меняться).
 type BackendUserDTO = {
   id: string;
   fio?: string;
@@ -28,51 +27,92 @@ type BackendUserDTO = {
 };
 
 function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
-  if (!s) return WorkerStatuses.active;
-  const normalized = s.trim().toLowerCase();
-  if (normalized === 'work' || normalized === 'active' || normalized === 'on') return WorkerStatuses.active;
-  if (normalized === 'vacation' || normalized === 'vac') return WorkerStatuses.vacation;
-  if (normalized === 'sick' || normalized === 'sickleave' || normalized === 'sick_leave' || normalized === 'sickleave') return WorkerStatuses.sickLeave;
-  // fallback
-  return WorkerStatuses.active;
+  // Нормализуем вход и используем словарь для простого расширения
+  const normalized = (s ?? '').toString().trim().toLowerCase();
+  const statusMap: Record<string, keyof typeof WorkerStatuses> = {
+    'work': WorkerStatuses.active,
+    'working': WorkerStatuses.active,
+    'active': WorkerStatuses.active,
+    'on': WorkerStatuses.active,
+    'vacation': WorkerStatuses.vacation,
+    'vac': WorkerStatuses.vacation,
+    'vocation': WorkerStatuses.vacation,
+    'sick': WorkerStatuses.sickLeave,
+    'sickleave': WorkerStatuses.sickLeave,
+    'sick_leave': WorkerStatuses.sickLeave,
+    'sick-leave': WorkerStatuses.sickLeave,
+  };
+
+  if (!normalized) return WorkerStatuses.active;
+  return statusMap[normalized] ?? WorkerStatuses.active;
+}
+
+function safeTrim(s?: string | null) {
+  if (s === null || s === undefined) return undefined;
+  const t = String(s).trim();
+  return t === '' ? undefined : t;
+}
+
+function safeString(s?: string | null) {
+  if (s === null || s === undefined) return '';
+  return String(s).trim();
+}
+
+function parseDateSafe(d?: string | null): string | undefined {
+  if (!d) return undefined;
+  const dt = new Date(d);
+  return Number.isNaN(dt.getTime()) ? undefined : dt.toISOString();
 }
 
 function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
-  return {
-    id: u.id,
-    fio: u.fio ?? u.fullName ?? "",
-    // стараемся взять email/mail/contact в порядке приоритета
-    email: u.email ?? u.mail ?? u.contact ?? "",
-    phone: u.phone ?? undefined,
-    mattermost: u.mattermost ?? undefined,
-    tg: u.tg ?? undefined,
+  const fio = safeString(u.fio ?? u.fullName);
+  const email = safeTrim(u.email ?? u.mail ?? u.contact) ?? '';
 
-    // если бэкенд не прислал дату — оставляем undefined (frontend умеет обрабатывать отсутствие)
-    birthday: u.birthday ?? undefined,
-    team: u.team ?? [],
-    // фронтенд ожидает не-null boss, поэтому подставляем пустой объект если null
-    boss: u.boss ?? { id: "", fullName: "", shortName: "" },
-    role: u.role ?? "",
-    experience: u.experience ?? 0,
-    // привести status к тому, что ожидает фронтенд
+  const team = Array.isArray(u.team) ? u.team.filter(Boolean).map(String) : [];
+
+  const boss = u.boss
+    ? {
+        id: safeString(u.boss.id),
+        fullName: safeString(u.boss.fullName),
+        shortName: safeString(u.boss.shortName),
+      }
+    : { id: '', fullName: '', shortName: '' };
+
+  const birthdayIso = parseDateSafe(u.birthday ?? undefined);
+
+  const experience = typeof u.experience === 'number' && Number.isFinite(u.experience) ? u.experience : Number(u.experience) || 0;
+
+  const isAdmin = Boolean(u.isAdmin);
+
+  return {
+    id: safeString(u.id),
+    fio,
+    email,
+    phone: safeTrim(u.phone ?? undefined),
+    mattermost: safeTrim(u.mattermost ?? undefined),
+    tg: safeTrim(u.tg ?? undefined),
+    isAdmin,
+
+    birthday: birthdayIso ?? undefined,
+    team,
+    boss,
+    role: safeString(u.role),
+    experience,
     status: mapStatusToWorkerStatus(u.status),
 
-    city: u.city ?? "",
-    aboutMe: u.aboutMe ?? "",
-    // обязательные поля фронтенда — поставим дефолты, если не пришли
-    legalEntity: u.legalEntity ?? "",
-    department: u.department ?? "",
+    city: safeString(u.city),
+    aboutMe: safeString(u.aboutMe),
+    legalEntity: safeString(u.legalEntity),
+    department: safeString(u.department),
   } as UserDTO;
 }
 
 export async function fetchCurrentUser(): Promise<UserDTO> {
-  // Если мы уже на странице логина/регистрации/аутентификации — не шлём запрос на /api/me
   if (typeof window !== 'undefined') {
     const path = window.location && window.location.pathname ? window.location.pathname : '';
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
     if (onAuthPage) {
-      // Сохраняем поведение — бросаем ошибку 'Unauthorized', чтобы вызывающий код мог обработать состояние неавторизованного пользователя.
-      throw new Error('Unauthorized');
+            throw new Error('Cannot fetch current user while on authentication page');
     }
   }
 
@@ -85,9 +125,6 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   });
 
   if (res.status === 401 || res.status === 403) {
-    // Не авторизован — перенаправляем на страницу логина.
-    // Используем полноценный переход, чтобы сбросить состояние приложения.
-    // Но не делаем redirect, если уже на странице логина/регистрации/аутентификации.
     if (typeof window !== 'undefined') {
       const path = window.location && window.location.pathname ? window.location.pathname : '';
       const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
@@ -107,7 +144,6 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   return adaptBackendUserToFrontend(raw);
 }
 
-// Добавлена функция для получения пользователя по id
 export async function fetchUserById(id: string): Promise<UserDTO> {
   if (!id) throw new Error('Missing id');
 

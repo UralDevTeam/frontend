@@ -1,14 +1,16 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Link} from "react-router";
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import WorkerStatus from "../../shared/statuses/workerStatus";
 import "./employees.css";
 import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import EmployeesFilters from "./EmployeesFilters";
-import { usersStore } from "../../entities/users";
+import {usersStore} from "../../entities/users";
+import ProfileCircle from "../../shared/profileCircle/profileCircle";
 
 type EmployeeTableInfo = {
   id: string;
+  isAdmin: boolean;
   name: string;
   role: string;
   status: keyof typeof WorkerStatuses;
@@ -34,16 +36,16 @@ function EmployeesComponent() {
 
   const tableData: EmployeeTableInfo[] = sourceUsers.map(u => ({
     id: u.id,
+    isAdmin: u.isAdmin,
     name: u.fio,
     role: u.role || '—',
-    status: (u as any).status as keyof typeof WorkerStatuses,
-    department: (u as any).department || ((u as any).team ? ((u as any).team as string[]).join(' / ') : undefined),
-    legalEntity: (u as any).legalEntity || (u as any).legalEntity,
-    mail: (u as any).mail || (u as any).email || '',
+    status: u.status as keyof typeof WorkerStatuses,
+    department: u.department || ((u as any).team ? ((u as any).team as string[]).join(' / ') : undefined),
+    legalEntity: u.legalEntity || u.legalEntity,
+    mail: (u as any).mail || u.email || '',
     team: (u as any).team ? ((u as any).team as string[]).join(' / ') : undefined,
   }));
 
-  // вычисляем опции для фильтров
   const statusOptions: Array<keyof typeof WorkerStatuses> = Array.from(
     new Set(tableData.map(t => t.status))
   ).filter(Boolean) as Array<keyof typeof WorkerStatuses>;
@@ -104,7 +106,7 @@ function EmployeesComponent() {
                 <td>
                   <Link to={`/profile/view/${e.id}`} className="employees-table-link">
                     <div className="employees-profile">
-                      <span className="employees-avatar-placeholder" aria-hidden="true"/>
+                      <ProfileCircle size={32} toSelf={false} isAdmin={e.isAdmin}/>
                       <span>{displayName}</span>
                     </div>
                   </Link>

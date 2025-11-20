@@ -1,6 +1,6 @@
 import {WorkerStatuses} from "./workerStatuses";
 import getWorkerStatusRussian from "./getWorkerStatusRussian";
-import RowInfo from "../../entries/userInfo/RowInfo/RowInfo";
+import RowInfo from "../RowInfo/RowInfo";
 import React from "react";
 
 interface Props {

@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 import { userStore } from './index';
 import { fetchCurrentUser } from './fetcher';
 
-// Компонент запускает загрузку текущего пользователя при навигации на защищённые страницы.
 export default function UserLoader(): null {
   const location = useLocation();
   const inFlightRef = useRef(false);
@@ -15,14 +14,11 @@ export default function UserLoader(): null {
 
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
 
-    // Если мы на auth-странице — ничего не делаем
     if (onAuthPage) return;
 
-    // Если уже есть пользователь или загрузка в процессе — не запускаем
     if (userStore.user || userStore.loading || inFlightRef.current) return;
 
     inFlightRef.current = true;
-    // Запускаем загрузку и сбрасываем флаг по завершению
     userStore.loadUserFromApi(fetchCurrentUser).finally(() => {
       inFlightRef.current = false;
     });

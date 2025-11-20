@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { usersStore } from '../../../entities/users';
-import { autorun } from 'mobx';
+import {useEffect, useMemo, useState} from "react";
+import {usersStore} from '../../../entities/users';
+import {autorun} from 'mobx';
 
-// Локальное определение TeamNode (ранее было в entries/team/model)
 type TeamNode = {
   id: string;
   name: string;
   children?: TeamNode[];
-  users: { id: string; name: string; role: string; mail: string }[];
+  users: { id: string; name: string; role: string; mail: string, isAdmin: boolean }[];
 };
 
 type Agg = { employees: number; groups: number; departments: number; legalEntities: number; domains: number };
@@ -25,6 +24,7 @@ type FlatFolder = {
 type FlatUser = {
   type: "user";
   id: string;
+  isAdmin: boolean;
   name: string;
   role: string;
   mail: string;
@@ -34,14 +34,12 @@ type FlatUser = {
 
 export type FlatItem = FlatFolder | FlatUser;
 
-// build tree of TeamNode from users list
 function buildTreeFromUsers(users: Array<any>): TeamNode[] {
-  // nodes stored by path key, e.g. 'dev' or 'dev/ui'
   const map = new Map<string, TeamNode & { parentKey?: string }>();
 
   function ensureNode(key: string, name: string, parentKey?: string) {
     if (!map.has(key)) {
-      map.set(key, { id: key, name, users: [], children: [] , parentKey });
+      map.set(key, {id: key, name, users: [], children: [], parentKey});
     }
     return map.get(key)!;
   }
@@ -49,14 +47,18 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
   for (const u of users || []) {
     const teamPath = Array.isArray(u.team) ? u.team : [];
     if (teamPath.length === 0) {
-      // user without team: attach to root node named 'No team'
       const rootKey = '__no_team__';
       const node = ensureNode(rootKey, 'No team');
-      node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+      node.users.push({
+        id: u.id,
+        name: u.fio || u.fullName || '',
+        role: u.role || '',
+        mail: u.mail || u.email || '',
+        isAdmin: u.isAdmin ?? false
+      });
       continue;
     }
 
-    // build nodes along the path
     let pathKeyParts: string[] = [];
     for (let i = 0; i < teamPath.length; i++) {
       const segment = String(teamPath[i]);
@@ -65,34 +67,40 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
       const parentKey = pathKeyParts.length > 1 ? pathKeyParts.slice(0, -1).join('/') : undefined;
       ensureNode(key, segment, parentKey);
 
-      // if last segment, attach user
       if (i === teamPath.length - 1) {
         const node = map.get(key)!;
-        node.users.push({ id: u.id, name: u.fio || u.fullName || '', role: u.role || '', mail: u.mail || u.email || '' });
+        node.users.push({
+          id: u.id,
+          name: u.fio || u.fullName || '',
+          role: u.role || '',
+          mail: u.mail || u.email || '',
+          isAdmin: u.isAdmin ?? false
+        });
       }
     }
   }
 
-  // wire children arrays based on parentKey
-  map.forEach((node, key) => {
+  map.forEach((node) => {
     if (node.parentKey) {
       const parent = map.get(node.parentKey);
       if (parent) {
-        // avoid duplicate child entries
         if (!parent.children) parent.children = [];
         if (!parent.children.find((c: any) => c.id === node.id)) parent.children.push(node);
       }
     }
   });
 
-  // collect roots (nodes without parentKey)
   const roots: TeamNode[] = [];
-  map.forEach((node, key) => {
+  map.forEach((node) => {
     if (!node.parentKey) {
-      // remove parentKey helper before returning
-      const copy: TeamNode = { id: node.id, name: node.name, users: node.users || [] };
+      const copy: TeamNode = {id: node.id, name: node.name, users: node.users || []};
       if (node.children && node.children.length) {
-        copy.children = node.children.map((c: any) => ({ id: c.id, name: c.name, users: c.users || [], children: c.children }));
+        copy.children = node.children.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          users: c.users || [],
+          children: c.children
+        }));
       }
       roots.push(copy);
     }
@@ -105,17 +113,13 @@ export function useTeams() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState("");
 
-  // set of ids that match current search
   const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
 
-  // локальный счётчик версии пользователей, увеличивается при изменении usersStore.users
   const [usersVersion, setUsersVersion] = useState(0);
 
   useEffect(() => {
     const disposer = autorun(() => {
-      // читаем usersStore.users чтобы autorun подписался
       void usersStore.users;
-      // форсим обновление версии
       setUsersVersion(v => v + 1);
     });
     return () => disposer();
@@ -173,6 +177,7 @@ export function useTeams() {
             out.push({
               type: "user",
               id: u.id,
+              isAdmin: u.isAdmin,
               name: u.name,
               role: u.role,
               mail: u.mail,
@@ -196,7 +201,6 @@ export function useTeams() {
     return ancestors.every(a => expanded[a]);
   }
 
-  // вычисление совпадений по searchTerm
   useEffect(() => {
     if (!searchTerm) {
       setMatchedIds({});
@@ -212,7 +216,6 @@ export function useTeams() {
           matched[it.id] = true;
         }
       } else {
-        // user
         if (it.name.toLowerCase().includes(q) || it.role.toLowerCase().includes(q)) {
           matched[it.id] = true;
         }
@@ -221,15 +224,12 @@ export function useTeams() {
 
     setMatchedIds(matched);
 
-    // автоматически раскрываем родителей найденных элементов
     const toExpand: Record<string, boolean> = {};
     for (const it of flatList) {
       if (matched[it.id]) {
-        // раскрываем всех предков
         for (const a of it.ancestors) {
           if (a) toExpand[a] = true;
         }
-        // если найденная папка сама — раскрыть её
         if (it.type === 'folder') toExpand[it.id] = true;
       }
     }
@@ -239,5 +239,16 @@ export function useTeams() {
     }
   }, [searchTerm, flatList]);
 
-  return { teams, loading: usersStore.loading, flatList, aggregates, expanded, toggle, isVisible, searchTerm, setSearchTerm, matchedIds };
+  return {
+    teams,
+    loading: usersStore.loading,
+    flatList,
+    aggregates,
+    expanded,
+    toggle,
+    isVisible,
+    searchTerm,
+    setSearchTerm,
+    matchedIds
+  };
 }

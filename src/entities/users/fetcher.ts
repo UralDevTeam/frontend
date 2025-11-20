@@ -1,5 +1,5 @@
-import {UserDTO} from "../../entries/user";
 import {API_BASE} from '../../shared/apiConfig';
+import {UserDTO} from "../user";
 
 
 export async function fetchUsers(): Promise<UserDTO[]> {
@@ -24,7 +24,6 @@ export async function fetchUsers(): Promise<UserDTO[]> {
 
     return (await res.json()) as UserDTO[];
   } catch (e) {
-    // В качестве безопасного fallback возвращаем пустой список — компонент может использовать локальные заглушки.
     console.warn('fetchUsers failed, returning empty list', e);
     return [];
   }

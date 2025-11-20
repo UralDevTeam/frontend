@@ -1,10 +1,10 @@
-import {User} from "../../user";
 import {useEffect, useState} from "react";
 import React from "react";
-import WorkerStatusSelector from "../../../shared/statuses/workerStatusSelector";
-import RowInfo from "../RowInfo/RowInfo";
-import {formatDateRussian} from "../../../shared/date/formatDateRussian";
+import WorkerStatusSelector from "../../../../shared/statuses/workerStatusSelector";
+import RowInfo from "../../../../shared/RowInfo/RowInfo";
+import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
+import {User} from "../../index";
 
 type IUserPersonalInfoCard = {
     user: User,

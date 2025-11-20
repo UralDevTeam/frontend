@@ -1,6 +1,6 @@
 import {NavLink} from "react-router";
-import LightLogo from "../../shared/logo/Light";
-import ProfileCircle from "../../shared/profileCircle/profileCircle";
+import LightLogo from "../../../shared/logo/Light";
+import ProfileCircle from "../../../shared/profileCircle/profileCircle";
 import "./Header.css"
 
 const navItems = [
@@ -36,3 +36,4 @@ export default function Header() {
     </header>
   )
 }
+

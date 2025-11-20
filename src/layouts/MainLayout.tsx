@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../entries/header/header';
+import Header from '../entities/header/ui/Header';
 import { Outlet } from 'react-router';
 
 export default function MainLayout() {
@@ -12,4 +12,3 @@ export default function MainLayout() {
     </>
   );
 }
-

@@ -1,9 +1,8 @@
 import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
 import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
-import {userStore} from "../../entities/user";
+import {User, userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";
-import {User} from "../../entries/user";
 import "./profile.css"
 
 type Props = {

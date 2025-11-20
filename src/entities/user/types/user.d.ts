@@ -1,4 +1,4 @@
-import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
+import {WorkerStatuses} from "../../../shared/statuses/workerStatuses";
 
 export type UserLinkDTO = {
   id: string;
@@ -33,3 +33,4 @@ export type User = Omit<UserDTO, "birthday" | "formatTeam"> & {
   birthday?: Date;
   formatTeam: string;
 }
+

@@ -1,5 +1,5 @@
-import {UserDTO} from "../../entries/user";
 import {API_BASE} from '../../shared/apiConfig';
+import {UserDTO} from "../user";
 
 
 export async function fetchUsers(): Promise<UserDTO[]> {

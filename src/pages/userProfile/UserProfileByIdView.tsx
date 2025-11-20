@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router';
 import {fetchUserById} from '../../entities/user/fetcher';
-import {userFromDto} from '../../entries/user/userFromDto';
 import UserPersonalInfoCardController from '../../entries/userInfo/UserPersonalInfoCardController';
 import UserMainProperties from '../../entries/userInfo/UserMainProperties/IUserMainProperties';
 import UserBasicInfoCard from '../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard';
-import {User} from '../../entries/user';
 import './profile.css';
+import {User, userFromDto} from "../../entities/user";
 
 export default function UserProfileByIdView() {
   const {id} = useParams<{ id: string }>();

@@ -1,8 +1,7 @@
-import {User} from "../user";
 import {NavLink, useNavigate} from "react-router";
 import React, {useCallback, useEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
-import {userStore} from "../../entities/user";
+import {User, userStore} from "../../entities/user";
 import {fetchCurrentUser} from "../../entities/user/fetcher";
 import SuccessSaveModal from "../../features/editUser/SuccessSaveModal";
 import {saveUser} from "../../features/editUser/saveUser";

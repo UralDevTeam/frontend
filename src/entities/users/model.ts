@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { UserDTO, User } from "../../entries/user";
-import { userFromDto } from "../../entries/user/userFromDto";
 import { fetchUsers } from "./fetcher";
+import {User, UserDTO, userFromDto} from "../user";
 
 export class UsersStore {
     users: User[] = [];

@@ -1,5 +1,5 @@
 import {API_BASE} from "../../shared/apiConfig";
-import {User} from "../../entries/user";
+import {User} from "../../entities/user";
 
 export async function saveUser(updatedUser: User) {
     const url = `${API_BASE}/api/me`;

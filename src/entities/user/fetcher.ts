@@ -1,6 +1,6 @@
-import {UserDTO} from "../../entries/user";
 import { API_BASE } from '../../shared/apiConfig';
 import { WorkerStatuses } from '../../shared/statuses/workerStatuses';
+import {UserDTO} from "./types/user";
 
 type BackendUserDTO = {
   id: string;

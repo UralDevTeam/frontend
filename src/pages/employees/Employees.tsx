@@ -39,14 +39,13 @@ function EmployeesComponent() {
     isAdmin: u.isAdmin,
     name: u.fio,
     role: u.role || '—',
-    status: (u as any).status as keyof typeof WorkerStatuses,
-    department: (u as any).department || ((u as any).team ? ((u as any).team as string[]).join(' / ') : undefined),
-    legalEntity: (u as any).legalEntity || (u as any).legalEntity,
-    mail: (u as any).mail || (u as any).email || '',
+    status: u.status as keyof typeof WorkerStatuses,
+    department: u.department || ((u as any).team ? ((u as any).team as string[]).join(' / ') : undefined),
+    legalEntity: u.legalEntity || u.legalEntity,
+    mail: (u as any).mail || u.email || '',
     team: (u as any).team ? ((u as any).team as string[]).join(' / ') : undefined,
   }));
 
-  // вычисляем опции для фильтров
   const statusOptions: Array<keyof typeof WorkerStatuses> = Array.from(
     new Set(tableData.map(t => t.status))
   ).filter(Boolean) as Array<keyof typeof WorkerStatuses>;

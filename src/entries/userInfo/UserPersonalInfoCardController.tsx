@@ -72,7 +72,7 @@ const UserPersonalInfoCardController = ({
             method: "PUT",
             headers,
             body: JSON.stringify(payload),
-            credentials: "include" // включает cookie если используется сессионная авторизация
+            credentials: "include"
         });
 
         if (!res.ok) {

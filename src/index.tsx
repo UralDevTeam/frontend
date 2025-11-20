@@ -12,10 +12,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-// блокирующий bootstrap: ждём загрузки текущего пользователя, затем рендерим приложение
 async function bootstrap() {
   try {
-    // Если мы на странице авторизации — не выполняем блокирующую загрузку здесь.
     const path = typeof window !== 'undefined' && window.location && window.location.pathname ? window.location.pathname : '';
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
 
@@ -23,7 +21,6 @@ async function bootstrap() {
       await userStore.loadUserFromApi(fetchCurrentUser);
     }
   } catch (e) {
-    // loadUserFromApi внутри себя выставляет error, но логируем для диагностики
     console.error('Failed to load current user', e);
   }
 

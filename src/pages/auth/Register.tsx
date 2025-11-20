@@ -22,7 +22,6 @@ export default function Register() {
       });
 
       if (res.status === 201) {
-        // Успешно создан — перекидываем на логин
         navigate('/login', { replace: true });
         return;
       }

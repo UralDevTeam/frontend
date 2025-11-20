@@ -4,7 +4,7 @@ import UserProfileEdit from './pages/userProfile/UserProfileEdit';
 import UserProfileByIdView from './pages/userProfile/UserProfileByIdView';
 import Employees from "./pages/employees/Employees";
 import Teams from "./pages/teams/Teams";
-import About from "./pages/index/About";
+import About from "./pages/about/About";
 import { Login, Register } from "./pages/auth";
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';

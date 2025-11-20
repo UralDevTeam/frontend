@@ -32,7 +32,6 @@ export default function Login() {
         return;
       }
 
-      // Успех — редирект на главную
       navigate('/', { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Network error');

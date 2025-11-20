@@ -2,7 +2,6 @@ import {UserDTO} from "../../entries/user";
 import { API_BASE } from '../../shared/apiConfig';
 import { WorkerStatuses } from '../../shared/statuses/workerStatuses';
 
-// Временный тип для данных, которые будет возвращать бэкенд (будет меняться).
 type BackendUserDTO = {
   id: string;
   fio?: string;
@@ -33,7 +32,7 @@ function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
   if (normalized === 'work' || normalized === 'active' || normalized === 'on') return WorkerStatuses.active;
   if (normalized === 'vacation' || normalized === 'vac') return WorkerStatuses.vacation;
   if (normalized === 'sick' || normalized === 'sickleave' || normalized === 'sick_leave' || normalized === 'sickleave') return WorkerStatuses.sickLeave;
-  // fallback
+
   return WorkerStatuses.active;
 }
 
@@ -41,38 +40,31 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   return {
     id: u.id,
     fio: u.fio ?? u.fullName ?? "",
-    // стараемся взять email/mail/contact в порядке приоритета
     email: u.email ?? u.mail ?? u.contact ?? "",
     phone: u.phone ?? undefined,
     mattermost: u.mattermost ?? undefined,
     tg: u.tg ?? undefined,
     isAdmin: u.isAdmin ?? false,
 
-    // если бэкенд не прислал дату — оставляем undefined (frontend умеет обрабатывать отсутствие)
     birthday: u.birthday ?? undefined,
     team: u.team ?? [],
-    // фронтенд ожидает не-null boss, поэтому подставляем пустой объект если null
     boss: u.boss ?? { id: "", fullName: "", shortName: "" },
     role: u.role ?? "",
     experience: u.experience ?? 0,
-    // привести status к тому, что ожидает фронтенд
     status: mapStatusToWorkerStatus(u.status),
 
     city: u.city ?? "",
     aboutMe: u.aboutMe ?? "",
-    // обязательные поля фронтенда — поставим дефолты, если не пришли
     legalEntity: u.legalEntity ?? "",
     department: u.department ?? "",
   } as UserDTO;
 }
 
 export async function fetchCurrentUser(): Promise<UserDTO> {
-  // Если мы уже на странице логина/регистрации/аутентификации — не шлём запрос на /api/me
   if (typeof window !== 'undefined') {
     const path = window.location && window.location.pathname ? window.location.pathname : '';
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
     if (onAuthPage) {
-      // Сохраняем поведение — бросаем ошибку 'Unauthorized', чтобы вызывающий код мог обработать состояние неавторизованного пользователя.
       throw new Error('Unauthorized');
     }
   }
@@ -86,9 +78,6 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   });
 
   if (res.status === 401 || res.status === 403) {
-    // Не авторизован — перенаправляем на страницу логина.
-    // Используем полноценный переход, чтобы сбросить состояние приложения.
-    // Но не делаем redirect, если уже на странице логина/регистрации/аутентификации.
     if (typeof window !== 'undefined') {
       const path = window.location && window.location.pathname ? window.location.pathname : '';
       const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
@@ -108,7 +97,6 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   return adaptBackendUserToFrontend(raw);
 }
 
-// Добавлена функция для получения пользователя по id
 export async function fetchUserById(id: string): Promise<UserDTO> {
   if (!id) throw new Error('Missing id');
 

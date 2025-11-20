@@ -1,8 +1,8 @@
 import "./userBasicInfoCard.css"
 import React from "react";
-import RowInfo from "../RowInfo/RowInfo";
+import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {NavLink} from "react-router";
-import {User} from "../../../entities/user";
+import {User} from "../../index";
 
 type IUserBasicInfoCard = {
   user: User;

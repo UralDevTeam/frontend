@@ -1,5 +1,5 @@
-import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
+import UserPersonalInfoCardController from "../../entities/user/ui/UserPersonalInfoCardController";
+import UserMainProperties from "../../entities/user/ui/UserMainProperties/IUserMainProperties";
 import {User, userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";

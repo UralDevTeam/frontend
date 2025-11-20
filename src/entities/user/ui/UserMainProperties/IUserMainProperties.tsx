@@ -1,7 +1,7 @@
 import "./userMainProperties.css"
-import ProfileCircle from "../../../shared/profileCircle/profileCircle";
-import WorkerStatus from "../../../shared/statuses/workerStatus";
-import {User} from "../../../entities/user";
+import ProfileCircle from "../../../../shared/profileCircle/profileCircle";
+import WorkerStatus from "../../../../shared/statuses/workerStatus";
+import {User} from "../../index";
 
 type IUserMainProperties = {
   user: User,

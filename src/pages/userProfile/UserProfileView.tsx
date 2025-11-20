@@ -1,7 +1,7 @@
 import React from 'react';
-import UserPersonalInfoCardController from "../../entries/userInfo/UserPersonalInfoCardController";
-import UserMainProperties from "../../entries/userInfo/UserMainProperties/IUserMainProperties";
-import UserBasicInfoCard from "../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard";
+import UserPersonalInfoCardController from "../../entities/user/ui/UserPersonalInfoCardController";
+import UserMainProperties from "../../entities/user/ui/UserMainProperties/IUserMainProperties";
+import UserBasicInfoCard from "../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard";
 import { observer } from 'mobx-react-lite';
 import {User, userStore} from '../../entities/user';
 import "./profile.css"

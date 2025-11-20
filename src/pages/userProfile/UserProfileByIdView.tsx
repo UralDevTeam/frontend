@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router';
 import {fetchUserById} from '../../entities/user/fetcher';
-import UserPersonalInfoCardController from '../../entries/userInfo/UserPersonalInfoCardController';
-import UserMainProperties from '../../entries/userInfo/UserMainProperties/IUserMainProperties';
-import UserBasicInfoCard from '../../entries/userInfo/UserBasicInfoCard/IUserBasicInfoCard';
+import UserPersonalInfoCardController from '../../entities/user/ui/UserPersonalInfoCardController';
+import UserMainProperties from '../../entities/user/ui/UserMainProperties/IUserMainProperties';
+import UserBasicInfoCard from '../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard';
 import './profile.css';
 import {User, userFromDto} from "../../entities/user";
 

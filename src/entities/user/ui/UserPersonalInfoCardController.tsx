@@ -1,10 +1,10 @@
 import {NavLink, useNavigate} from "react-router";
 import React, {useCallback, useEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
-import {User, userStore} from "../../entities/user";
-import {fetchCurrentUser} from "../../entities/user/fetcher";
-import SuccessSaveModal from "../../features/editUser/SuccessSaveModal";
-import {saveUser} from "../../features/editUser/saveUser";
+import {User, userStore} from "../index";
+import {fetchCurrentUser} from "../fetcher";
+import SuccessSaveModal from "../../../features/editUser/SuccessSaveModal";
+import {saveUser} from "../../../features/editUser/saveUser";
 
 
 type Props = {

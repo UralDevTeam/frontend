@@ -20,7 +20,7 @@ export default function UserLine({id, title, about, depth, matched}: Props) {
             aria-label={title}
             style={{paddingLeft: 24 * depth, background: matched ? '#E5F6F3' : undefined}}
         >
-            <ProfileCircle size={20}/>
+            <ProfileCircle size={20} toSelf={false} userId={id}/>
             <div className="user-line-title">{title}</div>
             <div className="user-line-metrics">
                 <div className="user-line-metric">{about}</div>

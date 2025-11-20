@@ -18,7 +18,7 @@ function UserProfileEdit({initialUser, viewPath = "/me"}: Props) {
 
   return (
     <div className="user-profile-card">
-      <UserMainProperties user={user}/>
+      <UserMainProperties user={user} toSelf={true}/>
       <div className={"user-profile-content"}>
         <UserPersonalInfoCardController user={user} isEdit={true} viewPath={viewPath}/>
       </div>

@@ -25,7 +25,7 @@ function UserProfileViewInner(props: Props) {
 
   return (
     <div className="user-profile-card">
-      <UserMainProperties user={user}/>
+      <UserMainProperties user={user} toSelf={true}/>
       <div className={"user-profile-content"}>
         <UserBasicInfoCard user={user}/>
         <UserPersonalInfoCardController

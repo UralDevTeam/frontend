@@ -13,6 +13,7 @@ export type UserDTO = {
     phone?: string;
     mattermost?: string;
     tg?: string;
+    isAdmin: boolean;
 
     birthday?: string;
     team: string[];

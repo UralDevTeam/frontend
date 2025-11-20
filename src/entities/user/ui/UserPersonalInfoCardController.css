@@ -1,0 +1,20 @@
+.user-personal-info-controller {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: max-content;
+}
+
+.user-personal-info-controller__header {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user-personal-info-controller__actions {
+  display: flex;
+  gap: 18px;
+  height: 48px;
+}
+

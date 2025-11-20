@@ -28,7 +28,7 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
       label: 'руководитель',
       content: user.boss ? (
         <NavLink
-          style={{textDecoration: "underline", color: "var(--color-primary-mint)"}}
+          className="user-basic-info-card__boss-link"
           to={`/profile/view/${user.boss.id}`}>
           {user.boss.shortName}
         </NavLink>

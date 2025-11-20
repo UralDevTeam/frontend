@@ -89,7 +89,7 @@
 }
 
 /* подсветка найденного */
-.matched, .teams-row[style*="#E5F6F3"] {
+.matched, .teams-row--matched {
     background: #E5F6F3;
 }
 

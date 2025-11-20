@@ -5,6 +5,7 @@ import {User, userStore} from "../index";
 import {fetchCurrentUser} from "../fetcher";
 import SuccessSaveModal from "../../../features/editUser/SuccessSaveModal";
 import {saveUser} from "../../../features/editUser/saveUser";
+import "./UserPersonalInfoCardController.css";
 
 
 type Props = {
@@ -61,9 +62,9 @@ const UserPersonalInfoCardController = ({
     }, [editingDisabled]);
 
     return (
-        <div style={{display: "flex", justifyContent: "space-between", flexDirection: "column", width: "max-content"}}>
+        <div className="user-personal-info-controller">
             {showSuccess && <SuccessSaveModal onClose={handleSuccessClose}/>}
-            <div style={{display: "flex", justifyContent: "space-between", flexDirection: "row"}}>
+            <div className="user-personal-info-controller__header">
                 <p className="user-profile-section-title">Личное</p>
                 {!isEdit && canEdit && <NavLink to={editPath}>
                     <button className="edit-mode-button">
@@ -79,7 +80,7 @@ const UserPersonalInfoCardController = ({
                 onChange={setDraftUser}
                 disabled={editingDisabled}
             />
-            {isEdit && <div style={{display: "flex", gap: 18, height: 48}}>
+            {isEdit && <div className="user-personal-info-controller__actions">
                 <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
                     <button className="undo-edit-button" onClick={handleUndo} disabled={editingDisabled}>
                         отменить

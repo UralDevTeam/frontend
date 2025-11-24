@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { usersStore } from '../../../entities/users';
+import { usersStore, createUser } from '../../../entities/users';
 import { WorkerStatuses } from '../../../shared/statuses/workerStatuses';
 
 export type EmployeeTableInfo = {
@@ -19,6 +19,9 @@ export function useEmployees() {
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [departmentFilter, setDepartmentFilter] = useState('');
+  const [addMode, setAddMode] = useState(false);
+  const [isSavingNew, setIsSavingNew] = useState(false);
+  const [newUser, setNewUser] = useState<Partial<EmployeeTableInfo & {email?: string, phone?: string}>>({});
 
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
@@ -61,8 +64,73 @@ export function useEmployees() {
     ));
   }, [nameFilter, roleFilter, statusFilter, departmentFilter, tableData]);
 
+  const startAdd = () => {
+    setNewUser({ name: '', role: '', status: WorkerStatuses.active, department: '', mail: '' });
+    setAddMode(true);
+  };
+
+  const cancelAdd = () => {
+    setAddMode(false);
+    setNewUser({});
+  };
+
+  const saveNewUser = async () => {
+    setIsSavingNew(true);
+    try {
+      // Map newUser to backend UserDTO partial
+      const payload: any = {
+        fio: newUser.name ?? '',
+        role: newUser.role ?? '',
+        status: newUser.status ?? WorkerStatuses.active,
+        city: newUser.department ?? '',
+        email: (newUser as any).mail ?? '',
+      };
+
+      await createUser(payload);
+      await usersStore.loadFromApi();
+      setAddMode(false);
+      setNewUser({});
+    } catch (e) {
+      console.error('Failed to create user', e);
+      throw e;
+    } finally {
+      setIsSavingNew(false);
+    }
+  };
+
+  // сгруппированные объекты для удобного экспорта
+  const filters = {
+    name: nameFilter,
+    setName: setNameFilter,
+    role: roleFilter,
+    setRole: setRoleFilter,
+    status: statusFilter,
+    setStatus: setStatusFilter,
+    department: departmentFilter,
+    setDepartment: setDepartmentFilter,
+  } as const;
+
+  const options = {
+    statuses: statusOptions,
+    roles: roleOptions,
+    departments: departmentOptions,
+  } as const;
+
+  const add = {
+    addMode,
+    startAdd,
+    cancelAdd,
+    saveNewUser,
+    isSavingNew,
+  } as const;
+
+  const newUserState = {
+    newUser,
+    setNewUser,
+  } as const;
+
   return {
-    // filters
+    // старые поля для обратной совместимости
     nameFilter,
     setNameFilter,
     roleFilter,
@@ -77,6 +145,19 @@ export function useEmployees() {
     statusOptions,
     roleOptions,
     departmentOptions,
+    // add user
+    addMode,
+    startAdd,
+    cancelAdd,
+    newUser,
+    setNewUser,
+    saveNewUser,
+    isSavingNew,
+
+    // сгруппированные объекты
+    filters,
+    options,
+    add,
+    newUserState,
   } as const;
 }
-

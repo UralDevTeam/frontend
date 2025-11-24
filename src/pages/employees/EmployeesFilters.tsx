@@ -14,6 +14,13 @@ type Props = {
   department: string;
   onDepartmentChange: (v: string) => void;
   departments: string[];
+  // add user controls
+  showAddModeButton?: boolean;
+  addMode?: boolean;
+  onStartAdd?: () => void;
+  onSaveAdd?: () => void;
+  onCancelAdd?: () => void;
+  isSavingAdd?: boolean;
 };
 
 export default function EmployeesFilters(
@@ -24,10 +31,16 @@ export default function EmployeesFilters(
     statuses,
     roles,
     department, onDepartmentChange,
-    departments
+    departments,
+    showAddModeButton = false,
+    addMode = false,
+    onStartAdd,
+    onSaveAdd,
+    onCancelAdd,
+    isSavingAdd = false,
   }: Props) {
   return (
-    <div className="employees-filters">
+    <div className="employees-filters" style={{display: 'flex', alignItems: 'center', gap: 12}}>
       <div className="filter-column">
         <label htmlFor="search-name">По имени</label>
         <input id="search-name" type="text" value={name} onChange={e => onNameChange(e.target.value)}
@@ -60,7 +73,19 @@ export default function EmployeesFilters(
           ))}
         </select>
       </div>
+      {showAddModeButton &&
+        <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8}}>
+          {!addMode && (
+            <button className="edit-mode-button" onClick={onStartAdd} title="Добавить пользователя">+</button>
+          )}
+          {addMode && (
+            <>
+              <button className="edit-mode-button" onClick={onSaveAdd} disabled={isSavingAdd}>сохранить</button>
+              <button className="undo-edit-button" onClick={onCancelAdd} disabled={isSavingAdd}>отменить</button>
+            </>
+          )}
+        </div>
+      }
     </div>
   );
 }
-

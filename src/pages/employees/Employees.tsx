@@ -4,22 +4,27 @@ import "./employees.css";
 import EmployeesFilters from "./EmployeesFilters";
 import {useEmployees} from "../../features/employees/hooks/useEmployees";
 import EmployeesTable from "../../features/employees/ui/EmployeesTable";
+import {userStore} from "../../entities/user";
 
 function EmployeesComponent() {
+  const { filters, options, add, newUserState, filteredData } = useEmployees();
+
   const {
-    nameFilter,
-    setNameFilter,
-    roleFilter,
-    setRoleFilter,
-    statusFilter,
-    setStatusFilter,
-    departmentFilter,
-    setDepartmentFilter,
-    filteredData,
-    statusOptions,
-    roleOptions,
-    departmentOptions,
-  } = useEmployees();
+    name: nameFilter,
+    setName: setNameFilter,
+    role: roleFilter,
+    setRole: setRoleFilter,
+    status: statusFilter,
+    setStatus: setStatusFilter,
+    department: departmentFilter,
+    setDepartment: setDepartmentFilter,
+  } = filters;
+
+  const { statuses: statusOptions, roles: roleOptions, departments: departmentOptions } = options;
+
+  const { addMode, startAdd, cancelAdd, saveNewUser, isSavingNew } = add;
+
+  const { newUser, setNewUser } = newUserState;
 
   return (
     <main className={"main"}>
@@ -37,9 +42,20 @@ function EmployeesComponent() {
         department={departmentFilter}
         onDepartmentChange={setDepartmentFilter}
         departments={departmentOptions}
+        showAddModeButton={userStore.user?.isAdmin}
+        addMode={addMode}
+        onStartAdd={startAdd}
+        onSaveAdd={saveNewUser}
+        onCancelAdd={cancelAdd}
+        isSavingAdd={isSavingNew}
       />
 
-      <EmployeesTable data={filteredData}/>
+      <EmployeesTable
+        data={filteredData}
+        addMode={addMode}
+        newUser={newUser}
+        setNewUser={setNewUser}
+      />
     </main>
   )
 }

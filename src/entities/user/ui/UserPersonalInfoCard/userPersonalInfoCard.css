@@ -72,7 +72,8 @@
     padding-right: 36px; /* space for arrow */
     font-size: 18px;
     color: var(--color-secondary-dark-blue);
-    width: 460px; /* match input width */
+    max-width: 460px;
+    width: 100%;
 
     background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20'%3E%3Cpath fill='%23808B94' d='M5.25 7.5L10 12.25 14.75 7.5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -80,16 +81,10 @@
     background-size: 12px 12px;
 }
 
-/* make select inside status-set take full width when using styled-select */
-.user-personal-info-card-status-set .styled-select {
-    width: 100%;
-}
-
 /* small responsive tweak: if container narrow, shrink to fit */
 @media (max-width: 520px) {
     .user-personal-info-card-item > input,
-    .user-personal-info-card-item > textarea,
-    .styled-select {
+    .user-personal-info-card-item > textarea {
         width: 100%;
     }
 }

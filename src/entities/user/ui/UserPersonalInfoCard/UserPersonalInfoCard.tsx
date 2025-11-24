@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import React from "react";
-import WorkerStatusSelector from "../../../../shared/statuses/workerStatusSelector";
+import WorkerStatusSelectorRowInfo from "../../../../shared/statuses/workerStatusSelectorRowInfo";
 import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
@@ -114,6 +114,6 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                     </RowInfo>
                 </React.Fragment>
             ))}
-            <WorkerStatusSelector status={editedUser.status} onChange={v => update("status", v)} disabled={disabled}/>        </div>
+            <WorkerStatusSelectorRowInfo status={editedUser.status} onChange={v => update("status", v)} disabled={disabled}/>        </div>
     )
 }

@@ -28,3 +28,22 @@ export async function fetchUsers(): Promise<UserDTO[]> {
     return [];
   }
 }
+
+  export async function createUser(payload: Partial<UserDTO>): Promise<UserDTO> {
+  const res = await fetch(`${API_BASE}/api/users`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Failed to create user: ${res.status} ${text}`);
+  }
+
+  return (await res.json()) as UserDTO;
+}

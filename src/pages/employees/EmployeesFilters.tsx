@@ -91,7 +91,9 @@ export default function EmployeesFilters(
       {showAddModeButton &&
         <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8}}>
           {!addMode && (
-            <button className="edit-mode-button" onClick={onStartAdd} title="Добавить пользователя">+</button>
+            <button className="edit-mode-button" onClick={onStartAdd} title="Добавить пользователя">
+              <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon" />
+            </button>
           )}
           {addMode && (
             <>

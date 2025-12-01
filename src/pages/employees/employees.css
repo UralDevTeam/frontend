@@ -97,3 +97,18 @@ main {
     background-color: #CED9DC;
     flex-shrink: 0;
 }
+
+.add-row > td {
+    padding-right: 20px;
+}
+
+.employees-table-input {
+    height: 28px;
+    border-radius: 10px;
+    border: 2px solid var(--color-primary-mint);
+    width: 100%;
+    background: var(--color-primary-white);
+
+    font-size: 14px;
+    padding: 0 10px;
+}

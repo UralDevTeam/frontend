@@ -30,7 +30,7 @@ export async function fetchUsers(): Promise<UserDTO[]> {
 }
 
   export async function createUser(payload: Partial<UserDTO>): Promise<UserDTO> {
-  const res = await fetch(`${API_BASE}/api/users`, {
+  const res = await fetch(`${API_BASE}/api/user`, {
     method: 'POST',
     credentials: 'include',
     headers: {

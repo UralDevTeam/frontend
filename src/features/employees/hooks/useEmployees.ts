@@ -82,8 +82,8 @@ export function useEmployees() {
         fio: newUser.name ?? '',
         role: newUser.role ?? '',
         status: newUser.status ?? WorkerStatuses.active,
-        city: newUser.department ?? '',
-        email: (newUser as any).mail ?? '',
+        department: newUser.department ?? '',
+        email: newUser.email ?? '',
       };
 
       await createUser(payload);

@@ -1,0 +1,47 @@
+.teams-tree-name-with-hint {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-team-input {
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 300px;
+    color: var(--color-primary-graphite);
+    background-color: #F8F9FA;
+    border: 2px solid #CED9DC;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+}
+
+.step-hint {
+    position: absolute;
+
+    z-index: 10;
+    padding: 16px;
+
+    background: #FFFFFF;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+
+}
+
+.step-number {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.hint-step-2__teams-select-label {
+    display: flex;
+
+    gap: 8px;
+}

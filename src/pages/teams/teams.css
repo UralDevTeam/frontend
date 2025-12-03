@@ -38,7 +38,7 @@
     gap: 4px;
 }
 
-.teams-row{
+.teams-row {
     width: 100%;
     border-bottom: rgba(0, 59, 76, 0.17) 2px solid;
     display: flex;
@@ -55,18 +55,18 @@
 }
 
 /* левый блок: иконка, название */
-.teams-row-left{
+.teams-row-left {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.teams-tree-icon{
+.teams-tree-icon {
     width: 18px;
     height: 18px;
 }
 
-.teams-tree-name{
+.teams-tree-name {
     font-family: 'Golos Text', serif;
     font-weight: 500;
     font-size: 16px;
@@ -82,7 +82,7 @@
     font-size: 14px;
 }
 
-.teams-metric{
+.teams-metric {
     white-space: nowrap;
     color: var(--color-secondary-dark-blue, #4b646b);
     font-size: 14px;
@@ -93,25 +93,30 @@
     background: #E5F6F3;
 }
 
+.teams-table-setings {
+    display: flex;
+    flex-direction: row;
+}
+
 /* поиск наверху */
-.teams-search{
+.teams-search {
     margin-top: 12px;
     margin-bottom: 12px;
 }
 
-.teams-search-input{
+.teams-search-input {
     width: 420px;
     padding: 8px 12px;
     border-radius: 15px;
     max-width: 300px;
-    color: #CED9DC;
+    color: var(--color-primary-graphite);
     background-color: #F8F9FA;
     border: 2px solid #CED9DC;
     margin-top: 14px;
     box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
 }
 
-.user-line{
+.user-line {
     justify-content: left;
 }
 
@@ -132,7 +137,7 @@
     gap: 16px;
 }
 
-.user-line-metric{
+.user-line-metric {
     box-sizing: border-box;
 
     display: flex;

@@ -15,6 +15,7 @@ export type EmployeeTableInfo = {
 };
 
 export function useEmployees() {
+  const [onlyAdminFilter, setOnlyAdminFilter] = useState(false);
   const [nameFilter, setNameFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -100,6 +101,8 @@ export function useEmployees() {
 
   // сгруппированные объекты для удобного экспорта
   const filters = {
+    onlyAdmin: onlyAdminFilter,
+    onOnlyAdminChange: setOnlyAdminFilter,
     name: nameFilter,
     setName: setNameFilter,
     role: roleFilter,

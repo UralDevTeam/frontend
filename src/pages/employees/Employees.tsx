@@ -18,6 +18,9 @@ function EmployeesComponent() {
     setStatus: setStatusFilter,
     department: departmentFilter,
     setDepartment: setDepartmentFilter,
+    onlyAdmin,
+    onOnlyAdminChange,
+
   } = filters;
 
   const { statuses: statusOptions, roles: roleOptions, departments: departmentOptions } = options;
@@ -31,6 +34,8 @@ function EmployeesComponent() {
       <h2 className="employees-title">Все сотрудники</h2>
 
       <EmployeesFilters
+        onlyAdmin={onlyAdmin}
+        onOnlyAdminChange={onOnlyAdminChange}
         name={nameFilter}
         onNameChange={setNameFilter}
         role={roleFilter}

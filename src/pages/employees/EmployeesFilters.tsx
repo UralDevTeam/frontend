@@ -3,6 +3,8 @@ import {WorkerStatuses} from "../../shared/statuses/workerStatuses";
 import getWorkerStatusRussian from "../../shared/statuses/getWorkerStatusRussian";
 
 type Props = {
+  onlyAdmin: boolean
+  onOnlyAdminChange: (v: boolean) => void;
   name: string;
   onNameChange: (v: string) => void;
   role: string;
@@ -25,6 +27,7 @@ type Props = {
 
 export default function EmployeesFilters(
   {
+    onlyAdmin, onOnlyAdminChange,
     name, onNameChange,
     role, onRoleChange,
     status, onStatusChange,
@@ -41,6 +44,18 @@ export default function EmployeesFilters(
   }: Props) {
   return (
     <div className="employees-filters" style={{display: 'flex', alignItems: 'center', gap: 12}}>
+      <div className="filter-column">
+        <label htmlFor="only-admin" style={{display: 'flex'}} className={"filter-column-checkbox__label"}>
+          <img
+            src={"/icons/Star.svg"} width={16} height={16} alt={"is admin"}
+            className={onlyAdmin ? "" : "filter-column-checkbox-star-gray"}
+          />
+        </label>
+        <input
+          id="only-admin" type="checkbox"
+          checked={onlyAdmin} onChange={e => onOnlyAdminChange(e.target.checked)}
+        />
+      </div>
       <div className="filter-column">
         <label htmlFor="search-name">По имени</label>
         <input id="search-name" type="text" value={name} onChange={e => onNameChange(e.target.value)}

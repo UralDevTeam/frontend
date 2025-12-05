@@ -26,53 +26,41 @@
 
 .edit-mode-button {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    align-content: flex-end;
-    padding: 10px 18px;
-    gap: 6px;
-    height: 39px;
 
-    background: #37505C;
-    border-radius: 12px;
+    height: 40px;
+    width: max-content;
+    padding: 0 16px;
+
     border: none;
+    outline: var(--color-primary-mint) solid 1px;
+    border-radius: 15px;
 
-    font-family: 'Golos Text', serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19px;
-
-    /* Primary/White */
-    color: var(--color-primary-white);
+    color: var(--color-primary-mint);
+    background-color: #F8F9FA;
     cursor: pointer;
+
+    font-size: 16px;
 
 }
 
 .undo-edit-button {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    align-content: flex-end;
-    padding: 8px 18px;
-    gap: 6px;
-    height: 39px;
 
-    background: var(--color-primary-white);
-    border: 2px solid var(--color-secondary-dark-blue);
-    border-radius: 12px;
+    height: 40px;
+    width: max-content;
+    padding: 0 16px;
 
-    font-family: 'Golos Text', serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19px;
+    border: none;
+    outline: var(--color-secondary-dark-blue) solid 1px;
+    border-radius: 15px;
 
     color: var(--color-secondary-dark-blue);
+    background-color: #F8F9FA;
     cursor: pointer;
 
+    font-size: 16px;
 }

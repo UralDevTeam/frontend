@@ -3,7 +3,6 @@ import {Link} from 'react-router';
 import ProfileCircle from '../../../shared/profileCircle/profileCircle';
 import WorkerStatus from '../../../shared/statuses/workerStatus';
 import {EmployeeTableInfo} from '../hooks/useEmployees';
-import {WorkerStatusSelector} from "../../../shared/statuses/workerStatusSelectorRowInfo";
 
 type Props = {
   data: EmployeeTableInfo[];
@@ -58,14 +57,12 @@ const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => 
 
   return (
     <tr className="employees-table-row add-row">
+      <td></td> {/*isAdmin column*/}
       {inputFields.map(({field, type, placeholder}) => {
         if (type === 'select') {
           return (
             <td key={field}>
-              <WorkerStatusSelector
-                onChange={(status) => handleInputChange('status', status)}
-                status={newUser['status'] ?? "active"}
-              />
+              <WorkerStatus status={"active"} />
             </td>
           );
         }

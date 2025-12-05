@@ -58,12 +58,13 @@ export function useEmployees() {
     const dept = departmentFilter.trim();
 
     return tableData.filter(e => (
+      (e.isAdmin === onlyAdminFilter) &&
       (!name || e.name.toLowerCase().includes(name)) &&
       (!role || e.role === role) &&
       (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses)) &&
       (!dept || (e.department || '').toLowerCase() === dept.toLowerCase())
     ));
-  }, [nameFilter, roleFilter, statusFilter, departmentFilter, tableData]);
+  }, [onlyAdminFilter, nameFilter, roleFilter, statusFilter, departmentFilter, tableData]);
 
   const startAdd = () => {
     setNewUser({ name: '', role: '', status: WorkerStatuses.active, department: '', mail: '' });

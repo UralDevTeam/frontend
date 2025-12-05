@@ -2,13 +2,15 @@ import React from 'react';
 import {Link} from 'react-router';
 import ProfileCircle from '../../../shared/profileCircle/profileCircle';
 import WorkerStatus from '../../../shared/statuses/workerStatus';
-import {EmployeeTableInfo} from '../hooks/useEmployees';
+import {EmployeeTableInfo, SortConfig} from '../hooks/useEmployees';
 
 type Props = {
   data: EmployeeTableInfo[];
   addMode?: boolean;
   newUser?: Partial<EmployeeTableInfo & { mail?: string }>;
   setNewUser?: (user: Partial<EmployeeTableInfo & { mail?: string }>) => void;
+  sortConfig?: SortConfig | null;
+  onSort?: (key: SortConfig['key']) => void;
 };
 
 type NewUserInputProps = {
@@ -57,12 +59,13 @@ const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => 
 
   return (
     <tr className="employees-table-row add-row">
-      <td></td> {/*isAdmin column*/}
+      <td></td>
+      {/*isAdmin column*/}
       {inputFields.map(({field, type, placeholder}) => {
         if (type === 'select') {
           return (
             <td key={field}>
-              <WorkerStatus status={"active"} />
+              <WorkerStatus status={"active"}/>
             </td>
           );
         }
@@ -127,31 +130,44 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
   );
 };
 
-const TableHeader: React.FC = () => (
-  <thead className="employees-table-head">
-  <tr>
-    <th></th>
-    <th>Имя</th>
-    <th>Роль</th>
-    <th>Статус</th>
-    <th>Подразделение</th>
-    <th>Юр. лицо</th>
-    <th>Почта</th>
-  </tr>
-  </thead>
-);
+const TableHeader = ({sortConfig, onSort}: {
+  sortConfig?: SortConfig | null;
+  onSort?: (key: SortConfig['key']) => void;
+}) => {
+  const getSortIcon = (key: SortConfig['key']) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return "↕️";
+    }
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
+  return (
+    <thead className="employees-table-head">
+    <tr>
+      <th></th>
+      <th onClick={() => onSort && onSort("name")}>Имя{getSortIcon("name")}</th>
+      <th onClick={() => onSort && onSort("role")}>Роль{getSortIcon("role")}</th>
+      <th onClick={() => onSort && onSort("status")}>Статус{getSortIcon("status")}</th>
+      <th onClick={() => onSort && onSort("department")}>Подразделение{getSortIcon("department")}</th>
+      <th onClick={() => onSort && onSort("legalEntity")}>Юр. лицо{getSortIcon("legalEntity")}</th>
+      <th onClick={() => onSort && onSort("mail")}>Почта{getSortIcon("mail")}</th>
+    </tr>
+    </thead>
+  );
+};
 
 export default function EmployeesTable(
   {
     data,
     addMode = false,
     newUser = {},
-    setNewUser
+    setNewUser,
+    sortConfig,
+    onSort
   }: Props) {
   return (
     <div className="" style={{marginTop: 16}}>
       <table className="employees-table">
-        <TableHeader/>
+        <TableHeader sortConfig={sortConfig} onSort={onSort}/>
         <tbody>
         {addMode && setNewUser && (
           <NewUserInputRow newUser={newUser} setNewUser={setNewUser}/>

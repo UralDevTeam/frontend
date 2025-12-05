@@ -57,6 +57,7 @@ const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => 
 
   return (
     <tr className="employees-table-row add-row">
+      <td></td> {/*isAdmin column*/}
       {inputFields.map(({field, type, placeholder}) => {
         if (type === 'select') {
           return (

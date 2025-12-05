@@ -1,0 +1,78 @@
+.login-page__text {
+    font-family: 'Golos Text';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 100%;
+
+    color: #0F0F0F;
+
+    margin-top: 8px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+
+    width: 450px;
+}
+
+.login-form__label,
+.login-form__text {
+    font-family: 'Golos Text';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 100%;
+
+    color: var(--color-primary-graphite);
+}
+
+.login-form__label{
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.login-form__input{
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid #CED9DC;
+    width: 460px;
+    background: var(--color-primary-white);
+
+    color: var(--color-secondary-dark-blue);
+    font-size: 18px;
+
+    padding: 0 10px;
+}
+
+.login-form__button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    height: 48px;
+
+    background: var(--color-primary-mint);
+    border-radius: 16px;
+
+    border: none;
+    outline: none;
+
+    color: white;
+
+
+
+    font-family: 'Golos Text';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 150%;
+}

@@ -152,7 +152,7 @@ export default function EmployeesTable(
     setNewUser
   }: Props) {
   return (
-    <div className="simple-border-card" style={{marginTop: 16}}>
+    <div className="" style={{marginTop: 16}}>
       <table className="employees-table">
         <TableHeader/>
         <tbody>

@@ -1,8 +1,8 @@
-import {API_BASE} from "../../shared/apiConfig";
 import {User} from "../../entities/user";
+import {apiClient} from "../../shared/lib/api-client";
 
 export async function saveUser(updatedUser: User) {
-    const url = `${API_BASE}/api/me`;
+    const url = `/api/me`;
     const payload = {
         city: updatedUser.city ?? "",
         phone: updatedUser.phone ?? "",
@@ -16,7 +16,7 @@ export async function saveUser(updatedUser: User) {
         "Content-Type": "application/json"
     };
 
-    const res = await fetch(url, {
+    const res = await apiClient.fetch(url, {
         method: "PUT",
         headers,
         body: JSON.stringify(payload),

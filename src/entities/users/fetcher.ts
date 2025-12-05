@@ -1,13 +1,12 @@
-import {API_BASE} from '../../shared/apiConfig';
 import {UserDTO} from "../user";
+import {apiClient} from "../../shared/lib/api-client";
 
 
 export async function fetchUsers(): Promise<UserDTO[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/users`, {
+    const res = await apiClient.fetch(`/api/users`, {
       method: 'GET',
       credentials: 'include',
-      headers: {'Accept': 'application/json'}
     });
 
     if (res.status === 401 || res.status === 403) {
@@ -30,7 +29,7 @@ export async function fetchUsers(): Promise<UserDTO[]> {
 }
 
   export async function createUser(payload: Partial<UserDTO>): Promise<UserDTO> {
-  const res = await fetch(`${API_BASE}/api/users`, {
+  const res = await apiClient.fetch(`/api/users`, {
     method: 'POST',
     credentials: 'include',
     headers: {

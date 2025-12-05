@@ -1,6 +1,6 @@
-import { API_BASE } from '../../shared/apiConfig';
-import { WorkerStatuses } from '../../shared/statuses/workerStatuses';
+import {WorkerStatuses} from '../../shared/statuses/workerStatuses';
 import {UserDTO} from "./types/user";
+import {apiClient} from "../../shared/lib/api-client";
 
 type BackendUserDTO = {
   id: string;
@@ -72,11 +72,11 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
 
   const boss = u.boss
     ? {
-        id: safeString(u.boss.id),
-        fullName: safeString(u.boss.fullName),
-        shortName: safeString(u.boss.shortName),
-      }
-    : { id: '', fullName: '', shortName: '' };
+      id: safeString(u.boss.id),
+      fullName: safeString(u.boss.fullName),
+      shortName: safeString(u.boss.shortName),
+    }
+    : {id: '', fullName: '', shortName: ''};
 
   const birthdayIso = parseDateSafe(u.birthday ?? undefined);
 
@@ -112,19 +112,15 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
     const path = window.location && window.location.pathname ? window.location.pathname : '';
     const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
     if (onAuthPage) {
-            throw new Error('Cannot fetch current user while on authentication page');
+      throw new Error('Cannot fetch current user while on authentication page');
     }
   }
 
-  const res = await fetch(`${API_BASE}/api/me`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
+  try {
+    const res = await apiClient.get<BackendUserDTO>(`/api/me`)
+    return adaptBackendUserToFrontend(res);
 
-  if (res.status === 401 || res.status === 403) {
+  } catch (error) {
     if (typeof window !== 'undefined') {
       const path = window.location && window.location.pathname ? window.location.pathname : '';
       const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
@@ -133,33 +129,15 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
       }
     }
     throw new Error('Unauthorized');
+
   }
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Failed to fetch /api/me: ${res.status} ${text}`);
-  }
-
-  const raw = (await res.json()) as BackendUserDTO;
-  return adaptBackendUserToFrontend(raw);
 }
 
 export async function fetchUserById(id: string): Promise<UserDTO> {
   if (!id) throw new Error('Missing id');
 
-  const res = await fetch(`${API_BASE}/api/users/${encodeURIComponent(id)}`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
+  const res = await apiClient.get<BackendUserDTO>(`/api/users/${encodeURIComponent(id)}`)
+  return adaptBackendUserToFrontend(res);
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Failed to fetch /api/users/${id}: ${res.status} ${text}`);
-  }
-
-  const raw = (await res.json()) as BackendUserDTO;
-  return adaptBackendUserToFrontend(raw);
 }

@@ -40,5 +40,3 @@ export class UsersStore {
 }
 
 export const usersStore = new UsersStore();
-
-export default UsersStore;

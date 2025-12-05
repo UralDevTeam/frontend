@@ -107,6 +107,11 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
   return (
     <tr key={employee.id} className="employees-table-row">
       <td>
+        <img style={{display: employee.isAdmin ? "block" : "none"}}
+             src={"/icons/Star.svg"} width={20} height={20} alt={"is admin"}
+        />
+      </td>
+      <td>
         <Link to={`/profile/view/${employee.id}`} className="employees-table-link">
           <div className="employees-profile">
             <ProfileCircle size={32} toSelf={false} isAdmin={employee.isAdmin}/>
@@ -128,6 +133,7 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
 const TableHeader: React.FC = () => (
   <thead className="employees-table-head">
   <tr>
+    <th></th>
     <th>Имя</th>
     <th>Роль</th>
     <th>Статус</th>

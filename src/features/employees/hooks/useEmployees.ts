@@ -58,7 +58,7 @@ export function useEmployees() {
     const dept = departmentFilter.trim();
 
     return tableData.filter(e => (
-      (e.isAdmin === onlyAdminFilter) &&
+      (!onlyAdminFilter || e.isAdmin === onlyAdminFilter) &&
       (!name || e.name.toLowerCase().includes(name)) &&
       (!role || e.role === role) &&
       (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses)) &&

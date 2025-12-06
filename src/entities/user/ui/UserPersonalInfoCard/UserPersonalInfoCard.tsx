@@ -5,6 +5,7 @@ import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
 import {User} from "../../index";
 import CopyIcon from "../../../../shared/copy-icon/copy-icon";
+import useCopyStatus from "../../../../shared/hooks/use-copy-status";
 
 type IUserPersonalInfoCard = {
     user: User,
@@ -41,24 +42,6 @@ function Field(props: {
     )
 }
 
-/**
- * Хук для управления статусом "скопировано".
- * Не зависит от типов User, использует строковый ключ.
- */
-function useCopyStatus(timeout = 500) {
-    const [copiedKey, setCopied] = useState<string | null>(null);
-
-    const copy = (text: string, field: string) => {
-        if (!text || text === "-") return;
-
-        navigator.clipboard.writeText(text).then(() => {
-            setCopied(field);
-            setTimeout(() => setCopied(prev => (prev === field ? null : prev)), timeout);
-        });
-    };
-
-    return {copiedKey, copy};
-}
 
 export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}: IUserPersonalInfoCard) {
     const [editedUser, setEditedUser] = useState<User>(user);
@@ -83,6 +66,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
     const rows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
         {key: "city", label: 'город'},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
+        {key: "email", label: 'почта', inputType: 'email'},
         {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "mattermost", label: 'mattermost'},
         {key: "tg", label: 'ник telegram'},
@@ -90,7 +74,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
     ];
 
     const copyableFields = useMemo(
-        () => new Set<keyof User>(["phone", "mattermost", "tg"]),
+        () => new Set<keyof User>(["email", "phone", "mattermost", "tg"]),
         []
     );
 

@@ -7,7 +7,6 @@
 
 .user-personal-info-controller__header {
   display: flex;
-  justify-content: space-between;
   flex-direction: row;
   align-items: center;
 }

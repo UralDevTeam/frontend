@@ -69,7 +69,6 @@ const UserPersonalInfoCardController = ({
                 {!isEdit && canEdit && <NavLink to={editPath}>
                     <button className="edit-mode-button">
                         редактировать
-                        <img src={"/icons/Edit.svg"} alt="Иконка редактирования"/>
                     </button>
                 </NavLink>
                 }

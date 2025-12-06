@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
-import React from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import WorkerStatusSelectorRowInfo from "../../../../shared/statuses/workerStatusSelectorRowInfo";
 import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
 import {User} from "../../index";
+import CopyIcon from "../../../../shared/copy-icon/copy-icon";
 
 type IUserPersonalInfoCard = {
     user: User,
@@ -41,19 +41,35 @@ function Field(props: {
     )
 }
 
+/**
+ * Хук для управления статусом "скопировано".
+ * Не зависит от типов User, использует строковый ключ.
+ */
+function useCopyStatus(timeout = 500) {
+    const [copiedKey, setCopied] = useState<string | null>(null);
+
+    const copy = (text: string, field: string) => {
+        if (!text || text === "-") return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            setCopied(field);
+            setTimeout(() => setCopied(prev => (prev === field ? null : prev)), timeout);
+        });
+    };
+
+    return {copiedKey, copy};
+}
 
 export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}: IUserPersonalInfoCard) {
-
     const [editedUser, setEditedUser] = useState<User>(user);
 
     useEffect(() => {
         setEditedUser(user);
-    }, [user])
+    }, [user]);
 
     const update = (key: keyof User, value: any) => {
-        if (disabled) {
-            return;
-        }
+        if (disabled) return;
+
         const newUser = {...editedUser} as any;
         if (key === 'birthday') {
             newUser[key] = value ? new Date(value) : undefined;
@@ -62,16 +78,23 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         }
         setEditedUser(newUser);
         if (onChange) onChange(newUser);
-    }
+    };
 
     const rows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
         {key: "city", label: 'город'},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
         {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "mattermost", label: 'mattermost'},
-        {key: "tg", label: 'ник tg'},
-        {key: "aboutMe", label: 'о себе', textarea: true},
+        {key: "tg", label: 'ник telegram'},
+        {key: "aboutMe", label: 'обо мне', textarea: true},
     ];
+
+    const copyableFields = useMemo(
+        () => new Set<keyof User>(["phone", "mattermost", "tg"]),
+        []
+    );
+
+    const {copiedKey, copy} = useCopyStatus(500);
 
     if (!isEdit) {
         return (
@@ -80,19 +103,45 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                     <React.Fragment key={String(r.key)}>
                         <RowInfo label={r.label}>
                             {(() => {
-                                const value = user[r.key];
+                                const rawValue = user[r.key];
+
                                 if (r.key === "birthday") {
-                                    const formatted = formatDateRussian(value as Date | string | undefined);
+                                    const formatted = formatDateRussian(rawValue as Date | string | undefined);
                                     return formatted || "-";
                                 }
-                                return String(value ?? "-");
+
+                                const value = String(rawValue ?? "-");
+                                const keyStr = String(r.key);
+
+                                if (copyableFields.has(r.key) && value !== "-") {
+                                    return (
+                                        <div className="row-copyable">
+                                            <span className="row-copyable__text">{value}</span>
+                                            <div className="copy-controls">
+                                                <button
+                                                    className="copy-button"
+                                                    onClick={() => copy(value, keyStr)}
+                                                    aria-label={`Скопировать ${r.label}`}
+                                                    title={`Скопировать ${r.label}`}
+                                                >
+                                                    <CopyIcon className="copy-button-icon"/>
+                                                </button>
+                                                {copiedKey === keyStr && (
+                                                    <span className="copy-status">скопировано</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                return value;
                             })()}
                         </RowInfo>
                         {idx !== rows.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
             </div>
-        )
+        );
     }
 
     return (
@@ -114,6 +163,11 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                     </RowInfo>
                 </React.Fragment>
             ))}
-            <WorkerStatusSelectorRowInfo status={editedUser.status} onChange={v => update("status", v)} disabled={disabled}/>        </div>
-    )
+            <WorkerStatusSelectorRowInfo
+                status={editedUser.status}
+                onChange={v => update("status", v)}
+                disabled={disabled}
+            />
+        </div>
+    );
 }

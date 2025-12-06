@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import './Login.css';
 import {authStore, LoginCredentials} from "../../features/auth/model";
 import {useNavigate} from "react-router";
-import LightLogo from "../../shared/logo/Light";
 
 export const Login: React.FC = observer(() => {
   const navigate = useNavigate();
@@ -33,12 +32,10 @@ export const Login: React.FC = observer(() => {
 
   return (
     <main className="main">
-      <header className="main-header">
-        <LightLogo />
-      </header>
+      <img src={"/icons/Light.svg"} width={130} height={25} alt={"udv|group"} className='udv-icon'/>
       <h1 style={{ display: "none" }}>Вход</h1>
 
-      <p className="login-page__text" style={{ marginTop: 128 }}>
+      <p className="login-page__text">
         Добро пожаловать в UDV Team Map!
       </p>
 
@@ -46,11 +43,11 @@ export const Login: React.FC = observer(() => {
         Войдите в систему, чтобы увидеть организационную структуру и найти коллег
       </p>
 
-      <form onSubmit={handleSubmit} className="login-form" style={{ marginTop: 48 }}>
+      <form onSubmit={handleSubmit} className="login-form">
         <p className="login-form__text">Введите данные для входа</p>
 
         <label className="login-form__label">
-          Электронная почта
+          <span className="login-form__label-text">Электронная почта</span>
           <input
             type="email"
             value={email}

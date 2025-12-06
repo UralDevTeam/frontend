@@ -10,15 +10,28 @@ type IUserBasicInfoCard = {
     user: User;
 }
 
-function parseDays(value: number) {
-    if (!Number.isFinite(value) || value <= 0) return `0 г. 0 м. 0 д.`;
-    const YEAR = 365, MONTH = 30;
-    let year = Math.floor(value / YEAR);
-    let rest = value - year * YEAR;
-    let months = Math.floor(rest / MONTH);
-    let days = rest - months * MONTH;
+function getPluralForm(value: number, forms: [string, string, string]) {
+    const lastDigits = Math.abs(value) % 100;
+    const lastDigit = lastDigits % 10;
 
-    return `${year} г. ${months} м. ${days} д.`;
+    if (lastDigits > 10 && lastDigits < 20) return forms[2];
+    if (lastDigit > 1 && lastDigit < 5) return forms[1];
+    if (lastDigit === 1) return forms[0];
+
+    return forms[2];
+}
+
+function formatExperience(value: number) {
+    if (!Number.isFinite(value) || value <= 0) return `0 лет 0 месяцев`;
+
+    const YEAR = 365, MONTH = 30;
+    const years = Math.floor(value / YEAR);
+    const months = Math.floor((value - years * YEAR) / MONTH);
+
+    const yearsLabel = getPluralForm(years, ["год", "года", "лет"]);
+    const monthsLabel = getPluralForm(months, ["месяц", "месяца", "месяцев"]);
+
+    return `${years} ${yearsLabel} ${months} ${monthsLabel}`;
 }
 
 export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
@@ -31,7 +44,7 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
         copyValue?: string;
     }[] = [
         {key: 'mail', label: 'почта', content: email, copyValue: email},
-        {key: 'experience', label: 'стаж', content: parseDays(user.experience || 0)},
+        {key: 'experience', label: 'стаж', content: formatExperience(user.experience || 0)},
         {
             key: 'boss',
             label: 'руководитель',

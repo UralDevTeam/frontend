@@ -46,7 +46,7 @@ export class ProfilePage {
     this.role = this.getRowByLabel('роль');
     this.legalEntity = this.getRowByLabel('юр.лицо');
     this.department = this.getRowByLabel('подразделение');
-    this.team = this.getRowByLabel('команда');
+    this.team = this.getRowByLabel('группа');
 
     // Личная информация
     this.personalInfoSection = page.locator('text=Личное');
@@ -54,8 +54,8 @@ export class ProfilePage {
     this.birthDate = this.getRowByLabel('дата рождения');
     this.phone = this.getRowByLabel('телефон');
     this.mattermost = this.getRowByLabel('mattermost');
-    this.telegram = this.getRowByLabel('ник tg');
-    this.aboutMe = this.getRowByLabel('о себе');
+    this.telegram = this.getRowByLabel('ник telegram');
+    this.aboutMe = this.getRowByLabel('обо мне');
   }
 
   // Вспомогательный метод для поиска строк по label

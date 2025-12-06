@@ -4,7 +4,7 @@ import {EditProfilePage} from "../pages/edit-profile-page";
 
 
 test.describe.configure({mode: 'serial'});
-test.describe('Цель: Изменить поле «О себе»', () => {
+test.describe('Цель: Изменить поле «Обо мне»', () => {
 
   let context: BrowserContext;
   let page: Page;

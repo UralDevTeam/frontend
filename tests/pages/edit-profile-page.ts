@@ -24,8 +24,8 @@ export class EditProfilePage {
     this.birthDateInput = this.getInputByLabel('дата рождения');
     this.phoneInput = this.getInputByLabel('телефон');
     this.mattermostInput = this.getInputByLabel('mattermost');
-    this.telegramInput = this.getInputByLabel('ник tg');
-    this.aboutMeTextarea = page.locator('.row-info:has-text("о себе") textarea');
+    this.telegramInput = this.getInputByLabel('ник telegram');
+    this.aboutMeTextarea = page.locator('.row-info:has-text("обо мне") textarea');
     this.statusSelect = page.locator('#status');
 
     // Инициализируем кнопки

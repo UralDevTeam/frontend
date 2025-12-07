@@ -66,7 +66,6 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
     const rows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
         {key: "city", label: 'город'},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
-        {key: "email", label: 'почта', inputType: 'email'},
         {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "mattermost", label: 'mattermost'},
         {key: "tg", label: 'ник telegram'},
@@ -74,7 +73,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
     ];
 
     const copyableFields = useMemo(
-        () => new Set<keyof User>(["email", "phone", "mattermost", "tg"]),
+        () => new Set<keyof User>(["phone", "mattermost", "tg"]),
         []
     );
 

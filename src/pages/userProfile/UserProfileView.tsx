@@ -1,6 +1,6 @@
 import React from 'react';
 import UserPersonalInfoCardController from "../../entities/user/ui/UserPersonalInfoCardController";
-import UserMainProperties from "../../entities/user/ui/UserMainProperties/IUserMainProperties";
+import UserMainPropertiesView from "../../entities/user/ui/UserMainProperties/UserMainPropertiesView";
 import UserBasicInfoCard from "../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard";
 import { observer } from 'mobx-react-lite';
 import {User, userStore} from '../../entities/user';
@@ -24,7 +24,7 @@ function UserProfileViewInner(props: Props) {
 
   return (
     <div className="user-profile-card">
-      <UserMainProperties user={user} toSelf={true}/>
+      <UserMainPropertiesView user={user} toSelf={true}/>
       <div className={"user-profile-content"}>
         <UserBasicInfoCard user={user}/>
         <UserPersonalInfoCardController

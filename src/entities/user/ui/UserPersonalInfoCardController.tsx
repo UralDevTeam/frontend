@@ -17,12 +17,12 @@ type Props = {
 };
 
 const UserPersonalInfoCardController = ({
-    user,
-    isEdit,
-    canEdit = false,
-    editPath = "/me/edit",
-    viewPath = "/me",
-}: Props) => {
+                                            user,
+                                            isEdit,
+                                            canEdit = false,
+                                            editPath = "/me/edit",
+                                            viewPath = "/me",
+                                        }: Props) => {
     const navigate = useNavigate();
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -33,9 +33,7 @@ const UserPersonalInfoCardController = ({
         setDraftUser(user);
     }, [user]);
 
-    const handleUndo = useCallback(() => {
-        console.log("Отмена редактирования пользователя", draftUser);
-    }, [draftUser]);
+    const handleUndo = useCallback(() => {}, [draftUser]);
 
     const handleSave = useCallback(async () => {
         setIsSaving(true);
@@ -65,7 +63,7 @@ const UserPersonalInfoCardController = ({
         <div className="user-personal-info-controller">
             {showSuccess && <SuccessSaveModal onClose={handleSuccessClose}/>}
             <div className="user-personal-info-controller__header">
-                <p className="user-profile-section-title">Личное</p>
+                {!isEdit && <p className="user-profile-section-title">Личное</p>}
                 {!isEdit && canEdit && <NavLink to={editPath}>
                     <button className="edit-mode-button">
                         редактировать
@@ -79,16 +77,19 @@ const UserPersonalInfoCardController = ({
                 onChange={setDraftUser}
                 disabled={editingDisabled}
             />
-            {isEdit && <div className="user-personal-info-controller__actions">
-                <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
-                    <button className="undo-edit-button" onClick={handleUndo} disabled={editingDisabled}>
-                        отменить
+            {isEdit && <>
+                <p className="user-personal-info-controller__hint">нажмите `сохранить` чтобы данные изменились</p>
+                <div className="user-personal-info-controller__actions">
+                    <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
+                        <button className="undo-edit-button" onClick={handleUndo} disabled={editingDisabled}>
+                            отменить
+                        </button>
+                    </NavLink>
+                    <button className="save-mode-button" onClick={handleSave} disabled={editingDisabled}>
+                        сохранить
                     </button>
-                </NavLink>
-                <button className="edit-mode-button" onClick={handleSave} disabled={editingDisabled}>
-                    сохранить
-                </button>
-            </div>
+                </div>
+            </>
             }
 
         </div>

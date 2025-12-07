@@ -9,26 +9,50 @@
     width: max-content;
 }
 
+.user-personal-info-card.user-personal-info-card--edit {
+    gap: 18px;
+    padding-top: 40px;
+    margin-top: -100px;
+}
+
 .label {
     min-width: 144px;
+    font-size: 16px;
 }
 
 .user-personal-info-card-item > input,
 .user-personal-info-card-item > textarea {
-    height: 40px;
+    height: 38px;
     border-radius: 10px;
-    border: 2px solid #CED9DC;
-    width: 460px;
+    border: 1px solid #CED9DC;
+    width: 418px;
     background: var(--color-primary-white);
 
-    color: var(--color-secondary-dark-blue);
-    font-size: 18px;
+    color: var(--color-primary-graphite);
+    font-size: 16px;
+    font-family: "Golos Text", sans-serif;
+    font-weight: 500;
 
-    padding: 0 10px;
+    padding: 10px;
 }
 
 .user-personal-info-card-item > textarea {
-    height: 96px;
+    min-height: 115px;
+}
+
+.user-personal-info-card--edit .user-personal-info-card-item > input[type="date"] {
+    width: 150px;
+    cursor: text;
+}
+
+.user-personal-info-card__optional-note {
+    font-family: "Golos Text", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: black;
+
+    margin-top: 46px;
+    margin-bottom: 3px;
 }
 
 .user-personal-info-card-status-set,
@@ -46,39 +70,18 @@
     width: 200px;
 }
 
-.user-personal-info-card-status-set > select {
-    height: 40px;
-    border-radius: 10px;
-    border: 2px solid #CED9DC;
-    width: 100%;
-
-    font-size: 18px;
-    color: var(--color-primary-graphite) !important;
-
-    padding-left: 8px;
-}
-
-/* styled select to match input appearance */
 .styled-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    height: 40px;
+    height: 38px;
     border-radius: 10px;
-    border: 2px solid #CED9DC;
+    border: 1px solid #CED9DC;
     background: var(--color-primary-white);
-    padding: 0 12px;
-    padding-right: 36px; /* space for arrow */
-    font-size: 18px;
-    color: var(--color-secondary-dark-blue);
-    max-width: 460px;
-    width: 100%;
-
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20'%3E%3Cpath fill='%23808B94' d='M5.25 7.5L10 12.25 14.75 7.5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 12px 12px;
+    padding: 8px 10px;
+    font-size: 16px;
+    font-family: "Golos Text", sans-serif;
+    font-weight: 500;
+    color: var(--color-primary-graphite);
+    width: 160px;
+    cursor: pointer;
 }
 
 .copy-button {

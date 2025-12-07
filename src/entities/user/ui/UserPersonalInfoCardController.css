@@ -17,3 +17,9 @@
   height: 48px;
 }
 
+.user-personal-info-controller__hint {
+    font-size: 14px;
+    font-family: "Golos Text", sans-serif;
+    color: var(--color-secondary-dark-blue);
+    margin: 32px 0;
+}

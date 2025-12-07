@@ -8,9 +8,17 @@
     font-weight: 500;
 }
 
+.user-main-properties-container.edit-mode {
+    align-items: start;
+}
+
 .user-main-properties-name {
     font-weight: 600;
     font-size: 40px;
+}
+
+.user-main-properties-title-override {
+    font-size: 28px;
 }
 
 .user-main-properties {

@@ -63,14 +63,19 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         if (onChange) onChange(newUser);
     };
 
-    const rows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
-        {key: "city", label: 'город'},
+    const primaryRows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
+        {key: "city", label: "город"},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
-        {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "mattermost", label: 'mattermost'},
+    ];
+
+    const optionalRows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
         {key: "tg", label: 'ник telegram'},
+        {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "aboutMe", label: 'обо мне', textarea: true},
     ];
+
+    const allRows = [...primaryRows, ...optionalRows];
 
     const copyableFields = useMemo(
         () => new Set<keyof User>(["phone", "mattermost", "tg"]),
@@ -81,8 +86,8 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
 
     if (!isEdit) {
         return (
-            <div className="user-personal-info-card">
-                {rows.map((r, idx) => (
+            <div className="user-personal-info-card user-personal-info-card--view">
+                {allRows.map((r, idx) => (
                     <React.Fragment key={String(r.key)}>
                         <RowInfo label={r.label}>
                             {(() => {
@@ -120,32 +125,36 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                                 return value;
                             })()}
                         </RowInfo>
-                        {idx !== rows.length - 1 && <hr/>}
+                        {idx !== allRows.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
             </div>
         );
     }
 
+    const renderField = (r: { key: keyof User; label: string; inputType?: string; textarea?: boolean }) => (
+        <React.Fragment key={String(r.key)}>
+            <RowInfo label={r.label}>
+                <Field
+                    onChangeValue={v => update(r.key, v)}
+                    value={(() => {
+                        const val = editedUser[r.key] as any;
+                        if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
+                        return String(val ?? '');
+                    })()}
+                    disabled={!!disabled}
+                    type={r.inputType || 'text'}
+                    textarea={r.textarea}
+                />
+            </RowInfo>
+        </React.Fragment>
+    );
+
     return (
-        <div className="user-personal-info-card">
-            {rows.map((r) => (
-                <React.Fragment key={String(r.key)}>
-                    <RowInfo label={r.label}>
-                        <Field
-                            onChangeValue={v => update(r.key, v)}
-                            value={(() => {
-                                const val = editedUser[r.key] as any;
-                                if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
-                                return String(val ?? '');
-                            })()}
-                            disabled={!!disabled}
-                            type={r.inputType || 'text'}
-                            textarea={r.textarea}
-                        />
-                    </RowInfo>
-                </React.Fragment>
-            ))}
+        <div className="user-personal-info-card user-personal-info-card--edit">
+            {primaryRows.map(renderField)}
+            <p className="user-personal-info-card__optional-note">Необязательно, но люди больше узнают о тебе</p>
+            {optionalRows.map(renderField)}
             <WorkerStatusSelectorRowInfo
                 status={editedUser.status}
                 onChange={v => update("status", v)}

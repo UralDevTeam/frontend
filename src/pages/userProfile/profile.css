@@ -10,6 +10,7 @@
     margin-top: 20px;
     margin-left: 137px;
     font-size: 16px;
+    padding-bottom: 50px;
 }
 
 .user-profile-section {
@@ -24,47 +25,58 @@
     height: 48px;
 }
 
-.edit-mode-button,
-.undo-edit-button {
+.save-mode-button,
+.undo-edit-button,
+.edit-mode-button {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    height: 40px;
-    width: 156px;
-    padding: 0 16px;
+    height: 39px;
+    width: 119px;
+    padding: 0 18px;
 
-    border: none;
-    outline: var(--color-secondary-dark-blue) solid 2px;
-    border-radius: 12px;
-
-    color: var(--color-secondary-dark-blue);
-    background-color: #F8F9FA;
     cursor: pointer;
 
     font-size: 16px;
+    font-weight: 500;
+    font-family: 'Golos Text', sans-serif;
+
+    border-radius: 12px;
+
+    transition: transform 0.15s ease;
+}
+
+.save-mode-button:hover,
+.undo-edit-button:hover,
+.edit-mode-button:hover {
+    transform: scale(1.05);
+}
+
+.save-mode-button {
+    border: none;
+    background-color: var(--color-secondary-dark-blue);
+    color: var(--color-primary-white);
+}
+
+
+.undo-edit-button {
+    border: none;
+    outline: var(--color-secondary-dark-blue) solid 2px;
+
+
+    color: var(--color-secondary-dark-blue);
+    background-color: #F8F9FA;
 }
 
 .edit-mode-button {
-    margin-left: 44px;
+    width: 156px;
+    margin-left: 35px;
+
+    border: none;
+    outline: var(--color-secondary-dark-blue) solid 2px;
+
+
+    color: var(--color-secondary-dark-blue);
+    background-color: #F8F9FA;
 }
-
-/*.undo-edit-button {*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-
-/*    height: 40px;*/
-/*    width: max-content;*/
-/*    padding: 0 16px;*/
-
-/*    border: none;*/
-/*    outline: var(--color-secondary-dark-blue) solid 1px;*/
-/*    border-radius: 15px;*/
-
-/*    color: var(--color-secondary-dark-blue);*/
-/*    background-color: #F8F9FA;*/
-/*    cursor: pointer;*/
-
-/*    font-size: 16px;*/
-/*}*/

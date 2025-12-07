@@ -7,7 +7,7 @@ export default function getWorkerStatusRussian(workerStatus: string) {
         case WorkerStatuses.vacation:
             return "в отпуске";
         case WorkerStatuses.sickLeave:
-            return "на больничном";
+            return "заболел";
         default:
             return "Неизвестный статус";
     }

@@ -23,6 +23,12 @@ main {
     border-collapse: collapse;
 }
 
+.employees-table-head__column_label > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .employees-table-row td,
 .employees-table-head th {
     border-bottom: 2px solid #CED9DC;

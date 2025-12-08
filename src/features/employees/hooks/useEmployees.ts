@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { usersStore, createUser } from '../../../entities/users';
-import { WorkerStatuses } from '../../../shared/statuses/workerStatuses';
+import {useEffect, useMemo, useState} from 'react';
+import {createUser, usersStore} from '../../../entities/users';
+import {WorkerStatuses} from '../../../shared/statuses/workerStatuses';
 
 export type EmployeeTableInfo = {
   id: string;
@@ -14,6 +14,11 @@ export type EmployeeTableInfo = {
   team?: string;
 };
 
+export interface SortConfig {
+  key: keyof EmployeeTableInfo;
+  direction: 'asc' | 'desc';
+}
+
 export function useEmployees() {
   const [onlyAdminFilter, setOnlyAdminFilter] = useState(false);
   const [nameFilter, setNameFilter] = useState('');
@@ -22,7 +27,8 @@ export function useEmployees() {
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [addMode, setAddMode] = useState(false);
   const [isSavingNew, setIsSavingNew] = useState(false);
-  const [newUser, setNewUser] = useState<Partial<EmployeeTableInfo & {email?: string, phone?: string}>>({});
+  const [newUser, setNewUser] = useState<Partial<EmployeeTableInfo & { email?: string, phone?: string }>>({});
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
@@ -45,29 +51,72 @@ export function useEmployees() {
   })), [sourceUsers]);
 
   const statusOptions: Array<keyof typeof WorkerStatuses> = useMemo(() =>
-    Array.from(new Set(tableData.map(t => t.status))).filter(Boolean) as Array<keyof typeof WorkerStatuses>
-  , [tableData]);
+      Array.from(new Set(tableData.map(t => t.status))).filter(Boolean) as Array<keyof typeof WorkerStatuses>
+    , [tableData]);
 
-  const roleOptions: string[] = useMemo(() => Array.from(new Set(tableData.map(t => t.role))).filter(Boolean).sort((a, b) => a.localeCompare(b)), [tableData]);
+  const roleOptions: string[] = useMemo(() =>
+      Array.from(new Set(tableData.map(t => t.role))).filter(Boolean).sort((a, b) => a.localeCompare(b)),
+    [tableData]
+  );
 
-  const departmentOptions: string[] = useMemo(() => Array.from(new Set(tableData.map(t => t.department || ''))).filter(d => d).sort((a, b) => a.localeCompare(b)), [tableData]);
+  const departmentOptions: string[] = useMemo(() =>
+      Array.from(new Set(tableData.map(t => t.department || ''))).filter(d => d).sort((a, b) => a.localeCompare(b)),
+    [tableData]
+  );
 
-  const filteredData = useMemo(() => {
+  const handleSort = (key: SortConfig['key']) => {
+    let direction: 'asc' | 'desc' = 'asc';
+
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig && sortConfig.key === key && sortConfig.direction === 'desc') {
+      setSortConfig(null);
+      return;
+    }
+
+    setSortConfig({key, direction});
+  };
+
+  const sortedAndFilteredData = useMemo(() => {
     const name = nameFilter.trim().toLowerCase();
     const role = roleFilter.trim();
     const dept = departmentFilter.trim();
 
-    return tableData.filter(e => (
+    let result = tableData.filter(e => (
       (!onlyAdminFilter || e.isAdmin === onlyAdminFilter) &&
       (!name || e.name.toLowerCase().includes(name)) &&
       (!role || e.role === role) &&
       (!statusFilter || e.status === (statusFilter as keyof typeof WorkerStatuses)) &&
       (!dept || (e.department || '').toLowerCase() === dept.toLowerCase())
     ));
-  }, [onlyAdminFilter, nameFilter, roleFilter, statusFilter, departmentFilter, tableData]);
+
+    console.log(result);
+    if (sortConfig) {
+      result.sort((a: EmployeeTableInfo, b: EmployeeTableInfo) => {
+        const aValue: string | boolean | undefined = a[sortConfig.key];
+        const bValue: string | boolean | undefined = b[sortConfig.key];
+
+        // Проверяем на null/undefined
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return 1;
+        if (bValue == null) return -1;
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          if (sortConfig.direction === 'asc') {
+            return aValue.localeCompare(bValue);
+          } else {
+            return bValue.localeCompare(aValue);
+          }
+        }
+        return 0;
+      })
+    }
+    return result;
+
+  }, [onlyAdminFilter, nameFilter, roleFilter, statusFilter, departmentFilter, tableData, sortConfig]);
 
   const startAdd = () => {
-    setNewUser({ name: '', role: '', status: WorkerStatuses.active, department: '', mail: '' });
+    setNewUser({name: '', role: '', status: WorkerStatuses.active, department: '', mail: ''});
     setAddMode(true);
   };
 
@@ -79,7 +128,6 @@ export function useEmployees() {
   const saveNewUser = async () => {
     setIsSavingNew(true);
     try {
-      // Map newUser to backend UserDTO partial
       const payload: any = {
         fio: newUser.name ?? '',
         role: newUser.role ?? '',
@@ -145,7 +193,6 @@ export function useEmployees() {
     setDepartmentFilter,
     // data
     tableData,
-    filteredData,
     statusOptions,
     roleOptions,
     departmentOptions,
@@ -157,6 +204,10 @@ export function useEmployees() {
     setNewUser,
     saveNewUser,
     isSavingNew,
+    // sorting
+    sortedData: sortedAndFilteredData,
+    sortConfig,
+    handleSort,
 
     // сгруппированные объекты
     filters,

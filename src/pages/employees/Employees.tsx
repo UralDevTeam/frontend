@@ -7,7 +7,7 @@ import EmployeesTable from "../../features/employees/ui/EmployeesTable";
 import {userStore} from "../../entities/user";
 
 function EmployeesComponent() {
-  const { filters, options, add, newUserState, filteredData } = useEmployees();
+  const { filters, options, add, newUserState, sortedData, sortConfig, handleSort } = useEmployees();
 
   const {
     name: nameFilter,
@@ -56,10 +56,12 @@ function EmployeesComponent() {
       />
 
       <EmployeesTable
-        data={filteredData}
+        data={sortedData}
         addMode={addMode}
         newUser={newUser}
         setNewUser={setNewUser}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
     </main>
   )

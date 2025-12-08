@@ -100,8 +100,8 @@ export class AuthStore implements AuthState {
       const data: AuthResponse = await res.json();
 
       runInAction(() => {
-        this.setToken(data.access_token);
-        this.setTokenType(data.token_type);
+        this.setToken(data.accessToken);
+        this.setTokenType(data.tokenType);
         this.isLoading = false;
       });
     } catch (error) {

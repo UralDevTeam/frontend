@@ -28,7 +28,7 @@
     position: absolute;
     border-radius: 50%;
     inset: 0;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;

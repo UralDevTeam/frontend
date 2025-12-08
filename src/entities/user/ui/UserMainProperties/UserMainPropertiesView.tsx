@@ -11,7 +11,13 @@ type Prop = {
 export default function UserMainPropertiesView({user, toSelf = false}: Prop) {
     return (
         <div className="user-main-properties-container">
-            <ProfileCircle size={106} userId={user.id} toSelf={toSelf} isAdmin={user.isAdmin}/>
+            <ProfileCircle
+                size={106}
+                userId={user.id}
+                toSelf={toSelf}
+                isAdmin={user.isAdmin}
+                addStar={true}
+            />
             <div className={"user-main-properties"}>
                 <p className="user-main-properties-name">
                     {user.fio}

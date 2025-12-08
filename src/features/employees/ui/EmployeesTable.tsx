@@ -28,32 +28,32 @@ const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => 
     {
       field: 'name' as const,
       type: 'text',
-      placeholder: 'Имя'
+      placeholder: 'имя'
     },
     {
-      field: 'role' as const,
+      field: 'position' as const,
       type: 'text',
-      placeholder: 'Роль'
+      placeholder: 'роль'
     },
     {
       field: 'status' as const,
       type: 'select',
-      placeholder: 'Статус'
+      placeholder: 'статус'
     },
     {
       field: 'department' as const,
       type: 'text',
-      placeholder: 'Подразделение'
+      placeholder: 'подразделение'
     },
     {
       field: 'legalEntity' as const,
       type: 'text',
-      placeholder: 'Юр. лицо'
+      placeholder: 'юр. лицо'
     },
     {
       field: 'mail' as const,
       type: 'email',
-      placeholder: 'Почта'
+      placeholder: 'почта'
     }
   ];
 
@@ -119,7 +119,7 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
           </div>
         </Link>
       </td>
-      <td>{employee.role}</td>
+      <td>{employee.position}</td>
       <td>
         <WorkerStatus status={employee.status}/>
       </td>
@@ -150,8 +150,8 @@ const TableHeader = ({sortConfig, onSort}: {
       <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("name")}>
         <div><p>Имя</p> {getSortIcon("name")}</div>
       </th>
-      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("role")}>
-        <div><p>Роль</p> {getSortIcon("role")}</div>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("position")}>
+        <div><p>Роль</p> {getSortIcon("position")}</div>
       </th>
       <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("status")}>
         <div><p>Статус</p> {getSortIcon("status")}</div>

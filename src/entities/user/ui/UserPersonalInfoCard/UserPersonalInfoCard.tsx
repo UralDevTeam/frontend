@@ -26,7 +26,8 @@ function Field(props: {
     inputClassName?: string;
 }) {
     const {value, disabled, type = 'text', onChangeValue, textarea, className, inputClassName} = props;
-    const wrapperClass = ["user-personal-info-card-item", className].filter(Boolean).join(" ");    return (
+    const wrapperClass = ["user-personal-info-card-item", className].filter(Boolean).join(" ");
+    return (
         <div className={wrapperClass}>
             {textarea ? (
                 <textarea
@@ -121,7 +122,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
 
                                 if (r.key === "birthday") {
                                     const formatted = formatDateRussian(rawValue as Date | string | undefined, {
-                                        hideYear: user.hideBirthdayYear,
+                                        hideYear: !user.isBirthyearVisible,
                                     });
                                     return formatted || "-";
                                 }
@@ -173,7 +174,9 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
 
         const inputClassNames = [
             isPlaceholderOnly ? 'user-personal-info-card-item__placeholder-value' : '',
-            r.key === 'birthday' && editedUser.hideBirthdayYear ? 'birthday-field__input-control--hidden-year' : '',
+            r.key === 'birthday' && !editedUser.isBirthyearVisible
+                ? 'birthday-field__input-control--hidden-year'
+                : ''
         ].filter(Boolean).join(' ');
 
         const handleChange = (nextValue: string) => {
@@ -200,15 +203,16 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                     <RowInfo label={r.label}>
                         <div className="birthday-field">
                             {field}
-                            {editedUser.hideBirthdayYear ? (
-                                <EyeCloseIcon
-                                    className="birthday-field__icon eye-closed"
-                                    onClick={() => update('hideBirthdayYear', false)}
-                                />
-                            ) : (
+                            {editedUser.isBirthyearVisible ? (
                                 <EyeIcon
                                     className="birthday-field__icon"
-                                    onClick={() => update('hideBirthdayYear', true)}
+                                    onClick={() => update('isBirthyearVisible', false)}
+                                />
+
+                            ) : (
+                                <EyeCloseIcon
+                                    className="birthday-field__icon eye-closed"
+                                    onClick={() => update('isBirthyearVisible', true)}
                                 />
                             )}
                         </div>

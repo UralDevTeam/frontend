@@ -56,7 +56,7 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
                 </NavLink>
             ) : '-'
         },
-        {key: 'role', label: 'роль', content: user.role || '-'},
+        {key: 'role', label: 'роль', content: user.position || '-'},
         {key: 'legalEntity', label: 'юр.лицо', content: (user as any).legalEntity || '-'},
         {key: 'department', label: 'подразделение', content: (user as any).department || '-'},
         {key: 'formatTeam', label: 'группа', content: (user as any).formatTeam || '-'},

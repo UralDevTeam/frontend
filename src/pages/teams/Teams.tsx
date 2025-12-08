@@ -162,7 +162,7 @@ export default function Teams() {
                   key={item.id}
                   userId={item.id}
                   userName={item.name}
-                  userRole={item.role}
+                  userRole={item.position}
                   onDragStart={handleUserDragStart}
                   onDragEnd={handleUserDragEnd}
                   disabled={isInLocalFolder} // Нельзя перемещать из локальных папок
@@ -171,7 +171,7 @@ export default function Teams() {
                     id={item.id}
                     isAdmin={item.isAdmin}
                     title={item.name}
-                    about={item.role}
+                    about={item.position}
                     depth={item.depth + 0.5}
                     matched={matchedIds[item.id]}
                   />

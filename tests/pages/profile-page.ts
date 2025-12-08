@@ -14,7 +14,7 @@ export class ProfilePage {
   readonly email: Locator;
   readonly experience: Locator;
   readonly manager: Locator;
-  readonly role: Locator;
+  readonly position: Locator;
   readonly legalEntity: Locator;
   readonly department: Locator;
   readonly team: Locator;
@@ -43,7 +43,7 @@ export class ProfilePage {
     this.email = this.getRowByLabel('почта');
     this.experience = this.getRowByLabel('стаж');
     this.manager = this.getRowByLabel('руководитель');
-    this.role = this.getRowByLabel('роль');
+    this.position = this.getRowByLabel('роль');
     this.legalEntity = this.getRowByLabel('юр.лицо');
     this.department = this.getRowByLabel('подразделение');
     this.team = this.getRowByLabel('группа');

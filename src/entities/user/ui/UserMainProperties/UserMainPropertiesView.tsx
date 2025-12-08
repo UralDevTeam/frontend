@@ -17,7 +17,7 @@ export default function UserMainPropertiesView({user, toSelf = false}: Prop) {
                     {user.fio}
                 </p>
                 <div className="user-main-properties-line">
-                    {user.role}
+                    {user.position}
                     <img src={"/icons/dot.svg"} alt={"dot icon"}/>
                     {user.team.join(" / ")}
                     <img src={"/icons/dot.svg"} alt={"dot icon"}/>

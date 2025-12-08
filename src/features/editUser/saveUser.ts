@@ -9,8 +9,11 @@ export async function saveUser(updatedUser: User) {
         mattermost: updatedUser.mattermost ?? "",
         tg: updatedUser.tg ?? "",
         aboutMe: updatedUser.aboutMe ?? "",
-        // birth_date: updatedUser.birthday ? new Date(updatedUser.birthday).toISOString().slice(0, 10) : "",
-        // hideBirthdayYear: updatedUser.hideBirthdayYear ?? false,
+        birthDate: updatedUser.birthday
+            ? new Date(updatedUser.birthday).toISOString().slice(0, 10)
+            : "",
+        isBirthyearVisible: updatedUser.isBirthyearVisible ?? true,
+        status: updatedUser.status,
     };
 
     const headers: Record<string, string> = {

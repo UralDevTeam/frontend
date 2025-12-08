@@ -40,10 +40,23 @@
     min-height: 115px;
 }
 
+.user-personal-info-card-item__placeholder-value {
+    color: #9DA3A4;
+}
+
 .user-personal-info-card--edit .user-personal-info-card-item > input[type="date"] {
     width: 150px;
     cursor: text;
 }
+
+.birthday-field__input-control--hidden-year {
+    color: #9DA3A4;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
 
 .user-personal-info-card__optional-note {
     font-family: "Golos Text", sans-serif;
@@ -68,6 +81,32 @@
 
 .user-personal-info-card-status-view {
     width: 200px;
+}
+
+.birthday-field {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.birthday-field__icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    color: var(--color-secondary-dark-blue);
+    user-select: none;
+}
+
+.birthday-field__icon.eye-closed {
+    color: #CED9DC;
+}
+
+.birthday-field__input-control--hidden-year::-webkit-datetime-edit-year-field {
+    color: #CED9DC;
 }
 
 .styled-select {

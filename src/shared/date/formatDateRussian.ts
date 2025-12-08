@@ -13,7 +13,7 @@ const MONTHS = [
     "декабря",
 ];
 
-export const formatDateRussian = (value?: Date | string | number | null) => {
+export const formatDateRussian = (value?: Date | string | number | null, options?: { hideYear?: boolean }) => {
     if (value === null || value === undefined || value === "") {
         return "";
     }
@@ -27,6 +27,10 @@ export const formatDateRussian = (value?: Date | string | number | null) => {
     const day = date.getDate();
     const month = MONTHS[date.getMonth()];
     const year = date.getFullYear();
+
+    if (options?.hideYear) {
+        return `${day} ${month}`;
+    }
 
     return `${day} ${month} ${year}`;
 };

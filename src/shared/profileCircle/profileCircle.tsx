@@ -17,7 +17,7 @@ export default function ProfileCircle({size, isAdmin = false, toSelf = true, use
         <img src={"/icons/Star.svg"} width={starSize} height={starSize} alt={"is admin"}
              style={{position: "absolute", transform: `translate(0, ${size - starSize}px)`}}
         />}
-      <img src={"/man.png"} alt="me" width={size} height={size} style={{borderRadius: "100%"}}/>
+      <img src={"/defaultPhoto.png"} alt="me" width={size} height={size} style={{borderRadius: "100%"}}/>
     </NavLink>
   )
 }

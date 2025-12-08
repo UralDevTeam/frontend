@@ -4,8 +4,8 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  access_token: string;
-  token_type: string;
+  accessToken: string;
+  tokenType: string;
 }
 
 export interface AuthState {

@@ -136,20 +136,35 @@ const TableHeader = ({sortConfig, onSort}: {
 }) => {
   const getSortIcon = (key: SortConfig['key']) => {
     if (!sortConfig || sortConfig.key !== key) {
-      return "↕️";
+      return <img src={"icons/column-sorting.svg"}/>;
     }
-    return sortConfig.direction === 'asc' ? '↑' : '↓';
+    if (sortConfig.direction === 'asc') {
+      return <img src={"icons/column-sorting-down.svg"}/>
+    }
+    return <img src={"icons/column-sorting-up.svg"}/>
   };
   return (
     <thead className="employees-table-head">
     <tr>
       <th></th>
-      <th onClick={() => onSort && onSort("name")}>Имя{getSortIcon("name")}</th>
-      <th onClick={() => onSort && onSort("role")}>Роль{getSortIcon("role")}</th>
-      <th onClick={() => onSort && onSort("status")}>Статус{getSortIcon("status")}</th>
-      <th onClick={() => onSort && onSort("department")}>Подразделение{getSortIcon("department")}</th>
-      <th onClick={() => onSort && onSort("legalEntity")}>Юр. лицо{getSortIcon("legalEntity")}</th>
-      <th onClick={() => onSort && onSort("mail")}>Почта{getSortIcon("mail")}</th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("name")}>
+        <div><p>Имя</p> {getSortIcon("name")}</div>
+      </th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("role")}>
+        <div><p>Роль</p> {getSortIcon("role")}</div>
+      </th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("status")}>
+        <div><p>Статус</p> {getSortIcon("status")}</div>
+      </th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("department")}>
+        <div><p>Подразделение</p> {getSortIcon("department")}</div>
+      </th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("legalEntity")}>
+        <div><p>Юр. лицо</p> {getSortIcon("legalEntity")}</div>
+      </th>
+      <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("mail")}>
+        <div><p>Почта</p> {getSortIcon("mail")}</div>
+      </th>
     </tr>
     </thead>
   );

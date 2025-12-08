@@ -6,22 +6,42 @@ import UserLine from "./UserLine";
 import {useDebounce} from "../../shared/helper/debounce";
 import {usersStore} from "../../entities/users";
 import AddTeamRow from "./AddTeamRow";
-
+import { DraggableUserWrapper } from "./DraggableUserWrapper";
+import { DroppableFolderWrapper } from "./DroppableFolderWrapper";
 
 export default function Teams() {
-  const {loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds, getNodesAtDepthFromFlat, createFolder} = useTeams();
+  const {
+    loading,
+    flatList,
+    aggregates,
+    expanded,
+    toggle,
+    isVisible,
+    setSearchTerm,
+    matchedIds,
+    getNodesAtDepthFromFlat,
+    createFolder,
+    moveUser,
+    nodesById
+  } = useTeams();
+
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 300);
-
   const [addMode, setAddMode] = useState(false);
+  const [dragState, setDragState] = useState<{
+    isDragging: boolean;
+    userId?: string;
+    userName?: string;
+    userRole?: string;
+  }>({ isDragging: false });
 
   const onStartAdd = () => {
     setAddMode(true);
-  }
+  };
 
   const onCancelAdd = () => {
     setAddMode(false);
-  }
+  };
   const onFinishEnd = onCancelAdd;
 
   useEffect(() => {
@@ -34,12 +54,44 @@ export default function Teams() {
     setSearchTerm(debouncedSearchTerm);
   }, [debouncedSearchTerm, setSearchTerm]);
 
-  if (loading) return <div>Loading...</div>;
+  const handleUserDragStart = (userId: string, userName: string, userRole?: string) => {
+    setDragState({
+      isDragging: true,
+      userId,
+      userName,
+      userRole
+    });
+  };
 
+  const handleUserDragEnd = () => {
+    setDragState({ isDragging: false });
+  };
+
+  const handleFolderDrop = (folderId: string, folderName: string) => {
+    if (dragState.userId && dragState.userId !== folderId) {
+      const folder = nodesById.get(folderId);
+      if (folder) {
+        if (window.confirm(`Переместить ${dragState.userName} в папку "${folderName}"?`)) {
+          moveUser(dragState.userId, folder);
+          console.log(`Пользователь ${dragState.userName} перемещен в ${folderName}`);
+        }
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <main className="main teams-page">
       <h2 className="teams-title">Все сотрудники</h2>
+
+      {/* Индикатор перетаскивания */}
+      {dragState.isDragging && dragState.userName && (
+        <div className="drag-indicator">
+          <span className="drag-indicator-icon">↕️</span>
+          Перемещаем: {dragState.userName}
+        </div>
+      )}
 
       <div className="teams-table-setings">
         <div className="teams-search">
@@ -83,21 +135,47 @@ export default function Teams() {
                   domains: 0
                 };
                 return (
-                  <TeamRow key={item.id} item={item} agg={agg} expanded={expanded} toggle={toggle}
-                           matched={matchedIds[item.id]}/>
+                  <DroppableFolderWrapper
+                    key={item.id}
+                    folderId={item.id}
+                    folderName={item.name}
+                    onDrop={handleFolderDrop}
+                    disabled={dragState.userId === item.id} // Нельзя перемещать в себя
+                  >
+                    <TeamRow
+                      item={item}
+                      agg={agg}
+                      expanded={expanded}
+                      toggle={toggle}
+                      matched={matchedIds[item.id]}
+                    />
+                  </DroppableFolderWrapper>
                 );
               }
 
+              // Для пользователей
+              const node = nodesById.get(item.ancestors[item.ancestors.length - 1]);
+              const isInLocalFolder = node?.isLocal;
+
               return (
-                <UserLine
+                <DraggableUserWrapper
                   key={item.id}
-                  id={item.id}
-                  isAdmin={item.isAdmin}
-                  title={item.name}
-                  about={item.role}
-                  depth={item.depth + 0.5}
-                  matched={matchedIds[item.id]}
-                />
+                  userId={item.id}
+                  userName={item.name}
+                  userRole={item.role}
+                  onDragStart={handleUserDragStart}
+                  onDragEnd={handleUserDragEnd}
+                  disabled={isInLocalFolder} // Нельзя перемещать из локальных папок
+                >
+                  <UserLine
+                    id={item.id}
+                    isAdmin={item.isAdmin}
+                    title={item.name}
+                    about={item.role}
+                    depth={item.depth + 0.5}
+                    matched={matchedIds[item.id]}
+                  />
+                </DraggableUserWrapper>
               );
             })}
           </div>

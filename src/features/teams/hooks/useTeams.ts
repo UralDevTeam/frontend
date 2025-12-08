@@ -234,6 +234,11 @@ export function useTeams() {
   const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
   const [usersVersion, setUsersVersion] = useState(0);
   const [foldersVersion, setFoldersVersion] = useState(0);
+  const [dragState, setDragState] = useState<{
+    isDragging: boolean;
+    userId?: string;
+    userName?: string;
+  }>({ isDragging: false });
 
   useEffect(() => {
     const disposer = autorun(() => {
@@ -447,8 +452,10 @@ export function useTeams() {
     setSearchTerm,
     matchedIds,
     getNodesAtDepthFromFlat,
-    // Экспортируем новые методы
     createFolder,
-    moveUser
+    moveUser,
+    dragState,
+    setDragState,
+    nodesById
   };
 }

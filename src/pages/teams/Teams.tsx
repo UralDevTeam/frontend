@@ -9,7 +9,7 @@ import AddTeamRow from "./AddTeamRow";
 
 
 export default function Teams() {
-  const {loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds} = useTeams();
+  const {loading, flatList, aggregates, expanded, toggle, isVisible, setSearchTerm, matchedIds, getNodesAtDepthFromFlat, createFolder} = useTeams();
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 300);
 
@@ -22,6 +22,7 @@ export default function Teams() {
   const onCancelAdd = () => {
     setAddMode(false);
   }
+  const onFinishEnd = onCancelAdd;
 
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
@@ -65,7 +66,10 @@ export default function Teams() {
         <div className="simple-border-card teams-tree-card">
           <div className="teams-list">
 
-            {addMode && <AddTeamRow/>}
+            {addMode && <AddTeamRow
+              getNodesAtDepthFromFlat={getNodesAtDepthFromFlat}
+              createFolder={createFolder}
+              onFinish={onFinishEnd}/>}
 
             {flatList.map(item => {
               if (!isVisible(item.ancestors)) return null;

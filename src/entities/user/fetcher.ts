@@ -15,7 +15,7 @@ type BackendUserDTO = {
   birthday?: string;
   team?: string[];
   boss?: { id: string; fullName: string; shortName: string } | null;
-  role?: string;
+  position?: string;
   grade?: string;
   experience?: number;
   status?: string;
@@ -96,7 +96,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     birthday: birthdayIso ?? undefined,
     team,
     boss,
-    role: safeString(u.role),
+    position: safeString(u.position),
     experience,
     status: mapStatusToWorkerStatus(u.status),
 

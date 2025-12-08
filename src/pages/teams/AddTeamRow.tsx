@@ -1,6 +1,7 @@
 import FolderIcon from "./FolderIcon";
 import React, {useEffect, useState} from "react";
 import "./AddTeamRow.css"
+import {TeamNode} from "../../features/teams/hooks/useTeams";
 
 const Step1 = () => {
   return (
@@ -11,7 +12,6 @@ const Step1 = () => {
 }
 
 const Step2 = ({onSelect}: { onSelect: (depth: number) => void }) => {
-
   const levels = [
     {label: 'Домен', depth: 0, id: "domen"},
     {label: 'Юр. лицо', depth: 1, id: "your face"},
@@ -33,41 +33,55 @@ const Step2 = ({onSelect}: { onSelect: (depth: number) => void }) => {
   )
 }
 
-const Step3 = ({possibleTeams}: { possibleTeams: { label: string, depth: number, id: string }[] }) => {
+const Step3 = ({possibleTeams, depth, onSelect}: {
+  possibleTeams: TeamNode[],
+  depth: number,
+  onSelect: (parentFolder: TeamNode) => void
+}) => {
   return (
     <>
       Выберите куда будет вложено
       {possibleTeams.map((team) => (
         <label key={team.id} className="hint-step-2__teams-select-label">
-          <input type="radio" name="level" value={team.id}/>
-          <FolderIcon depth={team.depth}/>
-          {team.label}
+          <input type="radio" name="parent" value={team.id} onClick={() => onSelect(team)}/>
+          <FolderIcon depth={depth}/>
+          {team.name}
         </label>
       ))}
     </>
   )
 }
 
-const AddTeamRow = () => {
+const AddTeamRow = ({getNodesAtDepthFromFlat, createFolder, onFinish}: {
+  getNodesAtDepthFromFlat: (depth: number) => TeamNode[],
+  createFolder: (name: string, parentFolder?: TeamNode) => string,
+  onFinish: () => void,
+}) => {
   const [step, setStep] = useState(1);
   const [folderName, setFolderName] = useState('');
-  const [folderType, setFolderType] = useState<number>();
+  const [folderType, setFolderType] = useState<number | null>(null);
+
+  const createTeam = (parentFolder: TeamNode) => {
+    console.log("Creating folder:", folderName, "in:", parentFolder);
+    createFolder(folderName, parentFolder);
+    onFinish();
+  }
 
   useEffect(() => {
-    if (folderName.length == 0) {
+    if (!folderName.trim()) {
       setStep(1);
+      setFolderType(null);
       return;
     }
-    if (folderType === undefined) {
+    if (folderType === null) {
       setStep(2);
       return;
     }
     setStep(3);
   }, [folderName, folderType]);
 
-  useEffect(() => {
-    console.log(step)
-  }, [step]);
+  // Получаем возможные родительские папки для выбранного типа
+  const possibleParents = folderType !== null ? getNodesAtDepthFromFlat(folderType) : [];
 
   return (
     <div className="teams-row">
@@ -82,24 +96,34 @@ const AddTeamRow = () => {
               setFolderName(e.target.value);
             }}
             className="add-team-input"
+            autoFocus
           />
 
           <div className="step-hint">
-
             {step === 1 && <Step1/>}
             {step === 2 && <Step2 onSelect={setFolderType}/>}
-            {step === 3 && <Step3 possibleTeams={[{label: "Основное", depth: 0, id: "2134"}]}/>}
+            {step === 3 && possibleParents.length > 0 ? (
+              <Step3
+                depth={folderType ?? -1}
+                possibleTeams={possibleParents}
+                onSelect={createTeam}
+              />
+            ) : step === 3 ? (
+              <div>Нет доступных родительских папок для выбранного типа</div>
+            ) : null}
 
             <div className="step-number">
-              {Array.from({length: 3}).map((_, i) => {
-                return (
-                  <svg width="5" height="5" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="2.5" cy="2.5" r="2.5" fill={i < step ? "#5D686B" : "#CED9DC"}/>
-                  </svg>
-                )
-              })}
+              {[1, 2, 3].map((stepNumber) => (
+                <svg key={stepNumber} width="5" height="5" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle
+                    cx="2.5"
+                    cy="2.5"
+                    r="2.5"
+                    fill={stepNumber <= step ? "#5D686B" : "#CED9DC"}
+                  />
+                </svg>
+              ))}
             </div>
-
           </div>
         </div>
       </div>
@@ -114,6 +138,5 @@ const AddTeamRow = () => {
     </div>
   );
 };
-
 
 export default AddTeamRow;

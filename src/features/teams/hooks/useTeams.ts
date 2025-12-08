@@ -1,12 +1,13 @@
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {usersStore} from '../../../entities/users';
 import {autorun} from 'mobx';
 
-type TeamNode = {
+export type TeamNode = {
   id: string;
   name: string;
   children?: TeamNode[];
   users: { id: string; name: string; role: string; mail: string, isAdmin: boolean }[];
+  isLocal?: boolean;
 };
 
 type Agg = { employees: number; groups: number; departments: number; legalEntities: number; domains: number };
@@ -34,28 +35,123 @@ type FlatUser = {
 
 export type FlatItem = FlatFolder | FlatUser;
 
+// Локальное хранилище для папок
+let localFolders: TeamNode[] = [];
+
+// Локальное хранилище для перемещений пользователей
+let userMoves: Record<string, string> = {};
+
 function buildTreeFromUsers(users: Array<any>): TeamNode[] {
   const map = new Map<string, TeamNode & { parentKey?: string }>();
 
   function ensureNode(key: string, name: string, parentKey?: string) {
     if (!map.has(key)) {
-      map.set(key, {id: key, name, users: [], children: [], parentKey});
+      map.set(key, {
+        id: key,
+        name,
+        users: [],
+        children: [],
+        parentKey,
+        isLocal: false
+      });
     }
     return map.get(key)!;
   }
 
+  // Сначала добавляем все локальные папки
+  function addLocalFolders() {
+    for (const folder of localFolders) {
+      // Для локальных папок сохраняем информацию о родителе
+      if (folder.id.includes('/')) {
+        // Это вложенная папка
+        const parts = folder.id.split('/');
+        const parentKey = parts.slice(0, -1).join('/');
+        const key = folder.id;
+
+        if (!map.has(key)) {
+          map.set(key, {
+            id: key,
+            name: folder.name,
+            users: [],
+            children: [],
+            parentKey: parentKey || undefined,
+            isLocal: true
+          });
+        }
+      } else {
+        // Это корневая папка
+        if (!map.has(folder.id)) {
+          map.set(folder.id, {
+            id: folder.id,
+            name: folder.name,
+            users: [],
+            children: [],
+            isLocal: true
+          });
+        }
+      }
+    }
+  }
+
+  addLocalFolders();
+
   for (const u of users || []) {
     const teamPath = Array.isArray(u.team) ? u.team : [];
+
+    // Проверяем, перемещен ли пользователь в другую папку
+    const userMove = userMoves[u.id];
+    if (userMove) {
+      // Если пользователь перемещен, добавляем его в новую папку
+      const movePath = userMove.split('/');
+      let pathKeyParts: string[] = [];
+
+      for (let i = 0; i < movePath.length; i++) {
+        const segment = String(movePath[i]);
+        pathKeyParts.push(segment);
+        const key = pathKeyParts.join('/');
+        const parentKey = pathKeyParts.length > 1 ? pathKeyParts.slice(0, -1).join('/') : undefined;
+
+        // Создаем папку, если ее еще нет
+        if (!map.has(key)) {
+          map.set(key, {
+            id: key,
+            name: segment,
+            users: [],
+            children: [],
+            parentKey,
+            isLocal: false
+          });
+        }
+
+        if (i === movePath.length - 1) {
+          const node = map.get(key)!;
+          // Проверяем, нет ли уже такого пользователя в этой папке
+          if (!node.users.find(user => user.id === u.id)) {
+            node.users.push({
+              id: u.id,
+              name: u.fio || u.fullName || '',
+              role: u.role || '',
+              mail: u.mail || u.email || '',
+              isAdmin: u.isAdmin ?? false
+            });
+          }
+        }
+      }
+      continue;
+    }
+
     if (teamPath.length === 0) {
       const rootKey = '__no_team__';
       const node = ensureNode(rootKey, 'No team');
-      node.users.push({
-        id: u.id,
-        name: u.fio || u.fullName || '',
-        role: u.role || '',
-        mail: u.mail || u.email || '',
-        isAdmin: u.isAdmin ?? false
-      });
+      if (!node.users.find(user => user.id === u.id)) {
+        node.users.push({
+          id: u.id,
+          name: u.fio || u.fullName || '',
+          role: u.role || '',
+          mail: u.mail || u.email || '',
+          isAdmin: u.isAdmin ?? false
+        });
+      }
       continue;
     }
 
@@ -69,41 +165,64 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
 
       if (i === teamPath.length - 1) {
         const node = map.get(key)!;
-        node.users.push({
-          id: u.id,
-          name: u.fio || u.fullName || '',
-          role: u.role || '',
-          mail: u.mail || u.email || '',
-          isAdmin: u.isAdmin ?? false
-        });
+        if (!node.users.find(user => user.id === u.id)) {
+          node.users.push({
+            id: u.id,
+            name: u.fio || u.fullName || '',
+            role: u.role || '',
+            mail: u.mail || u.email || '',
+            isAdmin: u.isAdmin ?? false
+          });
+        }
       }
     }
   }
 
+  // Строим иерархию
   map.forEach((node) => {
     if (node.parentKey) {
       const parent = map.get(node.parentKey);
       if (parent) {
         if (!parent.children) parent.children = [];
-        if (!parent.children.find((c: any) => c.id === node.id)) parent.children.push(node);
+        if (!parent.children.find((c: any) => c.id === node.id)) {
+          parent.children.push(node);
+        }
       }
     }
   });
 
+  // Собираем корневые элементы
   const roots: TeamNode[] = [];
   map.forEach((node) => {
     if (!node.parentKey) {
-      const copy: TeamNode = {id: node.id, name: node.name, users: node.users || []};
+      const copy: TeamNode = {
+        id: node.id,
+        name: node.name,
+        users: [...node.users],
+        isLocal: node.isLocal
+      };
+
       if (node.children && node.children.length) {
         copy.children = node.children.map((c: any) => ({
           id: c.id,
           name: c.name,
-          users: c.users || [],
-          children: c.children
+          users: [...c.users],
+          children: c.children,
+          isLocal: c.isLocal
         }));
       }
+
       roots.push(copy);
     }
+  });
+
+  // Сортируем: сначала существующие команды, затем локальные папки
+  roots.sort((a, b) => {
+    // Сначала нелокальные элементы
+    if (!a.isLocal && b.isLocal) return -1;
+    if (a.isLocal && !b.isLocal) return 1;
+    // Затем по имени
+    return a.name.localeCompare(b.name);
   });
 
   return roots;
@@ -112,10 +231,9 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
 export function useTeams() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState("");
-
   const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
-
   const [usersVersion, setUsersVersion] = useState(0);
+  const [foldersVersion, setFoldersVersion] = useState(0);
 
   useEffect(() => {
     const disposer = autorun(() => {
@@ -125,8 +243,21 @@ export function useTeams() {
     return () => disposer();
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const teams = useMemo(() => buildTreeFromUsers(usersStore.users || []), [usersVersion]);
+  const teams = useMemo(() => buildTreeFromUsers(usersStore.users || []), [usersVersion, foldersVersion]);
+
+  const nodesById = useMemo(() => {
+    const map = new Map<string, TeamNode>();
+
+    function walk(node: TeamNode) {
+      map.set(node.id, node);
+      if (node.children) {
+        node.children.forEach(walk);
+      }
+    }
+
+    teams.forEach(walk);
+    return map;
+  }, [teams]);
 
   function toggle(id: string) {
     setExpanded(prev => ({...prev, [id]: !prev[id]}));
@@ -239,6 +370,71 @@ export function useTeams() {
     }
   }, [searchTerm, flatList]);
 
+  const getNodesAtDepthFromFlat = useCallback((depth: number): TeamNode[] => {
+    const folderItems = flatList.filter(
+      item => item.type === 'folder' && item.depth === depth
+    ) as FlatFolder[];
+
+    return folderItems
+      .map(item => nodesById.get(item.id))
+      .filter((node): node is TeamNode => node !== undefined);
+  }, [flatList, nodesById]);
+
+  // Метод для создания папки
+  const createFolder = useCallback((name: string, parentFolder?: TeamNode) => {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substr(2, 9);
+    const folderId = `folder-${timestamp}-${random}`;
+
+    let fullId: string;
+
+    if (parentFolder) {
+      // Создаем вложенную папку
+      fullId = `${parentFolder.id}/${folderId}`;
+    } else {
+      // Создаем корневую папку
+      fullId = folderId;
+    }
+
+    // Создаем новую папку
+    const newFolder: TeamNode = {
+      id: fullId,
+      name,
+      users: [],
+      children: [],
+      isLocal: true
+    };
+
+    // Добавляем в локальное хранилище
+    localFolders.push(newFolder);
+
+    // Обновляем версию для перестроения дерева
+    setFoldersVersion(v => v + 1);
+
+    // Автоматически раскрываем родительскую папку
+    if (parentFolder) {
+      setExpanded(prev => ({...prev, [parentFolder.id]: true}));
+    }
+
+    return fullId;
+  }, []);
+
+  // Метод для перемещения пользователя
+  const moveUser = useCallback((userId: string, targetFolder: TeamNode) => {
+    // Находим пользователя в исходных данных
+    const user = usersStore.users?.find(u => u.id === userId);
+    if (!user) return;
+
+    // Сохраняем перемещение в локальное хранилище
+    userMoves[userId] = targetFolder.id;
+
+    // Обновляем версию для перестроения дерева
+    setUsersVersion(v => v + 1);
+
+    // Раскрываем целевую папку, чтобы показать перемещенного пользователя
+    setExpanded(prev => ({...prev, [targetFolder.id]: true}));
+  }, []);
+
   return {
     teams,
     loading: usersStore.loading,
@@ -249,6 +445,10 @@ export function useTeams() {
     isVisible,
     searchTerm,
     setSearchTerm,
-    matchedIds
+    matchedIds,
+    getNodesAtDepthFromFlat,
+    // Экспортируем новые методы
+    createFolder,
+    moveUser
   };
 }

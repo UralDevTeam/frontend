@@ -20,7 +20,7 @@ export type UserDTO = {
   legalEntity: string;
   department: string;
   boss: UserLinkDTO;
-  role: string;
+  position: string;
   experience: number; // days
   status: keyof typeof WorkerStatuses;
 
@@ -28,9 +28,28 @@ export type UserDTO = {
   aboutMe?: string;
 }
 
+export type User = {
 
-export type User = Omit<UserDTO, "birthday" | "formatTeam"> & {
+  id: string;
+  fio: string;
+  email: string;
+  phone?: string;
+  mattermost?: string;
+  tg?: string;
+  isAdmin: boolean;
+
   birthday?: Date;
+  team: string[];
+  legalEntity: string;
+  department: string;
+  boss: UserLinkDTO;
+  role: string;
+  experience: number; // days
+  status: keyof typeof WorkerStatuses;
+
+  city?: string;
+  aboutMe?: string;
+
   formatTeam: string;
 }
 

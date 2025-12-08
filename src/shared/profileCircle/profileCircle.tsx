@@ -14,6 +14,7 @@ type Props = {
     toSelf: boolean,
     userId?: string,
     editable?: boolean,
+    addStar?: boolean,
     variant?: AvatarVariant,
     disableNavigation?: boolean,
 };
@@ -26,6 +27,7 @@ const ProfileCircle = ({
                            editable = false,
                            variant,
                            disableNavigation = false,
+                           addStar = false,
                        }: Props) => {
 
     const [avatarUrl, setAvatarUrl] = useState<string>("/defaultPhoto.png");
@@ -139,7 +141,7 @@ const ProfileCircle = ({
             style={{width: size, height: size}}
             onClick={triggerFileSelect}
         >
-            {isAdmin && (
+            {isAdmin && !editable && addStar && (
                 <img
                     src={"/icons/Star.svg"}
                     width={starSize}

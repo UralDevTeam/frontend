@@ -4,6 +4,14 @@
     align-items: center;
 }
 
+.row-info.row-info--align-start {
+    align-items: flex-start;
+}
+
+.row-info.row-info--align-start > .label {
+    padding-top: 6px;
+}
+
 .row-info > .label {
     width: 144px;
     color: var(--color-secondary-dark-blue);

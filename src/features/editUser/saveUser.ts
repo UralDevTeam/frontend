@@ -8,7 +8,9 @@ export async function saveUser(updatedUser: User) {
         phone: updatedUser.phone ?? "",
         mattermost: updatedUser.mattermost ?? "",
         tg: updatedUser.tg ?? "",
-        aboutMe: updatedUser.aboutMe ?? ""
+        aboutMe: updatedUser.aboutMe ?? "",
+        // birth_date: updatedUser.birthday ? new Date(updatedUser.birthday).toISOString().slice(0, 10) : "",
+        // hideBirthdayYear: updatedUser.hideBirthdayYear ?? false,
     };
 
     const headers: Record<string, string> = {

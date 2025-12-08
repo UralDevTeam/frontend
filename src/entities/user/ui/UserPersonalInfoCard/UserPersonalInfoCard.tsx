@@ -4,8 +4,10 @@ import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
 import {User} from "../../index";
-import CopyIcon from "../../../../shared/copy-icon/copy-icon";
+import CopyIcon from "../../../../shared/icons/copy-icon";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
+import EyeIcon from "../../../../shared/icons/eye-icon";
+import EyeCloseIcon from "../../../../shared/icons/yey-close-icon";
 
 type IUserPersonalInfoCard = {
     user: User,
@@ -20,15 +22,18 @@ function Field(props: {
     type?: string;
     onChangeValue: (v: string) => void;
     textarea?: boolean;
+    className?: string;
+    inputClassName?: string;
 }) {
-    const {value, disabled, type = 'text', onChangeValue, textarea} = props;
-    return (
-        <div className="user-personal-info-card-item">
+    const {value, disabled, type = 'text', onChangeValue, textarea, className, inputClassName} = props;
+    const wrapperClass = ["user-personal-info-card-item", className].filter(Boolean).join(" ");    return (
+        <div className={wrapperClass}>
             {textarea ? (
                 <textarea
                     value={value}
                     disabled={disabled}
                     onChange={e => onChangeValue(e.target.value)}
+                    className={inputClassName}
                 />
             ) : (
                 <input
@@ -36,6 +41,7 @@ function Field(props: {
                     disabled={disabled}
                     type={type}
                     onChange={e => onChangeValue(e.target.value)}
+                    className={inputClassName}
                 />
             )}
         </div>
@@ -75,6 +81,23 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         {key: "aboutMe", label: 'обо мне', textarea: true},
     ];
 
+    const prefixedInputs: Partial<Record<keyof User, string>> = {
+        tg: "@",
+        phone: "+7",
+    };
+
+    const ensurePrefixed = (value: string, prefix?: string) => {
+        if (!prefix) return value;
+        const stripped = value.startsWith(prefix) ? value.slice(prefix.length) : value;
+        return `${prefix}${stripped}`;
+    };
+
+    const normalizePrefixedInput = (value: string, prefix?: string) => {
+        if (!prefix) return value;
+        const withoutPrefix = value.replace(new RegExp(`^\\${prefix}+`), "");
+        return `${prefix}${withoutPrefix}` || prefix;
+    };
+
     const allRows = [...primaryRows, ...optionalRows];
 
     const copyableFields = useMemo(
@@ -89,12 +112,17 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
             <div className="user-personal-info-card user-personal-info-card--view">
                 {allRows.map((r, idx) => (
                     <React.Fragment key={String(r.key)}>
-                        <RowInfo label={r.label}>
+                        <RowInfo
+                            label={r.label}
+                            className={r.key === 'aboutMe' ? 'row-info--align-start' : undefined}
+                        >
                             {(() => {
                                 const rawValue = user[r.key];
 
                                 if (r.key === "birthday") {
-                                    const formatted = formatDateRussian(rawValue as Date | string | undefined);
+                                    const formatted = formatDateRussian(rawValue as Date | string | undefined, {
+                                        hideYear: user.hideBirthdayYear,
+                                    });
                                     return formatted || "-";
                                 }
 
@@ -132,23 +160,71 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         );
     }
 
-    const renderField = (r: { key: keyof User; label: string; inputType?: string; textarea?: boolean }) => (
-        <React.Fragment key={String(r.key)}>
-            <RowInfo label={r.label}>
-                <Field
-                    onChangeValue={v => update(r.key, v)}
-                    value={(() => {
-                        const val = editedUser[r.key] as any;
-                        if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
-                        return String(val ?? '');
-                    })()}
-                    disabled={!!disabled}
-                    type={r.inputType || 'text'}
-                    textarea={r.textarea}
-                />
-            </RowInfo>
-        </React.Fragment>
-    );
+    const renderField = (r: { key: keyof User; label: string; inputType?: string; textarea?: boolean }) => {
+        const prefix = prefixedInputs[r.key];
+        const baseValue = (() => {
+            const val = editedUser[r.key] as any;
+            if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
+            return String(val ?? '');
+        })();
+
+        const displayValue = prefix ? ensurePrefixed(baseValue, prefix) || prefix : baseValue;
+        const isPlaceholderOnly = prefix && (!baseValue || baseValue === prefix);
+
+        const inputClassNames = [
+            isPlaceholderOnly ? 'user-personal-info-card-item__placeholder-value' : '',
+            r.key === 'birthday' && editedUser.hideBirthdayYear ? 'birthday-field__input-control--hidden-year' : '',
+        ].filter(Boolean).join(' ');
+
+        const handleChange = (nextValue: string) => {
+            const normalized = prefix ? normalizePrefixedInput(nextValue, prefix) : nextValue;
+            const sanitized = prefix && normalized === prefix ? '' : normalized;
+            update(r.key, sanitized);
+        };
+
+        const field = (
+            <Field
+                onChangeValue={handleChange}
+                value={displayValue}
+                disabled={!!disabled}
+                type={r.inputType || 'text'}
+                textarea={r.textarea}
+                className={prefix ? 'user-personal-info-card-item--with-prefix' : undefined}
+                inputClassName={inputClassNames}
+            />
+        );
+
+        if (r.key === 'birthday') {
+            return (
+                <React.Fragment key={String(r.key)}>
+                    <RowInfo label={r.label}>
+                        <div className="birthday-field">
+                            {field}
+                            {editedUser.hideBirthdayYear ? (
+                                <EyeCloseIcon
+                                    className="birthday-field__icon eye-closed"
+                                    onClick={() => update('hideBirthdayYear', false)}
+                                />
+                            ) : (
+                                <EyeIcon
+                                    className="birthday-field__icon"
+                                    onClick={() => update('hideBirthdayYear', true)}
+                                />
+                            )}
+                        </div>
+                    </RowInfo>
+                </React.Fragment>
+            );
+        }
+
+        return (
+            <React.Fragment key={String(r.key)}>
+                <RowInfo label={r.label} className={r.textarea ? 'row-info--align-start' : undefined}>
+                    {field}
+                </RowInfo>
+            </React.Fragment>
+        );
+    };
 
     return (
         <div className="user-personal-info-card user-personal-info-card--edit">

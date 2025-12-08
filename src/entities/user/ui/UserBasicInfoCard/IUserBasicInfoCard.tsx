@@ -4,7 +4,7 @@ import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {NavLink} from "react-router";
 import {User} from "../../index";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
-import CopyIcon from "../../../../shared/copy-icon/copy-icon";
+import CopyIcon from "../../../../shared/icons/copy-icon";
 
 type IUserBasicInfoCard = {
     user: User;

@@ -1,0 +1,21 @@
+import "./userMainProperties.css";
+import ProfileCircle from "../../../../shared/profileCircle/profileCircle";
+import {User} from "../../index";
+
+type Props = {
+    user: User,
+    toSelf?: boolean,
+};
+
+export default function UserMainPropertiesEdit({user, toSelf = false}: Props) {
+    return (
+        <div className="user-main-properties-container edit-mode">
+            <ProfileCircle size={106} userId={user.id} toSelf={toSelf} isAdmin={user.isAdmin}/>
+            <div className={"user-main-properties"}>
+                <p className="user-main-properties-title-override">
+                    Редактирование личных данных
+                </p>
+            </div>
+        </div>
+    );
+}

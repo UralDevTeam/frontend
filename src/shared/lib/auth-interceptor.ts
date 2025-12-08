@@ -21,8 +21,10 @@ class AuthInterceptor {
       headers.set('Authorization', authStore.authorizationHeader);
     }
 
-    if (!headers.has('Content-Type') && fetchOptions.body) {
-      headers.set('Content-Type', 'application/json');
+      const isFormData = typeof FormData !== 'undefined' && fetchOptions.body instanceof FormData;
+
+      if (!headers.has('Content-Type') && fetchOptions.body && !isFormData) {
+          headers.set('Content-Type', 'application/json');
     }
 
     try {

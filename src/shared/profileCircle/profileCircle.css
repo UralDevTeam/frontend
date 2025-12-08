@@ -1,0 +1,54 @@
+.profile-circle {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-icon {
+    color: white;
+    height: 32px;
+    width: 35px;
+}
+
+.profile-circle__image {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-circle__admin {
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+}
+
+.profile-circle__overlay {
+    position: absolute;
+    border-radius: 50%;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.profile-circle--editable .profile-circle__overlay {
+    opacity: 1;
+}
+
+.profile-circle--editable:hover .profile-circle__overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.profile-circle__overlay img {
+    width: 32%;
+    height: 32%;
+}
+
+.profile-circle__input {
+    display: none;
+}

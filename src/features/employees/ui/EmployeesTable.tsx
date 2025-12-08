@@ -114,8 +114,8 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
       <td>
         <Link to={`/profile/view/${employee.id}`} className="employees-table-link">
           <div className="employees-profile">
-            <ProfileCircle size={32} toSelf={false} isAdmin={employee.isAdmin}/>
-            <span>{getDisplayName(employee.name)}</span>
+              <ProfileCircle size={32} toSelf={false} isAdmin={employee.isAdmin} userId={employee.id} variant={"small"}/>
+              <span>{getDisplayName(employee.name)}</span>
           </div>
         </Link>
       </td>

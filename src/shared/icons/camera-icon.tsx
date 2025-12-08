@@ -4,8 +4,8 @@ import type { IconBaseProps } from "react-icons";
 
 type IconProps = IconBaseProps;
 
-const CopyIcon: React.FC<IconProps> = (props) => {
+const CameraIcon: React.FC<IconProps> = (props) => {
     return React.createElement(MdOutlineCameraAlt as React.ComponentType<IconBaseProps>, props);
 };
 
-export default CopyIcon;
+export default CameraIcon;

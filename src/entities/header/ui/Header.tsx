@@ -29,7 +29,7 @@ export default function Header() {
       </div>
       <div className={"right_part"}>
         <NavLink to={"/me"}>
-          <ProfileCircle size={42} toSelf={true} />
+          <ProfileCircle size={43} toSelf={true} />
         </NavLink>
         {/*<img src={"/icons/ExitButton.svg"} alt="Exit Button"/>*/}
       </div>

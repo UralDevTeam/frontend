@@ -85,14 +85,6 @@ export default function Teams() {
     <main className="main teams-page">
       <h2 className="teams-title">Все сотрудники</h2>
 
-      {/* Индикатор перетаскивания */}
-      {dragState.isDragging && dragState.userName && (
-        <div className="drag-indicator">
-          <span className="drag-indicator-icon">↕️</span>
-          Перемещаем: {dragState.userName}
-        </div>
-      )}
-
       <div className="teams-table-setings">
         <div className="teams-search">
           <input

@@ -18,7 +18,7 @@ export default function TeamRow({item, agg, expanded, toggle, matched}: Props) {
       <div className="teams-row-left">
         {(item.hasChildren || item.hasUsers) ? (
           <button className="teams-tree-toggler" onClick={() => toggle(item.id)} aria-label="toggle">
-            {expanded[item.id] ? "▼" : "▶"}
+            <img src={expanded[item.id] ? "/icons/folder_state_open.svg":"/icons/folder_state_close.svg"} alt="toggle open folder"/>
           </button>
         ) : (
           <span className="teams-tree-empty"/>

@@ -1,13 +1,9 @@
-import {BrowserContext, expect, Page, test} from '@playwright/test';
-import {ProfilePage} from '../pages/profile-page';
-import {EditProfilePage} from "../pages/edit-profile-page";
+import { expect, test } from '@playwright/test';
+import { ProfilePage } from '../pages/profile-page';
+import { EditProfilePage } from "../pages/edit-profile-page";
 
-
-test.describe.configure({mode: 'serial'});
-test.describe('Цель: Изменить поле «Обо мне»', () => {
-
-  let context: BrowserContext;
-  let page: Page;
+test.describe.configure({ mode: 'serial' });
+test.describe('Цель: Изменить поле «Обо мне» (с глобальной авторизацией)', () => {
   let profilePage: ProfilePage;
   let editProfilePage: EditProfilePage;
 
@@ -19,23 +15,22 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
     originalCity = (await profilePage.city.textContent()) || '';
   }
 
-  test.beforeAll(async ({browser}) => {
-    context = await browser.newContext({
-      extraHTTPHeaders: {
-        'Authorization': 'Basic bWFyaWEua290b3ZhQHVkdi5jb206cGFzc3dvcmQ=',
-      }
-    });
-    page = await context.newPage();
+  test.beforeEach(async ({ page }) => {
+    // Инициализируем Page Objects
     profilePage = new ProfilePage(page);
     editProfilePage = new EditProfilePage(page);
-  })
 
-  test('Шаг 1: Проверка отображения информации о пользователе', async ({}) => {
+    // Переходим на страницу профиля
     await profilePage.navigate();
-    await saveOriginalValues(profilePage);
 
+    // Сохраняем оригинальные значения (только перед первым тестом)
+    if (!originalAboutMe) {
+      await saveOriginalValues(profilePage);
+    }
+  });
+
+  test('Шаг 1: Проверка отображения информации о пользователе', async () => {
     await expect(profilePage.profileCard).toBeVisible();
-
     await expect(profilePage.userName).toBeVisible();
     await expect(profilePage.userName).toContainText('Котова Мария Юрьевна');
 
@@ -52,11 +47,10 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
     await expect(profilePage.editButton).toBeVisible();
   });
 
-  test('Шаг 2: Редактирование полей с последующей отменой', async ({}) => {
-    await profilePage.navigate();
-
+  test('Шаг 2: Редактирование полей с последующей отменой', async ({ page }) => {
     // Переходим в режим редактирования
     await profilePage.editButton.click();
+    await editProfilePage.waitForLoad();
 
     // Вносим изменения в поля
     const aboutMeText = await editProfilePage.aboutMeTextarea.inputValue();
@@ -71,8 +65,8 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
 
     // Отменяем изменения
     await editProfilePage.cancelButton.click();
-    await page.waitForTimeout(1000);
-    await profilePage.navigate();
+    await page.waitForURL('/me');
+    await profilePage.waitForLoad();
 
     // Проверяем, что изменения не сохранились
     const finalAboutMeText = await profilePage.getAboutMeText();
@@ -82,11 +76,10 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
     expect(finalCityText).not.toContain("+test");
   });
 
-  test('Шаг 3: Редактирование полей с сохранением', async ({}) => {
-    await profilePage.navigate();
-
+  test('Шаг 3: Редактирование полей с сохранением', async ({ page }) => {
     // Переходим в режим редактирования
     await profilePage.editButton.click();
+    await editProfilePage.waitForLoad();
 
     // Вносим изменения в поля
     const aboutMeText = await editProfilePage.aboutMeTextarea.inputValue();
@@ -112,7 +105,7 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
     expect(finalCityText).toContain("+test");
   });
 
-  test('Шаг 4: Восстановление оригинальных значений', async ({}) => {
+  test('Шаг 4: Восстановление оригинальных значений', async ({ page }) => {
     // Проверяем, что тестовые изменения присутствуют
     const currentAboutMeText = await profilePage.getAboutMeText();
     const currentCityText = await profilePage.city.textContent();
@@ -122,6 +115,7 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
 
     // Переходим в режим редактирования
     await profilePage.editButton.click();
+    await editProfilePage.waitForLoad();
 
     // Восстанавливаем оригинальные значения
     await editProfilePage.fillAboutMe(originalAboutMe);
@@ -147,6 +141,5 @@ test.describe('Цель: Изменить поле «Обо мне»', () => {
 
     expect(finalAboutMeText).toBe(originalAboutMe);
     expect(finalCityText).toBe(originalCity);
-  })
-
-})
+  });
+});

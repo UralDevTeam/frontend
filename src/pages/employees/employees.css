@@ -1,3 +1,12 @@
+.employees-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .employees-title {
     font-family: 'Golos Text', serif;
     font-style: normal;
@@ -5,7 +14,12 @@
     font-size: 40px;
     line-height: 48px;
     color: var(--color-primary-graphite);
+}
 
+.admin-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 main {
@@ -52,11 +66,23 @@ main {
 .employees-filters {
     margin-top: 24px;
     display: flex;
-    gap: 12px;
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 12px;
 }
 
+.filters-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.reset-filters-container {
+    margin-left: auto;
+    flex-shrink: 0;
+}
 
 .employees-filters label {
     display: none;
@@ -143,4 +169,16 @@ main {
 
     font-size: 14px;
     padding: 0 10px;
+}
+
+.reset-filters-button {
+    height: 36px;
+    width: max-content;
+    padding: 6px;
+    border: 2px solid  var(--color-primary-graphite);
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+
+    color: var(--color-primary-graphite);
 }

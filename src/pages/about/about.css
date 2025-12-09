@@ -1,40 +1,46 @@
 .about-page {
     max-width: 980px;
-    margin: 24px auto;
+    margin: 18px 120px;
     padding: 20px;
-    border-radius: 8px;
-    color: #222;
-    font-family: Inter, Roboto, Arial, sans-serif;
+    color: var(--color-primary-graphite);
+    font-family: 'Golos Text', sans-serif
+}
+
+.about-page h1 {
+    margin-bottom: 50px;
+    font-size: 40px;
+    color: black;
 }
 
 .about-title {
     font-family: 'Golos Text', serif;
     font-style: normal;
     font-weight: 600;
-    font-size: 40px;
-    line-height: 48px;
+    font-size: 24px;
     color: var(--color-primary-mint);
 }
 
-.about-section {
-    margin: 18px 0;
+.about-title.h2 {
+    font-size: 36px;
+    font-weight: 700;
 }
 
-.about-section h2 {
-    font-family: 'Golos Text', serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 26px;
-    line-height: 31px;
+.about-title.h3 {
+    margin-top: 32px;
+}
 
+.about-title.h3:last-child {
+    margin-top: 16px;
+}
 
+.about-section {
+    margin: 16px 0;
 }
 
 .about-section p,
-.about-section li,
-.about-section h3 {
+.about-section li
+{
     font-family: 'Golos Text', serif;
-    font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 19px;
@@ -42,25 +48,12 @@
     color: var(--color-primary-graphite);
 }
 
+.about-section li {
+    margin-top: 5px;
+}
+
 .about-section ul {
     padding-left: 20px;
-}
-
-.about-footer {
-    margin-top: 26px;
-    padding-top: 12px;
-    border-top: 1px solid #eee;
-    color: #333;
-}
-
-.project-name {
-    color: var(--color-secondary-violet);
-}
-
-.highlighted {
-    color: var(--color-secondary-violet) !important;
-    font-weight: 700 !important;
-    font-size: 16px;
 }
 
 

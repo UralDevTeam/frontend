@@ -57,6 +57,10 @@
     padding: 0 18px;
 }
 
+.login-form__input--error {
+    border-color: #E53130;
+}
+
 .login-form__input::placeholder {
     font-family: 'Golos Text', serif;
     font-size: 16px;
@@ -64,7 +68,7 @@
     color: #7B7B7B;
 }
 
-.login-form__button{
+.login-form__button {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -87,9 +91,42 @@
     font-weight: 600;
     font-size: 16px;
     line-height: 150%;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.login-form__button:hover {
+    transform: scale(1.05);
 }
 
 .udv-icon {
     position: absolute;
     top: 5%;
+}
+
+.login-form__link {
+    font-family: 'Golos Text', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary-mint);
+
+    margin-top: 16px;
+}
+
+.login-form__hint {
+    font-family: 'Golos Text', serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 100%;
+}
+
+.login-form__hint--error {
+    color: #E53130;
+}
+
+
+@media (min-width: 1024px) {
+    .auth-main {
+        padding-top: 0 !important;
+    }
 }

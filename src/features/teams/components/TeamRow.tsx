@@ -18,7 +18,8 @@ export default function TeamRow({item, agg, expanded, toggle, matched}: Props) {
       <div className="teams-row-left">
         {(item.hasChildren || item.hasUsers) ? (
           <button className="teams-tree-toggler" onClick={() => toggle(item.id)} aria-label="toggle">
-            {expanded[item.id] ? "▼" : "▶"}
+            <img src={expanded[item.id] ? "/icons/folder_state_open.svg" : "/icons/folder_state_close.svg"}
+                 alt="toggle open folder"/>
           </button>
         ) : (
           <span className="teams-tree-empty"/>
@@ -29,11 +30,11 @@ export default function TeamRow({item, agg, expanded, toggle, matched}: Props) {
       </div>
 
       <div className="teams-row-right">
-        <span className="teams-metric">{agg.employees} сотрудника</span>
-        <span className="teams-metric">{agg.groups} групп</span>
-        <span className="teams-metric">{agg.departments} отдела</span>
-        <span className="teams-metric">{agg.legalEntities} юр. лиц</span>
-        <span className="teams-metric">{agg.domains} домен</span>
+        <span className="teams-metric">{agg.employees}</span>
+        <span className="teams-metric">{agg.groups}</span>
+        <span className="teams-metric">{agg.departments}</span>
+        <span className="teams-metric">{agg.legalEntities}</span>
+        <span className="teams-metric">{agg.domains}</span>
       </div>
     </div>
   );

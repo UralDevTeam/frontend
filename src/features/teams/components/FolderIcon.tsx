@@ -2,7 +2,7 @@ import React from "react";
 
 const FolderColor = new Map<number, string>([
   [0, "#763186"],
-  [1, "#DCCFEC"],
+  [1, "#763186"],
   [2, "#DBF4A7"],
   [3, "#C6DCFF"],
 ]);

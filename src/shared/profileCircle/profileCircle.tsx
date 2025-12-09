@@ -5,6 +5,7 @@ import {userStore} from "../../entities/user";
 import {apiClient} from "../lib/api-client";
 import "./profileCircle.css";
 import CameraIcon from "../icons/camera-icon";
+import TrashIcon from "../icons/trash-icon";
 
 type AvatarVariant = "small" | "large";
 
@@ -17,6 +18,7 @@ type Props = {
     addStar?: boolean,
     variant?: AvatarVariant,
     disableNavigation?: boolean,
+    allowDelete?: boolean,
 };
 
 const ProfileCircle = ({
@@ -28,13 +30,17 @@ const ProfileCircle = ({
                            variant,
                            disableNavigation = false,
                            addStar = false,
+                           allowDelete = false,
                        }: Props) => {
 
     const [avatarUrl, setAvatarUrl] = useState<string>("/defaultPhoto.png");
     const [isUploading, setIsUploading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const objectUrlRef = useRef<string | null>(null);
+    const deleteRef = useRef<HTMLDivElement | null>(null);
 
     const currentUserId = userStore.user?.id;
 
@@ -93,6 +99,24 @@ const ProfileCircle = ({
         };
     }, [avatarVariant, refreshKey, resolvedUserId]);
 
+    useEffect(() => {
+        if (!isDeleteConfirmOpen) return;
+
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (deleteRef.current && !deleteRef.current.contains(event.target as Node)) {
+                setIsDeleteConfirmOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("touchstart", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [isDeleteConfirmOpen]);
+
     const triggerFileSelect = () => {
         if (!editable) return;
         fileInputRef.current?.click();
@@ -135,6 +159,36 @@ const ProfileCircle = ({
         }
     };
 
+    const handleDeleteAvatar = async () => {
+        if (!resolvedUserId) return;
+
+        setIsDeleting(true);
+
+        try {
+            const response = await apiClient.fetch(
+                `/api/users/${encodeURIComponent(resolvedUserId)}/avatar`,
+                {method: "DELETE"}
+            );
+
+            if (!response.ok) {
+                throw new Error("Не удалось удалить аватар");
+            }
+
+            if (objectUrlRef.current) {
+                URL.revokeObjectURL(objectUrlRef.current);
+                objectUrlRef.current = null;
+            }
+
+            setAvatarUrl("/defaultPhoto.png");
+            setRefreshKey((prev) => prev + 1);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsDeleting(false);
+            setIsDeleteConfirmOpen(false);
+        }
+    };
+
     const content = (
         <div
             className={`profile-circle${editable ? " profile-circle--editable" : ""}`}
@@ -174,7 +228,49 @@ const ProfileCircle = ({
     );
 
     if (editable || disableNavigation) {
-        return content;
+        if (!editable || !allowDelete) {
+            return content;
+        }
+
+        return (
+            <div className="profile-circle__wrapper">
+                {content}
+                <div className="profile-circle__actions" ref={deleteRef}>
+                    <button
+                        type="button"
+                        className="profile-circle__delete-button"
+                        onClick={() => setIsDeleteConfirmOpen(true)}
+                        disabled={!resolvedUserId || isUploading || isDeleting}
+                        aria-label="Удалить фото"
+                    >
+                        <TrashIcon className='trash-icon'/>
+                    </button>
+                    {isDeleteConfirmOpen && (
+                        <div className="profile-circle__delete-confirm">
+                            <span className="profile-circle__delete-confirm-text">Вы точно хотите удалить фото?</span>
+                            <div className="profile-circle__delete-confirm-actions">
+                                <button
+                                    type="button"
+                                    className="profile-circle__delete-confirm-button"
+                                    onClick={handleDeleteAvatar}
+                                    disabled={isDeleting}
+                                >
+                                    Да
+                                </button>
+                                <button
+                                    type="button"
+                                    className="profile-circle__delete-confirm-button profile-circle__delete-confirm-button--secondary"
+                                    onClick={() => setIsDeleteConfirmOpen(false)}
+                                    disabled={isDeleting}
+                                >
+                                    Нет
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
     }
 
     const profileHref = toSelf ? "/me" : resolvedUserId ? `/profile/view/${resolvedUserId}` : "/profile/view";

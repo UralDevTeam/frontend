@@ -125,7 +125,7 @@
 }
 
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
     .auth-main {
         padding-top: 0 !important;
     }

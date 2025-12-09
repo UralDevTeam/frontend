@@ -68,7 +68,7 @@
     color: #7B7B7B;
 }
 
-.login-form__button{
+.login-form__button {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -92,6 +92,11 @@
     font-size: 16px;
     line-height: 150%;
     cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.login-form__button:hover {
+    transform: scale(1.05);
 }
 
 .udv-icon {
@@ -117,4 +122,11 @@
 
 .login-form__hint--error {
     color: #E53130;
+}
+
+
+@media (min-width: 1024px) {
+    .auth-main {
+        padding-top: 0 !important;
+    }
 }

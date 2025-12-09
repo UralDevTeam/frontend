@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {usersStore} from '../../../entities/users';
 import {autorun} from 'mobx';
+import { updateUser } from "../../../entities/user/fetcher";
 
 export type TeamNode = {
     id: string;
@@ -425,7 +426,7 @@ export function useTeams() {
     }, []);
 
     // Метод для перемещения пользователя
-    const moveUser = useCallback((userId: string, targetFolder: TeamNode) => {
+    const moveUser = useCallback(async (userId: string, targetFolder: TeamNode) => {
         // Находим пользователя в исходных данных
         const user = usersStore.users?.find(u => u.id === userId);
         if (!user) return;
@@ -433,12 +434,20 @@ export function useTeams() {
         // Сохраняем перемещение в локальное хранилище
         userMoves[userId] = targetFolder.id;
 
+        try {
+            await updateUser(userId, { team: targetFolder.id.split('/') });
+        } catch (error) {
+            console.error("Failed to update user team", error);
+            throw error;
+        }
+
         // Обновляем версию для перестроения дерева
         setUsersVersion(v => v + 1);
 
         // Раскрываем целевую папку, чтобы показать перемещенного пользователя
-        setExpanded(prev => ({...prev, [targetFolder.id]: true}));
+        setExpanded(prev => ({ ...prev, [targetFolder.id]: true }));
     }, []);
+
 
     return {
         teams,

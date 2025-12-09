@@ -1,23 +1,43 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { API_BASE } from '../../shared/apiConfig';
+import './Login.css';
+import { useAuthForm } from '../../shared/hooks/use-auth-form';
+import { FormField } from '../../shared/form-field/formField';
 
 export default function Register() {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmError, setConfirmError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+
+    const {
+        email,
+        password,
+        emailError,
+        passwordError,
+        generalError,
+        setEmailError,
+        setPasswordError,
+        setGeneralError,
+        handleEmailChange,
+        handlePasswordChange,
+        validate,
+    } = useAuthForm({ validatePasswordLength: true });
 
     async function submit(e: React.FormEvent) {
         e.preventDefault();
 
-        setError(null);
+        setConfirmError(null);
+        setGeneralError(null);
+
+        if (!validate()) {
+            return;
+        }
 
         if (password !== confirmPassword) {
-            setError('Пароли не совпадают');
+            setConfirmError('Пароли не совпадают');
             return;
         }
 
@@ -28,7 +48,7 @@ export default function Register() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                 },
                 body: JSON.stringify({
                     email,
@@ -54,9 +74,17 @@ export default function Register() {
                 }
             }
 
-            setError(message);
-        } catch (err: any) {
-            setError(err?.message || 'Ошибка сети');
+            const lower = message.toLowerCase();
+
+            if (lower.includes('mail') || lower.includes('почт')) {
+                setEmailError('Проверьте адрес');
+            } else if (lower.includes('password') || lower.includes('парол')) {
+                setPasswordError('Проверьте пароль');
+            } else {
+                setGeneralError('Что-то пошло не так, попробуйте ещё раз');
+            }
+        } catch {
+            setGeneralError('Ошибка сети. Попробуйте ещё раз');
         } finally {
             setLoading(false);
         }
@@ -78,57 +106,59 @@ export default function Register() {
             </p>
 
             <p className="login-page__text">
-                Зарегистрируйтесь в системе, чтобы видеть организационную структуру и найти коллег
+                Зарегистрируйтесь в системе, чтобы видеть организационную
+                структуру и найти коллег
             </p>
 
             <form onSubmit={submit} className="login-form">
-                <p className="login-form__text">Введите данные для регистрации</p>
+                <p className="login-form__text">
+                    Введите данные для регистрации
+                </p>
 
-                <label className="login-form__label">
-                    <span className="login-form__label-text">
-                        Электронная (корпоративная) почта
-                    </span>
-                    <input
-                        type="email"
-                        value={email}
-                        className="login-form__input"
-                        placeholder="Введите почту"
-                        onChange={e => setEmail(e.target.value)}
-                        required
-                        disabled={loading}
-                    />
-                </label>
+                <FormField
+                    label="Электронная (корпоративная) почта"
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    placeholder="Введите почту"
+                    disabled={loading}
+                    required
+                    autoComplete="email"
+                    error={emailError}
+                />
 
-                <label className="login-form__label">
-                    Пароль
-                    <input
-                        type="password"
-                        value={password}
-                        className="login-form__input"
-                        placeholder="Введите пароль"
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        disabled={loading}
-                    />
-                </label>
+                <FormField
+                    label="Пароль"
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    placeholder="Введите пароль"
+                    disabled={loading}
+                    required
+                    autoComplete="new-password"
+                    error={passwordError}
+                />
 
-                <label className="login-form__label">
-                    Подтвердить пароль
-                    <input
-                        type="password"
-                        value={confirmPassword}
-                        className="login-form__input"
-                        placeholder="Введите пароль повторно"
-                        onChange={e => setConfirmPassword(e.target.value)}
-                        required
-                        disabled={loading}
-                    />
-                </label>
+                <FormField
+                    label="Подтвердить пароль"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => {
+                        setConfirmPassword(e.target.value);
+                        if (confirmError) setConfirmError(null);
+                        if (generalError) setGeneralError(null);
+                    }}
+                    placeholder="Введите пароль повторно"
+                    disabled={loading}
+                    required
+                    autoComplete="new-password"
+                    error={confirmError}
+                />
 
-                {error && (
-                    <div className="login-form__error">
-                        {error}
-                    </div>
+                {generalError && (
+                    <p className="login-form__hint login-form__hint--error">
+                        {generalError}
+                    </p>
                 )}
 
                 <button

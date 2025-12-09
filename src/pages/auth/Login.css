@@ -57,6 +57,10 @@
     padding: 0 18px;
 }
 
+.login-form__input--error {
+    border-color: #E53130;
+}
+
 .login-form__input::placeholder {
     font-family: 'Golos Text', serif;
     font-size: 16px;
@@ -102,4 +106,15 @@
     color: var(--color-primary-mint);
 
     margin-top: 16px;
+}
+
+.login-form__hint {
+    font-family: 'Golos Text', serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 100%;
+}
+
+.login-form__hint--error {
+    color: #E53130;
 }

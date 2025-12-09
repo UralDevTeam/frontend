@@ -1,60 +1,148 @@
-import React, {useState} from 'react';
-import { useNavigate } from 'react-router';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { API_BASE } from '../../shared/apiConfig';
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+    async function submit(e: React.FormEvent) {
+        e.preventDefault();
 
-      if (res.status === 201) {
-        navigate('/login', { replace: true });
-        return;
-      }
+        setError(null);
 
-      const text = await res.text().catch(() => '');
-      setError(`Ошибка: ${res.status} ${text}`);
-    } catch (err: any) {
-      setError(err?.message || 'Network error');
-    } finally {
-      setLoading(false);
+        if (password !== confirmPassword) {
+            setError('Пароли не совпадают');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${API_BASE}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            if (res.status === 201) {
+                navigate('/login', { replace: true });
+                return;
+            }
+
+            let message = `Ошибка: ${res.status}`;
+            try {
+                const data = await res.json();
+                if (data?.detail) {
+                    message = String(data.detail);
+                }
+            } catch {
+                const text = await res.text().catch(() => '');
+                if (text) {
+                    message = `Ошибка: ${res.status} ${text}`;
+                }
+            }
+
+            setError(message);
+        } catch (err: any) {
+            setError(err?.message || 'Ошибка сети');
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
-  return (
-    <main className="main simple-shadow-card" style={{ maxWidth: 480, margin: '40px auto', padding: 24 }}>
-      <h2>Регистрация</h2>
-      <form onSubmit={submit}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <label>
-            Почта
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </label>
-          <label>
-            Пароль
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
-          </label>
-          {error && <div style={{ color: 'crimson' }}>{error}</div>}
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button type="submit" disabled={loading}>{loading ? 'Регистрирую...' : 'Зарегистрироваться'}</button>
-            <button type="button" onClick={() => navigate('/login')}>Войти</button>
-          </div>
-        </div>
-      </form>
-    </main>
-  );
+    return (
+        <main className="main">
+            <img
+                src="/icons/Light.svg"
+                width={130}
+                height={25}
+                alt="udv|group"
+                className="udv-icon"
+            />
+            <h1 style={{ display: 'none' }}>Регистрация</h1>
+
+            <p className="login-page__text">
+                Добро пожаловать в UDV Team Map!
+            </p>
+
+            <p className="login-page__text">
+                Зарегистрируйтесь в системе, чтобы видеть организационную структуру и найти коллег
+            </p>
+
+            <form onSubmit={submit} className="login-form">
+                <p className="login-form__text">Введите данные для регистрации</p>
+
+                <label className="login-form__label">
+                    <span className="login-form__label-text">
+                        Электронная (корпоративная) почта
+                    </span>
+                    <input
+                        type="email"
+                        value={email}
+                        className="login-form__input"
+                        placeholder="Введите почту"
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                        disabled={loading}
+                    />
+                </label>
+
+                <label className="login-form__label">
+                    Пароль
+                    <input
+                        type="password"
+                        value={password}
+                        className="login-form__input"
+                        placeholder="Введите пароль"
+                        onChange={e => setPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                    />
+                </label>
+
+                <label className="login-form__label">
+                    Подтвердить пароль
+                    <input
+                        type="password"
+                        value={confirmPassword}
+                        className="login-form__input"
+                        placeholder="Введите пароль повторно"
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                    />
+                </label>
+
+                {error && (
+                    <div className="login-form__error">
+                        {error}
+                    </div>
+                )}
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="login-form__button"
+                >
+                    {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+                </button>
+            </form>
+
+            <Link to="/login" className="login-form__link">
+                Войти →
+            </Link>
+        </main>
+    );
 }

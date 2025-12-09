@@ -87,9 +87,19 @@
     font-weight: 600;
     font-size: 16px;
     line-height: 150%;
+    cursor: pointer;
 }
 
 .udv-icon {
     position: absolute;
     top: 5%;
+}
+
+.login-form__link {
+    font-family: 'Golos Text', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary-mint);
+
+    margin-top: 16px;
 }

@@ -85,7 +85,7 @@ export default function Teams() {
     <main className="main teams-page">
       <h2 className="teams-title">Все сотрудники</h2>
 
-      <div className="teams-table-setings">
+      <div className="teams-table-settings">
         <div className="teams-search">
           <input
             className="teams-search-input"
@@ -94,13 +94,15 @@ export default function Teams() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
-        <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8}}>
+        <div className={"teams-table-settings_buttons"}>
           {!addMode && (
-            <button className="edit-mode-button" onClick={onStartAdd}>+</button>
+            <button className="edit-mode-button" onClick={onStartAdd}>
+              <img src={"/icons/PlusInCircle.svg"} alt={"toggle add team mode"} />
+            </button>
           )}
           {addMode && (
             <>
-              <button className="undo-edit-button" onClick={onCancelAdd}>отменить</button>
+              <button className="edit-mode-button" onClick={onCancelAdd}>отменить</button>
             </>
           )}
         </div>

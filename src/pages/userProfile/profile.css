@@ -25,15 +25,20 @@
     height: 48px;
 }
 
+.teams-table-settings_buttons {
+    display: flex;
+    flex-direction: row;
+    height: max-content;
+}
+
 .save-mode-button,
-.undo-edit-button,
 .edit-mode-button {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    height: 39px;
-    width: 119px;
+    height: 40px;
+    width: max-content;
     padding: 0 18px;
 
     cursor: pointer;
@@ -48,7 +53,6 @@
 }
 
 .save-mode-button:hover,
-.undo-edit-button:hover,
 .edit-mode-button:hover {
     transform: scale(1.05);
 }
@@ -59,24 +63,13 @@
     color: var(--color-primary-white);
 }
 
-
-.undo-edit-button {
-    border: none;
-    outline: var(--color-secondary-dark-blue) solid 2px;
-
-
-    color: var(--color-secondary-dark-blue);
-    background-color: #F8F9FA;
-}
-
 .edit-mode-button {
-    width: 156px;
+    width: max-content;
     margin-left: 35px;
 
     border: none;
-    outline: var(--color-secondary-dark-blue) solid 2px;
+    outline: var(--color-primary-mint) solid 2px;
 
-
-    color: var(--color-secondary-dark-blue);
+    color: var(--color-primary-mint);
     background-color: #F8F9FA;
 }

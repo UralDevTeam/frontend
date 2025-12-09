@@ -8,6 +8,8 @@ import {usersStore} from "../../entities/users";
 import AddTeamRow from "../../features/teams/components/AddTeamRow";
 import {DraggableUserWrapper} from "../../features/teams/components/DraggableUserWrapper";
 import {DroppableFolderWrapper} from "../../features/teams/components/DroppableFolderWrapper";
+import {userStore} from "../../entities/user";
+import onUpdateAD from "../../shared/AD/updateAD";
 
 export default function Teams() {
   const {
@@ -94,18 +96,25 @@ export default function Teams() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
-        <div className={"teams-table-settings_buttons"}>
-          {!addMode && (
-            <button className="edit-mode-button" onClick={onStartAdd}>
-              <img src={"/icons/PlusInCircle.svg"} alt={"toggle add team mode"} />
-            </button>
-          )}
-          {addMode && (
-            <>
-              <button className="edit-mode-button" onClick={onCancelAdd}>отменить</button>
-            </>
-          )}
-        </div>
+        {userStore.user?.isAdmin &&
+          <div className={"teams-table-settings_buttons"}>
+            <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16}}>
+              <button className="AD-sync-button" onClick={onUpdateAD}>
+                AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
+              </button>
+              {!addMode && (
+                <button className="edit-mode-button" onClick={onStartAdd}>
+                  <img src={"/icons/PlusInCircle.svg"} alt={"toggle add team mode"}/>
+                </button>
+              )}
+              {addMode && (
+                <>
+                  <button className="edit-mode-button" onClick={onCancelAdd}>отменить</button>
+                </>
+              )}
+            </div>
+          </div>
+        }
       </div>
 
       <div className="teams-layout">

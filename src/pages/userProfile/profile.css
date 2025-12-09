@@ -32,7 +32,8 @@
 }
 
 .save-mode-button,
-.edit-mode-button {
+.edit-mode-button,
+.AD-sync-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,7 +54,8 @@
 }
 
 .save-mode-button:hover,
-.edit-mode-button:hover {
+.edit-mode-button:hover,
+.AD-sync-button:hover {
     transform: scale(1.05);
 }
 
@@ -65,11 +67,24 @@
 
 .edit-mode-button {
     width: max-content;
-    margin-left: 35px;
 
     border: none;
     outline: var(--color-primary-mint) solid 2px;
 
     color: var(--color-primary-mint);
+    background-color: #F8F9FA;
+}
+
+.AD-sync-button{
+    width: 175px;
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    border: none;
+    outline: #CED9DC solid 2px;
+
+    color: var(--color-primary-graphite);
     background-color: #F8F9FA;
 }

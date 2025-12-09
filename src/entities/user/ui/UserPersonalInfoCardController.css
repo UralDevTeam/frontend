@@ -51,7 +51,8 @@
 }
 
 .user-personal-info-controller__undo-edit-button:hover,
-.user-personal-info-controller__save-mode-button:hover {
+.user-personal-info-controller__save-mode-button:hover,
+.user-personal-info-controller__edit-mode-button:hover {
     transform: scale(1.05);
 }
 

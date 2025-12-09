@@ -96,10 +96,14 @@ main {
     border-radius: 15px;
     background: #fff;
     font-size: 14px;
-    color: #CED9DC;
+    color: black;
     min-width: 180px;
     max-width: 200px;
     box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+}
+
+.employees-filters select {
+    cursor: pointer;
 }
 
 .employees-filters input[type="checkbox"] {
@@ -129,7 +133,7 @@ main {
 }
 
 .employees-filters input::placeholder {
-    color: #9AAEB2;
+    color: #CED9DC;
 }
 
 .employees-table {

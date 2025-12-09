@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router";
-import "./teams.css";
-import ProfileCircle from "../../shared/profileCircle/profileCircle";
+import "../../../pages/teams/teams.css";
+import ProfileCircle from "../../../shared/profileCircle/profileCircle";
 
 type Props = {
     id: string;

@@ -1,7 +1,7 @@
 import FolderIcon from "./FolderIcon";
 import React, {useEffect, useState} from "react";
-import "./AddTeamRow.css"
-import {TeamNode} from "../../features/teams/hooks/useTeams";
+import "../../../pages/teams/AddTeamRow.css"
+import {TeamNode} from "../hooks/useTeams";
 
 const Step1 = () => {
   return (

@@ -2,12 +2,12 @@ import React, {useEffect, useState} from "react";
 import "./teams.css";
 import {useTeams} from "../../features/teams/hooks/useTeams";
 import TeamRow from "../../features/teams/components/TeamRow";
-import UserLine from "./UserLine";
+import UserLine from "../../features/teams/components/UserLine";
 import {useDebounce} from "../../shared/helper/debounce";
 import {usersStore} from "../../entities/users";
-import AddTeamRow from "./AddTeamRow";
-import { DraggableUserWrapper } from "./DraggableUserWrapper";
-import { DroppableFolderWrapper } from "./DroppableFolderWrapper";
+import AddTeamRow from "../../features/teams/components/AddTeamRow";
+import { DraggableUserWrapper } from "../../features/teams/components/DraggableUserWrapper";
+import { DroppableFolderWrapper } from "../../features/teams/components/DroppableFolderWrapper";
 
 export default function Teams() {
   const {

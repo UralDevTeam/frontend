@@ -1,5 +1,5 @@
 import React from "react";
-import FolderIcon from "../../../pages/teams/FolderIcon";
+import FolderIcon from "./FolderIcon";
 
 type Props = {
   item: any;

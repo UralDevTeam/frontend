@@ -3,6 +3,9 @@ import {usersStore} from '../../../entities/users';
 import {autorun} from 'mobx';
 import { updateUser } from "../../../entities/user/fetcher";
 
+const UDV_ROOT_ID = "udv-group-holding";
+const UDV_ROOT_NAME = "UDV Group Holding";
+
 export type TeamNode = {
     id: string;
     name: string;
@@ -226,11 +229,17 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
         return a.name.localeCompare(b.name);
     });
 
-    return roots;
+    return [{
+        id: UDV_ROOT_ID,
+        name: UDV_ROOT_NAME,
+        users: [],
+        children: roots,
+        isLocal: false
+    }];
 }
 
 export function useTeams() {
-    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({[UDV_ROOT_ID]: true});
     const [searchTerm, setSearchTerm] = useState("");
     const [matchedIds, setMatchedIds] = useState<Record<string, boolean>>({});
     const [usersVersion, setUsersVersion] = useState(0);
@@ -272,22 +281,50 @@ export function useTeams() {
     const aggregates = useMemo(() => {
         const map: Record<string, Agg> = {};
 
-        function dfs(node: TeamNode): { employees: number; groups: number } {
-            let employees = node.users ? node.users.length : 0;
-            let groups = 0;
+        function dfs(node: TeamNode, depth: number): Agg {
+            const agg: Agg = {
+                employees: node.users ? node.users.length : 0,
+                groups: 0,
+                departments: 0,
+                legalEntities: 0,
+                domains: 0
+            };
+
             if (node.children && node.children.length) {
-                groups += node.children.length;
                 for (const ch of node.children) {
-                    const res = dfs(ch);
-                    employees += res.employees;
-                    groups += res.groups;
+                    const childDepth = depth + 1;
+                    const childAgg = dfs(ch, childDepth);
+
+                    agg.employees += childAgg.employees;
+                    agg.groups += childAgg.groups;
+                    agg.departments += childAgg.departments;
+                    agg.legalEntities += childAgg.legalEntities;
+                    agg.domains += childAgg.domains;
+
+                    switch (childDepth) {
+                        case 1:
+                            agg.domains += 1;
+                            break;
+                        case 2:
+                            agg.legalEntities += 1;
+                            break;
+                        case 3:
+                            agg.departments += 1;
+                            break;
+                        case 4:
+                            agg.groups += 1;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
-            map[node.id] = {employees, groups, departments: 0, legalEntities: 0, domains: 0};
-            return {employees, groups};
+
+            map[node.id] = agg;
+            return agg;
         }
 
-        for (const root of teams) dfs(root);
+        for (const root of teams) dfs(root, 0);
         return map;
     }, [teams]);
 

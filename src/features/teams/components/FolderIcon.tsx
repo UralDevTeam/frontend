@@ -3,8 +3,9 @@ import React from "react";
 const FolderColor = new Map<number, string>([
   [0, "#763186"],
   [1, "#763186"],
-  [2, "#DBF4A7"],
-  [3, "#C6DCFF"],
+  [2, "#DCCFEC"],
+  [3, "#DBF4A7"],
+  [4, "#C6DCFF"],
 ]);
 
 export default function FolderIcon({depth}: { depth: number }) {

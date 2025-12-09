@@ -11,6 +11,8 @@ function EmployeesComponent() {
   const {filters, options, add, newUserState, sortedData, sortConfig, handleSort} = useEmployees();
 
   const {
+    onlyAdmin,
+    onOnlyAdminChange,
     fullText: fullTextFilter,
     setFullText: setFullTextFilter,
     position: positionFilter,
@@ -19,9 +21,6 @@ function EmployeesComponent() {
     setStatus: setStatusFilter,
     department: departmentFilter,
     setDepartment: setDepartmentFilter,
-    onlyAdmin,
-    onOnlyAdminChange,
-
   } = filters;
 
   const {statuses: statusOptions, positions: positionOptions, departments: departmentOptions} = options;
@@ -31,6 +30,14 @@ function EmployeesComponent() {
   const {newUser, setNewUser} = newUserState;
 
   const adminMode = userStore.user?.isAdmin;
+
+  const resetFilters = () => {
+    onOnlyAdminChange(false);
+    setFullTextFilter('');
+    setPositionFilter('');
+    setStatusFilter('');
+    setDepartmentFilter('');
+  };
 
   return (
     <main className={"main"}>
@@ -75,6 +82,7 @@ function EmployeesComponent() {
         department={departmentFilter}
         onDepartmentChange={setDepartmentFilter}
         departments={departmentOptions}
+        onResetFilters={resetFilters}
       />
 
       <EmployeesTable

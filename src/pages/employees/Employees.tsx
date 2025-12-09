@@ -10,8 +10,8 @@ function EmployeesComponent() {
     const {filters, options, add, newUserState, sortedData, sortConfig, handleSort} = useEmployees();
 
     const {
-        name: nameFilter,
-        setName: setNameFilter,
+        fullText: fullTextFilter,
+        setFullText: setFullTextFilter,
         position: positionFilter,
         setPosition: setPositionFilter,
         status: statusFilter,
@@ -36,8 +36,8 @@ function EmployeesComponent() {
             <EmployeesFilters
                 onlyAdmin={onlyAdmin}
                 onOnlyAdminChange={onOnlyAdminChange}
-                name={nameFilter}
-                onNameChange={setNameFilter}
+                fullText={fullTextFilter}
+                fullTextChange={setFullTextFilter}
                 position={positionFilter}
                 onPositionChange={setPositionFilter}
                 status={statusFilter}

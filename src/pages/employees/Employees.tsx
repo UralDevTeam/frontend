@@ -30,9 +30,36 @@ function EmployeesComponent() {
 
   const {newUser, setNewUser} = newUserState;
 
+  const adminMode = userStore.user?.isAdmin;
+
   return (
     <main className={"main"}>
-      <h2 className="employees-title">Все сотрудники</h2>
+      <div className="employees-header">
+        <h2 className="employees-title">Все сотрудники</h2>
+
+        {adminMode && (
+          <div className="admin-controls">
+            <button className="AD-sync-button" onClick={onUpdateAD}>
+              AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
+            </button>
+            {!addMode && (
+              <button className="edit-mode-button" onClick={startAdd} title="Добавить пользователя">
+                <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon"/>
+              </button>
+            )}
+            {addMode && (
+              <>
+                <button className="edit-mode-button" onClick={saveNewUser} disabled={isSavingNew}>
+                  сохранить
+                </button>
+                <button className="undo-edit-button" onClick={cancelAdd} disabled={isSavingNew}>
+                  отменить
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
 
       <EmployeesFilters
         onlyAdmin={onlyAdmin}
@@ -48,13 +75,6 @@ function EmployeesComponent() {
         department={departmentFilter}
         onDepartmentChange={setDepartmentFilter}
         departments={departmentOptions}
-        adminMode={userStore.user?.isAdmin}
-        addMode={addMode}
-        onStartAdd={startAdd}
-        onSaveAdd={saveNewUser}
-        onCancelAdd={cancelAdd}
-        isSavingAdd={isSavingNew}
-        onUpdateAD={onUpdateAD}
       />
 
       <EmployeesTable

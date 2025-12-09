@@ -16,14 +16,6 @@ type Props = {
   department: string;
   onDepartmentChange: (v: string) => void;
   departments: string[];
-  // add user controls
-  adminMode?: boolean;
-  addMode?: boolean;
-  onStartAdd?: () => void;
-  onSaveAdd?: () => void;
-  onCancelAdd?: () => void;
-  isSavingAdd?: boolean;
-  onUpdateAD: () => void;
 };
 
 export default function EmployeesFilters(
@@ -36,13 +28,6 @@ export default function EmployeesFilters(
     positions,
     department, onDepartmentChange,
     departments,
-    adminMode = false,
-    addMode = false,
-    onStartAdd,
-    onSaveAdd,
-    onCancelAdd,
-    isSavingAdd = false,
-    onUpdateAD
   }: Props) {
   return (
     <div className="employees-filters" style={{display: 'flex', alignItems: 'center', gap: 12}}>
@@ -93,28 +78,6 @@ export default function EmployeesFilters(
           ))}
         </select>
       </div>
-      {adminMode &&
-        <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16}}>
-          <button className="AD-sync-button" onClick={onUpdateAD}>
-            AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
-          </button>
-          {!addMode && (
-            <button className="edit-mode-button" onClick={onStartAdd} title="Добавить пользователя">
-              <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon"/>
-            </button>
-          )}
-          {addMode && (
-            <>
-              <button className="edit-mode-button" onClick={onSaveAdd} disabled={isSavingAdd}>
-                сохранить
-              </button>
-              <button className="undo-edit-button" onClick={onCancelAdd} disabled={isSavingAdd}>
-                отменить
-              </button>
-            </>
-          )}
-        </div>
-      }
     </div>
   );
 }

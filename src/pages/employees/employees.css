@@ -1,3 +1,12 @@
+.employees-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .employees-title {
     font-family: 'Golos Text', serif;
     font-style: normal;
@@ -5,7 +14,12 @@
     font-size: 40px;
     line-height: 48px;
     color: var(--color-primary-graphite);
+}
 
+.admin-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 main {

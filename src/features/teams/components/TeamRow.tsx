@@ -1,5 +1,6 @@
 import React from "react";
 import FolderIcon from "./FolderIcon";
+import {UDV_ROOT_ID} from "../hooks/useTeams";
 
 type Props = {
   item: any;
@@ -12,11 +13,12 @@ type Props = {
 
 export default function TeamRow({item, agg, expanded, toggle, matched}: Props) {
   const paddingLeft = 24 * (item.depth + 0.5);
+  const isRoot = item.id === UDV_ROOT_ID;
 
   return (
     <div className="teams-row" style={{paddingLeft, background: matched ? '#E5F6F3' : undefined}}>
       <div className="teams-row-left">
-        {(item.hasChildren || item.hasUsers) ? (
+        {(item.hasChildren || item.hasUsers) && !isRoot ? (
           <button className="teams-tree-toggler" onClick={() => toggle(item.id)} aria-label="toggle">
             <img src={expanded[item.id] ? "/icons/folder_state_open.svg" : "/icons/folder_state_close.svg"}
                  alt="toggle open folder"/>

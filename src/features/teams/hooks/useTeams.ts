@@ -3,7 +3,7 @@ import {usersStore} from '../../../entities/users';
 import {autorun} from 'mobx';
 import { updateUser } from "../../../entities/user/fetcher";
 
-const UDV_ROOT_ID = "udv-group-holding";
+export const UDV_ROOT_ID = "udv-group-holding";
 const UDV_ROOT_NAME = "UDV Group Holding";
 
 export type TeamNode = {
@@ -275,6 +275,7 @@ export function useTeams() {
     }, [teams]);
 
     function toggle(id: string) {
+        if (id === UDV_ROOT_ID) return;
         setExpanded(prev => ({...prev, [id]: !prev[id]}));
     }
 

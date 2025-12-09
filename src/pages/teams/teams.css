@@ -26,6 +26,10 @@
     flex-direction: column;
 }
 
+.teams-list > div {
+    border-bottom: 2px solid #CDD8DB;
+}
+
 .teams-tree-toggler {
     cursor: pointer;
     border: none;
@@ -54,7 +58,7 @@
     border-bottom: none;
 }
 
-/* левый блок: иконка, название */
+.user-line-left,
 .teams-row-left {
     display: flex;
     align-items: center;
@@ -73,19 +77,30 @@
     color: var(--color-primary-graphite);
 }
 
-/* правый блок: метрики */
-.teams-row-right{
+.teams-row-right {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--color-secondary-dark-blue, #4b646b);
+    color: #D1D1D1;
     font-size: 14px;
 }
 
+.teams-row-head{
+    color: #464646;
+    font-size: 14px;
+
+    width: 64px;
+    text-align: right;
+}
+
+.user-line-metric,
 .teams-metric {
     white-space: nowrap;
-    color: var(--color-secondary-dark-blue, #4b646b);
+    color: #D1D1D1;
     font-size: 14px;
+
+    width: 64px;
+    text-align: right;
 }
 
 /* подсветка найденного */
@@ -117,7 +132,7 @@
 }
 
 .user-line {
-    justify-content: left;
+    justify-content: space-between;
 }
 
 .user-line-title {
@@ -135,17 +150,8 @@
 .user-line-metrics {
     display: flex;
     gap: 16px;
-}
 
-.user-line-metric {
-    box-sizing: border-box;
+    width: 508px;
+    justify-content: start;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 0 4px;
-
-    border: 2px solid var(--color-primary-mint);
-    border-radius: 7px;
 }

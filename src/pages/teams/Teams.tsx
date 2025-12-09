@@ -6,8 +6,8 @@ import UserLine from "../../features/teams/components/UserLine";
 import {useDebounce} from "../../shared/helper/debounce";
 import {usersStore} from "../../entities/users";
 import AddTeamRow from "../../features/teams/components/AddTeamRow";
-import { DraggableUserWrapper } from "../../features/teams/components/DraggableUserWrapper";
-import { DroppableFolderWrapper } from "../../features/teams/components/DroppableFolderWrapper";
+import {DraggableUserWrapper} from "../../features/teams/components/DraggableUserWrapper";
+import {DroppableFolderWrapper} from "../../features/teams/components/DroppableFolderWrapper";
 
 export default function Teams() {
   const {
@@ -33,7 +33,7 @@ export default function Teams() {
     userId?: string;
     userName?: string;
     userRole?: string;
-  }>({ isDragging: false });
+  }>({isDragging: false});
 
   const onStartAdd = () => {
     setAddMode(true);
@@ -64,7 +64,7 @@ export default function Teams() {
   };
 
   const handleUserDragEnd = () => {
-    setDragState({ isDragging: false });
+    setDragState({isDragging: false});
   };
 
   const handleFolderDrop = (folderId: string, folderName: string) => {
@@ -107,8 +107,23 @@ export default function Teams() {
       </div>
 
       <div className="teams-layout">
-        <div className="simple-border-card teams-tree-card">
+        <div className="teams-tree-card">
           <div className="teams-list">
+
+            <div className="teams-row">
+              <div className="teams-row-left">
+                <span className="teams-tree-name">Название</span>
+              </div>
+
+              <div className="teams-row-right">
+                <span className="teams-row-head" style={{textAlign: "left", width: 128}}>Роль</span>
+                <span className="teams-row-head">Сотруд.</span>
+                <span className="teams-row-head">Группы</span>
+                <span className="teams-row-head">Отделы</span>
+                <span className="teams-row-head">Юр. лиц</span>
+                <span className="teams-row-head">Домен</span>
+              </div>
+            </div>
 
             {addMode && <AddTeamRow
               getNodesAtDepthFromFlat={getNodesAtDepthFromFlat}

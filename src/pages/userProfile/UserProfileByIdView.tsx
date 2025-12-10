@@ -5,54 +5,56 @@ import UserPersonalInfoCardController from '../../entities/user/ui/UserPersonalI
 import UserMainPropertiesView from '../../entities/user/ui/UserMainProperties/UserMainPropertiesView';
 import UserBasicInfoCard from '../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard';
 import './profile.css';
-import {User, userFromDto} from "../../entities/user";
+import {User, userFromDto, userStore} from "../../entities/user";
 
 export default function UserProfileByIdView() {
-  const {id} = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const {id} = useParams<{ id: string }>();
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+    useEffect(() => {
 
-    if (!id) return;
+        if (!id) return;
 
-    const loadUser = async () => {
-      setLoading(true);
-      setError(null);
+        const loadUser = async () => {
+            setLoading(true);
+            setError(null);
 
-      try {
-        const dto = await fetchUserById(id);
-        setUser(userFromDto(dto));
-      } catch (e) {
-        const error = e as Error;
-        setError(error?.message ?? String(error));
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadUser();
-  }, [id]);
+            try {
+                const dto = await fetchUserById(id);
+                setUser(userFromDto(dto));
+            } catch (e) {
+                const error = e as Error;
+                setError(error?.message ?? String(error));
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadUser();
+    }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!user) return <div>No user</div>;
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!user) return <div>No user</div>;
 
+    const currentUser = userStore.user;
+    const canEdit = Boolean(currentUser?.isAdmin || currentUser?.id === user.id);
 
-  return (
-    <div className="user-profile-card">
-      <UserMainPropertiesView user={user}/>
-      <div className={"user-profile-content"}>
-        <UserBasicInfoCard user={user}/>
-        <UserPersonalInfoCardController
-          user={user}
-          isEdit={false}
-          canEdit={false}
-          editPath={`/profile/edit/${user.id}`}
-          viewPath={`/profile/view/${user.id}`}
-        />
-      </div>
-    </div>
-  );
+    return (
+        <div className="user-profile-card">
+            <UserMainPropertiesView user={user}/>
+            <div className={"user-profile-content"}>
+                <UserBasicInfoCard user={user}/>
+                <UserPersonalInfoCardController
+                    user={user}
+                    isEdit={false}
+                    canEdit={canEdit}
+                    editPath={`/profile/edit/${user.id}`}
+                    viewPath={`/profile/view/${user.id}`}
+                />
+            </div>
+        </div>
+    );
 }
 

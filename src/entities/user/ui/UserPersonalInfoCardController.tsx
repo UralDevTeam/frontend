@@ -3,7 +3,6 @@ import React, {useCallback, useEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 import {User, userStore} from "../index";
 import {fetchCurrentUser} from "../fetcher";
-import SuccessSaveModal from "../../../features/editUser/SuccessSaveModal";
 import {saveUser} from "../../../features/editUser/saveUser";
 import "./UserPersonalInfoCardController.css";
 
@@ -14,6 +13,8 @@ type Props = {
     canEdit?: boolean;
     editPath?: string;
     viewPath?: string;
+    saveUserFn?: (user: User) => Promise<unknown>;
+    afterSave?: () => Promise<unknown> | void;
 };
 
 const UserPersonalInfoCardController = (
@@ -23,10 +24,10 @@ const UserPersonalInfoCardController = (
         canEdit = false,
         editPath = "/me/edit",
         viewPath = "/me",
+        saveUserFn,
+        afterSave,
     }: Props) => {
     const navigate = useNavigate();
-    const [showSuccess, setShowSuccess] = useState(false);
-
     const [draftUser, setDraftUser] = useState<User>(user);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -40,20 +41,19 @@ const UserPersonalInfoCardController = (
     const handleSave = useCallback(async () => {
         setIsSaving(true);
         try {
-            await saveUser(draftUser);
-            await userStore.loadUserFromApi(fetchCurrentUser);
-            setShowSuccess(true);
+            await (saveUserFn ?? saveUser)(draftUser);
+            if (afterSave) {
+                await afterSave();
+            } else {
+                await userStore.loadUserFromApi(fetchCurrentUser);
+            }
+            navigate(viewPath);
         } finally {
             setIsSaving(false);
         }
-    }, [draftUser]);
+    }, [draftUser, navigate, viewPath]);
 
-    const handleSuccessClose = useCallback(() => {
-        setShowSuccess(false);
-        navigate(viewPath);
-    }, [navigate, viewPath]);
-
-    const editingDisabled = showSuccess || isSaving;
+    const editingDisabled = isSaving;
     const preventNavigationIfDisabled = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
         if (editingDisabled) {
             event.preventDefault();
@@ -63,7 +63,6 @@ const UserPersonalInfoCardController = (
 
     return (
         <div className="user-personal-info-controller">
-            {showSuccess && <SuccessSaveModal onClose={handleSuccessClose}/>}
             <div className="user-personal-info-controller__header">
                 {!isEdit && <p className="user-profile-section-title">Личное</p>}
                 {!isEdit && canEdit && <NavLink to={editPath}>

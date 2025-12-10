@@ -94,7 +94,7 @@ export default function EmployeesFilters(
 
             <div className="reset-filters-container">
                 <button className="reset-filters-button" onClick={onResetFilters} disabled={!hasActiveFilters}>
-                    Сбросить фильтры
+                    отменить фильтры
                 </button>
             </div>
         </div>

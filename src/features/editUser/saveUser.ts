@@ -1,9 +1,8 @@
 import {User} from "../../entities/user";
 import {apiClient} from "../../shared/lib/api-client";
 
-export async function saveUser(updatedUser: User) {
-    const url = `/api/me`;
-    const payload = {
+const buildUserPayload = (updatedUser: User) => {
+    return {
         city: updatedUser.city ?? "",
         phone: updatedUser.phone ?? "",
         mattermost: updatedUser.mattermost ?? "",
@@ -15,7 +14,9 @@ export async function saveUser(updatedUser: User) {
         isBirthyearVisible: updatedUser.isBirthyearVisible ?? true,
         status: updatedUser.status,
     };
+};
 
+const saveUserWithUrl = async (url: string, updatedUser: User) => {
     const headers: Record<string, string> = {
         "Accept": "application/json",
         "Content-Type": "application/json"
@@ -24,7 +25,7 @@ export async function saveUser(updatedUser: User) {
     const res = await apiClient.fetch(url, {
         method: "PUT",
         headers,
-        body: JSON.stringify(payload),
+        body: JSON.stringify(buildUserPayload(updatedUser)),
         credentials: "include"
     });
 
@@ -34,5 +35,16 @@ export async function saveUser(updatedUser: User) {
     }
 
     return await res.json();
+};
+
+export async function saveUser(updatedUser: User) {
+    const url = `/api/me`;
+    return await saveUserWithUrl(url, updatedUser);
 }
 
+export async function saveUserById(userId: string, updatedUser: User) {
+    const url = `/api/users/${encodeURIComponent(userId)}`;
+    return await saveUserWithUrl(url, updatedUser);
+}
+
+export {buildUserPayload};

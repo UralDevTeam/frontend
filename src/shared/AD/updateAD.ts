@@ -6,10 +6,8 @@ async function updateAD() {
 
 export default async function onUpdateAD() {
   try {
-    if (window.confirm("При обновлении из AD могут воникнуть кофликты")) {
       await updateAD();
       window.location.reload()
-    }
   } catch (error) {
     alert((error as Error).message);
   }

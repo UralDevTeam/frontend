@@ -49,9 +49,29 @@ function Field(props: {
     )
 }
 
+type RowDefinition = {
+    key: keyof User;
+    label: string;
+    inputType?: string;
+    textarea?: boolean;
+    tooltipContent?: React.ReactNode;
+};
 
 export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}: IUserPersonalInfoCard) {
     const [editedUser, setEditedUser] = useState<User>(user);
+
+    const mattermostTooltip = (
+        <div className="mattermost-tooltip">
+            <span className="mattermost-tooltip__title">
+                Добавь ссылку, чтобы коллеги могли тебе написать в mattermost
+            </span>
+            <ol className="mattermost-tooltip__list">
+                <li>Открываешь диалог с собой</li>
+                <li>Копируешь ссылку из поисковой строки</li>
+                <li>Вставь ссылку в это поле</li>
+            </ol>
+        </div>
+    );
 
     useEffect(() => {
         setEditedUser(user);
@@ -70,13 +90,13 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         if (onChange) onChange(newUser);
     };
 
-    const primaryRows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
+    const primaryRows: RowDefinition[] = [
         {key: "city", label: "город"},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
-        {key: "mattermost", label: 'mattermost'},
+        {key: "mattermost", label: 'mattermost', tooltipContent: mattermostTooltip},
     ];
 
-    const optionalRows: { key: keyof User; label: string; inputType?: string; textarea?: boolean }[] = [
+    const optionalRows: RowDefinition[] = [
         {key: "tg", label: 'ник telegram'},
         {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "aboutMe", label: 'обо мне', textarea: true},
@@ -116,6 +136,8 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                         <RowInfo
                             label={r.label}
                             className={r.key === 'aboutMe' ? 'row-info--align-start' : undefined}
+                            tooltipContent={r.tooltipContent}
+                            showTooltipTrigger={false}
                         >
                             {(() => {
                                 const rawValue = user[r.key];
@@ -161,7 +183,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         );
     }
 
-    const renderField = (r: { key: keyof User; label: string; inputType?: string; textarea?: boolean }) => {
+    const renderField = (r: RowDefinition) => {
         const prefix = prefixedInputs[r.key];
         const baseValue = (() => {
             const val = editedUser[r.key] as any;
@@ -223,7 +245,8 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
 
         return (
             <React.Fragment key={String(r.key)}>
-                <RowInfo label={r.label} className={r.textarea ? 'row-info--align-start' : undefined}>
+                <RowInfo label={r.label} className={r.textarea ? 'row-info--align-start' : undefined}
+                         tooltipContent={r.tooltipContent}>
                     {field}
                 </RowInfo>
             </React.Fragment>

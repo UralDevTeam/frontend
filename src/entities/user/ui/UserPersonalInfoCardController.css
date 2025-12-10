@@ -51,7 +51,8 @@
 }
 
 .user-personal-info-controller__undo-edit-button:hover,
-.user-personal-info-controller__save-mode-button:hover {
+.user-personal-info-controller__save-mode-button:hover,
+.user-personal-info-controller__edit-mode-button:hover {
     transform: scale(1.05);
 }
 
@@ -63,9 +64,8 @@
 }
 
 .user-personal-info-controller__edit-mode-button {
-    height: 40px;
-    width: max-content;
-    padding: 6px;
+    height: 39px;
+    width: 156px;
     border: 2px solid var(--color-primary-graphite);
     border-radius: 12px;
     background: transparent;
@@ -73,10 +73,13 @@
 
     color: var(--color-secondary-dark-blue);
 
-    font-family: 'Golos Text';
+    font-family: 'Golos Text', sans-serif;
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 19px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

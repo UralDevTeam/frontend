@@ -33,7 +33,9 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+    transition:
+            opacity 0.2s ease,
+            background-color 0.2s;
 }
 
 .profile-circle--editable .profile-circle__overlay {
@@ -51,4 +53,108 @@
 
 .profile-circle__input {
     display: none;
+}
+
+.profile-circle__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.profile-circle__delete-button {
+    position: absolute;
+    top: -28px;
+    right: 2px;
+
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    border: 1px solid #D3DDDF;
+    background: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    padding: 6px;
+}
+
+.trash-icon {
+    color: #E53130;
+}
+
+.profile-circle__delete-button:hover {
+    transform: scale(1.05);
+}
+
+.profile-circle__delete-button:focus {
+    border: none;
+    outline: 2px solid #E53130;
+}
+
+.profile-circle__delete-confirm {
+    width: 260px;
+    height: 92px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: #E53130 solid 2px;
+    position: absolute;
+    top: 4px;
+    left: 77px;
+    z-index: 20;
+}
+
+.profile-circle__delete-confirm-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: black;
+}
+
+.profile-circle__delete-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: start;
+}
+
+.profile-circle__delete-confirm-button {
+    width: 56px;
+    height: 39px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: var(--color-secondary-dark-blue);
+    background-color: #F8F9FA;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: 'Golos Text', sans-serif;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.15s ease;
+    box-sizing: border-box;
+    border: var(--color-secondary-dark-blue) solid 2px;
+}
+
+.profile-circle__delete-confirm-button:hover:enabled,
+.profile-circle__delete-confirm-button--secondary:hover:enabled {
+    transform: scale(1.05);
+}
+
+.profile-circle__delete-confirm-button--secondary {
+    border: none;
+    background-color: var(--color-secondary-dark-blue);
+    color: var(--color-primary-white);
+    width: 63px;
+}
+
+.profile-circle__delete-confirm-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }

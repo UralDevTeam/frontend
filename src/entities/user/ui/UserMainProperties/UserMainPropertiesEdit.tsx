@@ -18,6 +18,7 @@ export default function UserMainPropertiesEdit({user, toSelf = false}: Props) {
                     isAdmin={user.isAdmin}
                     editable={true}
                     disableNavigation={true}
+                    allowDelete={true}
                 />
                 <p className="user-main-properties-avatar__note">до 10МБ</p>
             </div>

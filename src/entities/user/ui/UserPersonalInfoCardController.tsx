@@ -13,7 +13,7 @@ type Props = {
     canEdit?: boolean;
     editPath?: string;
     viewPath?: string;
-    saveUserFn?: (user: User) => Promise<unknown>;
+    saveUserFn?: (user: User, originalUser?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
 };
 
@@ -41,7 +41,7 @@ const UserPersonalInfoCardController = (
     const handleSave = useCallback(async () => {
         setIsSaving(true);
         try {
-            await (saveUserFn ?? saveUser)(draftUser);
+            await (saveUserFn ?? saveUser)(draftUser, user);
             if (afterSave) {
                 await afterSave();
             } else {
@@ -51,7 +51,7 @@ const UserPersonalInfoCardController = (
         } finally {
             setIsSaving(false);
         }
-    }, [draftUser, navigate, viewPath]);
+    }, [afterSave, draftUser, navigate, saveUserFn, user, viewPath]);
 
     const editingDisabled = isSaving;
     const preventNavigationIfDisabled = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {

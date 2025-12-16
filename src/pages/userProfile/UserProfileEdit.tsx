@@ -8,7 +8,7 @@ import "./profile.css"
 type Props = {
     initialUser?: User;
     viewPath?: string;
-    saveUserFn?: (user: User) => Promise<unknown>;
+    saveUserFn?: (user: User, originalUser?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
     toSelf?: boolean;
 }

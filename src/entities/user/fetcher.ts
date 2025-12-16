@@ -2,9 +2,12 @@ import {WorkerStatuses} from '../../shared/statuses/workerStatuses';
 import {UserDTO} from "./types/user";
 import {apiClient} from "../../shared/lib/api-client";
 
-type BackendUserDTO = {
+export type BackendUserDTO = {
   id: string;
   fio?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
   fullName?: string;
   email?: string;
   mail?: string;
@@ -13,6 +16,7 @@ type BackendUserDTO = {
   mattermost?: string | null;
   tg?: string | null;
   birthday?: string;
+  hireDate?: string;
   isBirthyearVisible: boolean;
   team?: string[];
   boss?: { id: string; fullName: string; shortName: string } | null;
@@ -56,7 +60,7 @@ function parseDateSafe(d?: string | null): string | undefined {
   return Number.isNaN(dt.getTime()) ? undefined : dt.toISOString();
 }
 
-function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
+export function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   const fio = safeString(u.fio ?? u.fullName);
   const email = safeTrim(u.email ?? u.mail ?? u.contact) ?? '';
 
@@ -71,6 +75,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     : {id: '', fullName: '', shortName: ''};
 
   const birthdayIso = parseDateSafe(u.birthday ?? undefined);
+  const hireDateIso = parseDateSafe(u.hireDate ?? undefined);
 
   const isBirthyearVisible = Boolean(u.isBirthyearVisible);
 
@@ -81,6 +86,9 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   return {
     id: safeString(u.id),
     fio,
+    firstName: safeString(u.firstName),
+    middleName: safeString(u.middleName),
+    lastName: safeString(u.lastName),
     email,
     phone: safeTrim(u.phone ?? undefined),
     mattermost: safeTrim(u.mattermost ?? undefined),
@@ -88,6 +96,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     isAdmin,
 
     birthday: birthdayIso ?? undefined,
+    hireDate: hireDateIso ?? undefined,
     isBirthyearVisible,
     team,
     boss,
@@ -138,5 +147,6 @@ export async function fetchUserById(id: string): Promise<UserDTO> {
 }
 
 export const updateUser = async (userId: string, payload: Partial<UserDTO>): Promise<UserDTO> => {
-  return await apiClient.put<UserDTO>(`/api/users/${encodeURIComponent(userId)}`, payload);
+  const res = await apiClient.put<BackendUserDTO>(`/api/users/${encodeURIComponent(userId)}`, payload);
+  return adaptBackendUserToFrontend(res);
 };

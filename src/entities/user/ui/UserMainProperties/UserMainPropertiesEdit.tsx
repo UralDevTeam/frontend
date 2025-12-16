@@ -24,7 +24,7 @@ export default function UserMainPropertiesEdit({user, toSelf = false}: Props) {
             </div>
             <div className={"user-main-properties"}>
                 <p className="user-main-properties-title-override">
-                    Редактирование личных данных
+                    Редактирование данных сотрудника
                 </p>
             </div>
         </div>

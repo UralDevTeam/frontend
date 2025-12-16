@@ -1,19 +1,19 @@
 .user-personal-info-card {
     min-width: 440px;
-    max-width: 735px;
-    padding: 28px 0;
+    max-width: 860px;
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 
     height: max-content;
     width: max-content;
 }
 
 .user-personal-info-card.user-personal-info-card--edit {
-    gap: 18px;
-    padding-top: 40px;
-    margin-top: -100px;
+    gap: 28px;
+    padding-top: 16px;
+    margin-top: 0;
 }
 
 .label {
@@ -26,7 +26,8 @@
     height: 38px;
     border-radius: 10px;
     border: 1px solid #CED9DC;
-    width: 418px;
+    width: 480px;
+    max-width: 100%;
     background: var(--color-primary-white);
 
     color: var(--color-primary-graphite);
@@ -46,7 +47,7 @@
 }
 
 .user-personal-info-card--edit .user-personal-info-card-item > input[type="date"] {
-    width: 150px;
+    width: 200px;
     cursor: text;
 }
 
@@ -56,17 +57,6 @@
 
 input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
-}
-
-
-.user-personal-info-card__optional-note {
-    font-family: "Golos Text", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: black;
-
-    margin-top: 46px;
-    margin-bottom: 3px;
 }
 
 .user-personal-info-card-status-set,
@@ -85,29 +75,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .birthday-field {
-    position: relative;
-    display: inline-block;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.birthday-field__icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+.birthday-field__toggle {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #CED9DC;
+    padding: 0 12px;
+    background: #F8F9FA;
     cursor: pointer;
-    width: 15px;
-    height: 15px;
+
     color: var(--color-secondary-dark-blue);
-    user-select: none;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Golos Text", sans-serif;
 }
 
-.birthday-field__icon.eye-closed {
-    color: #CED9DC;
-}
-
-.birthday-field__input-control--hidden-year::-webkit-datetime-edit-year-field {
-    color: #CED9DC;
+.birthday-field__toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .styled-select {
@@ -147,6 +136,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 14px;
     margin-left: 5px;
     font-weight: 400;
+}
+
+.user-personal-info-card__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-personal-info-card__section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-primary-graphite);
+}
+
+.user-personal-info-card__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-personal-info-card__rows hr {
+    border: none;
+    border-bottom: 1px solid #F0F2F2;
+    margin: 4px 0 0;
 }
 
 /* small responsive tweak: if container narrow, shrink to fit */

@@ -6,8 +6,6 @@ import "./userPersonalInfoCard.css"
 import {User} from "../../index";
 import CopyIcon from "../../../../shared/icons/copy-icon";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
-import EyeIcon from "../../../../shared/icons/eye-icon";
-import EyeCloseIcon from "../../../../shared/icons/yey-close-icon";
 
 type IUserPersonalInfoCard = {
     user: User,
@@ -81,7 +79,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         if (disabled) return;
 
         const newUser = {...editedUser} as any;
-        if (key === 'birthday') {
+        if (key === 'birthday' || key === 'hireDate') {
             newUser[key] = value ? new Date(value) : undefined;
         } else {
             newUser[key] = value;
@@ -90,16 +88,31 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         if (onChange) onChange(newUser);
     };
 
-    const primaryRows: RowDefinition[] = [
+    const personalRows: RowDefinition[] = [
+        {key: "lastName", label: "фамилия"},
+        {key: "firstName", label: "имя"},
+        {key: "middleName", label: "отчество"},
         {key: "city", label: "город"},
         {key: "birthday", label: 'дата рождения', inputType: 'date'},
+    ];
+
+    const workRows: RowDefinition[] = [
+        {key: "position", label: "должность"},
+        {key: "legalEntity", label: "юр лицо"},
+        {key: "department", label: "подразделение"},
+        {key: "team", label: "группа"},
+        {key: "hireDate", label: "дата выхода на работу", inputType: 'date'},
+    ];
+
+    const contactRows: RowDefinition[] = [
+        {key: "email", label: 'почта', inputType: 'email'},
+        {key: "tg", label: 'ник telegram'},
+        {key: "phone", label: 'телефон', inputType: 'tel'},
         {key: "mattermost", label: 'mattermost', tooltipContent: mattermostTooltip},
     ];
 
-    const optionalRows: RowDefinition[] = [
-        {key: "tg", label: 'ник telegram'},
-        {key: "phone", label: 'телефон', inputType: 'tel'},
-        {key: "aboutMe", label: 'обо мне', textarea: true},
+    const aboutRows: RowDefinition[] = [
+        {key: "aboutMe", label: 'о себе', textarea: true},
     ];
 
     const prefixedInputs: Partial<Record<keyof User, string>> = {
@@ -119,19 +132,20 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         return `${prefix}${withoutPrefix}` || prefix;
     };
 
-    const allRows = [...primaryRows, ...optionalRows];
+    const formatTeam = (value?: string[] | null) => (Array.isArray(value) && value.length ? value.join(" / ") : "");
 
     const copyableFields = useMemo(
-        () => new Set<keyof User>(["phone", "mattermost", "tg"]),
+        () => new Set<keyof User>(["phone", "mattermost", "tg", "email"]),
         []
     );
 
     const {copiedKey, copy} = useCopyStatus(500);
 
     if (!isEdit) {
+        const viewRows: RowDefinition[] = [...personalRows, ...workRows, ...contactRows, ...aboutRows];
         return (
             <div className="user-personal-info-card user-personal-info-card--view">
-                {allRows.map((r, idx) => (
+                {viewRows.map((r, idx) => (
                     <React.Fragment key={String(r.key)}>
                         <RowInfo
                             label={r.label}
@@ -147,6 +161,11 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                                         hideYear: !user.isBirthyearVisible,
                                     });
                                     return formatted || "-";
+                                }
+
+                                if (r.key === "team") {
+                                    const formattedTeam = formatTeam(rawValue as string[] | undefined);
+                                    return formattedTeam || "-";
                                 }
 
                                 const value = String(rawValue ?? "-");
@@ -173,10 +192,10 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                                     );
                                 }
 
-                                return value;
+                                return value || "-";
                             })()}
                         </RowInfo>
-                        {idx !== allRows.length - 1 && <hr/>}
+                        {idx !== viewRows.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
             </div>
@@ -187,7 +206,8 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         const prefix = prefixedInputs[r.key];
         const baseValue = (() => {
             const val = editedUser[r.key] as any;
-            if (r.key === 'birthday') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
+            if (r.key === 'birthday' || r.key === 'hireDate') return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : '';
+            if (r.key === 'team') return formatTeam(val);
             return String(val ?? '');
         })();
 
@@ -202,6 +222,12 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         ].filter(Boolean).join(' ');
 
         const handleChange = (nextValue: string) => {
+            if (r.key === 'team') {
+                const parts = nextValue.split('/').map((part) => part.trim()).filter(Boolean);
+                update('team', parts);
+                return;
+            }
+
             const normalized = prefix ? normalizePrefixedInput(nextValue, prefix) : nextValue;
             const sanitized = prefix && normalized === prefix ? '' : normalized;
             update(r.key, sanitized);
@@ -225,18 +251,14 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
                     <RowInfo label={r.label}>
                         <div className="birthday-field">
                             {field}
-                            {editedUser.isBirthyearVisible ? (
-                                <EyeIcon
-                                    className="birthday-field__icon"
-                                    onClick={() => update('isBirthyearVisible', false)}
-                                />
-
-                            ) : (
-                                <EyeCloseIcon
-                                    className="birthday-field__icon eye-closed"
-                                    onClick={() => update('isBirthyearVisible', true)}
-                                />
-                            )}
+                            <button
+                                type="button"
+                                className="birthday-field__toggle"
+                                onClick={() => update('isBirthyearVisible', !editedUser.isBirthyearVisible)}
+                                disabled={!!disabled}
+                            >
+                                {editedUser.isBirthyearVisible ? 'Скрыть год рождения' : 'Показать год рождения'}
+                            </button>
                         </div>
                     </RowInfo>
                 </React.Fragment>
@@ -253,16 +275,39 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled}:
         );
     };
 
+    const Section = ({title, children}: { title: string, children: React.ReactNode }) => (
+        <div className="user-personal-info-card__section">
+            <p className="user-personal-info-card__section-title">{title}</p>
+            <div className="user-personal-info-card__rows">{children}</div>
+        </div>
+    );
+
+    const renderSectionRows = (rows: RowDefinition[]) => rows.map((row, idx) => (
+        <React.Fragment key={String(row.key)}>
+            {renderField(row)}
+            {idx !== rows.length - 1 && <hr/>}
+        </React.Fragment>
+    ));
+
     return (
         <div className="user-personal-info-card user-personal-info-card--edit">
-            {primaryRows.map(renderField)}
-            <p className="user-personal-info-card__optional-note">Необязательно, но люди больше узнают о тебе</p>
-            {optionalRows.map(renderField)}
-            <WorkerStatusSelectorRowInfo
-                status={editedUser.status}
-                onChange={v => update("status", v)}
-                disabled={disabled}
-            />
+            <Section title="Личные данные">
+                {renderSectionRows(personalRows)}
+            </Section>
+            <Section title="О работе">
+                {renderSectionRows(workRows)}
+                <WorkerStatusSelectorRowInfo
+                    status={editedUser.status}
+                    onChange={v => update("status", v)}
+                    disabled={disabled}
+                />
+            </Section>
+            <Section title="Контактные данные">
+                {renderSectionRows(contactRows)}
+            </Section>
+            <Section title="О себе">
+                {renderSectionRows(aboutRows)}
+            </Section>
         </div>
     );
 }

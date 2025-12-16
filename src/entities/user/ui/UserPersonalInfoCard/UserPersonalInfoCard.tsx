@@ -14,14 +14,14 @@ type IUserPersonalInfoCard = {
     isEdit: boolean;
     onChange?: (user: User) => void;
     disabled?: boolean;
-    adminMode?: boolean; // true = админ редактирует другого
+    adminMode?: boolean;
 };
 
 type AdminEditedUser = User & {
     firstName?: string;
     middleName?: string;
     lastName?: string;
-    hireDate?: Date; // ✅
+    hireDate?: Date;
 };
 
 type RowDefinition = {
@@ -103,7 +103,7 @@ const withAdminFields = (user: User): AdminEditedUser => {
         firstName: fioParts.firstName,
         middleName: fioParts.middleName,
         lastName: fioParts.lastName,
-        hireDate: deriveHireDate(user.experience, undefined), // ✅
+        hireDate: deriveHireDate(user.experience, undefined),
     };
 };
 
@@ -182,13 +182,11 @@ export default function UserPersonalInfoCard({
             (next as any)[key] = value;
         }
 
-        // админские поля ФИО -> пересобираем fio
         if (adminMode && (key === "firstName" || key === "middleName" || key === "lastName")) {
             const fio = composeFio(next.lastName, next.firstName, next.middleName);
             if (fio) next.fio = fio;
         }
 
-        // ✅ hireDate -> experience (days)
         if (adminMode && key === "hireDate") {
             const days = computeExperienceDaysFromHireDate(next.hireDate);
             if (typeof days === "number") next.experience = days;
@@ -202,10 +200,6 @@ export default function UserPersonalInfoCard({
     const viewRows: Array<Pick<RowDefinition, "key" | "label" | "tooltipContent" | "textarea">> = [
         { key: "city", label: "город" },
         { key: "birthday", label: "дата рождения" },
-        { key: "position", label: "роль" },
-        { key: "legalEntity", label: "юр. лицо" },
-        { key: "department", label: "отдел" },
-        { key: "team", label: "группа" },
         { key: "tg", label: "ник telegram" },
         { key: "phone", label: "телефон" },
         { key: "mattermost", label: "mattermost", tooltipContent: mattermostTooltip },

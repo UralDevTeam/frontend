@@ -16,6 +16,7 @@ type IUserPersonalInfoCard = {
     onChange?: (user: User) => void;
     disabled?: boolean;
     adminMode?: boolean;
+    invalidFieldKey?: keyof AdminEditedUser;
 };
 
 type AdminEditedUser = User & {
@@ -122,12 +123,35 @@ const parseTeam = (value: string): string[] =>
         .map((s) => s.trim())
         .filter(Boolean);
 
+const formatPhoneNumber = (value: string): string => {
+    const digitsOnly = value.replace(/\D/g, "");
+    if (!digitsOnly) return "";
+
+    const normalized = (digitsOnly.startsWith("8") ? `7${digitsOnly.slice(1)}` : digitsOnly).slice(0, 11);
+
+    const country = normalized.slice(0, 1);
+    const part1 = normalized.slice(1, 4);
+    const part2 = normalized.slice(4, 7);
+    const part3 = normalized.slice(7, 9);
+    const part4 = normalized.slice(9, 11);
+
+    let formatted = country ? `+${country}` : "+";
+    formatted += part1 ? ` (${part1}` : "";
+    formatted += part1 && part1.length === 3 ? ")" : "";
+    formatted += part2 ? ` ${part2}` : "";
+    formatted += part3 ? `-${part3}` : "";
+    formatted += part4 ? `-${part4}` : "";
+
+    return formatted.trim();
+};
+
 export default function UserPersonalInfoCard({
                                                  user,
                                                  isEdit,
                                                  onChange,
                                                  disabled,
                                                  adminMode = false,
+                                                 invalidFieldKey,
                                              }: IUserPersonalInfoCard) {
     const [editedUser, setEditedUser] = useState<AdminEditedUser>(() =>
         adminMode ? withAdminFields(user) : { ...user }
@@ -175,7 +199,9 @@ export default function UserPersonalInfoCard({
 
         const next: AdminEditedUser = { ...editedUser };
 
-        if (key === "birthday" || key === "hireDate") {
+        if (key === "phone") {
+            (next as any)[key] = formatPhoneNumber(String(value ?? ""));
+        } else if (key === "birthday" || key === "hireDate") {
             (next as any)[key] = value ? new Date(value) : undefined;
         } else if (key === "team") {
             (next as any)[key] = parseTeam(String(value ?? ""));
@@ -298,6 +324,7 @@ export default function UserPersonalInfoCard({
         const inputClassNames = [
             isPlaceholderOnly ? "user-personal-info-card-item__placeholder-value" : "",
             r.key === "birthday" && !editedUser.isBirthyearVisible ? "birthday-field__input-control--hidden-year" : "",
+            invalidFieldKey === r.key ? "user-personal-info-card-item__input--invalid" : "",
         ]
             .filter(Boolean)
             .join(" ");

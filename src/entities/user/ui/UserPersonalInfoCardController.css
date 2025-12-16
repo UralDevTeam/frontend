@@ -84,3 +84,11 @@
     justify-content: center;
     transition: transform 0.2s ease;
 }
+
+.user-personal-info-controller__error {
+    margin-top: 16px;
+    color: #E53130;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Golos Text", sans-serif;
+}

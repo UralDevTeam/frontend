@@ -52,6 +52,11 @@
     color: #9DA3A4;
 }
 
+.user-personal-info-card-item > input.user-personal-info-card-item__input--invalid,
+.user-personal-info-card-item > textarea.user-personal-info-card-item__input--invalid {
+    border: 1.5px solid #E53130;
+}
+
 .user-personal-info-card--edit .user-personal-info-card-item > input[type="date"] {
     width: 150px;
     cursor: text;

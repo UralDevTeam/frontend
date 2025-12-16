@@ -54,7 +54,10 @@ const isBirthdayValid = (date?: Date | string) => {
     const hundredYearsAgo = new Date();
     hundredYearsAgo.setFullYear(now.getFullYear() - 100);
 
-    return dt >= hundredYearsAgo && dt <= now;
+    const fourteenYearsAgo = new Date();
+    fourteenYearsAgo.setFullYear(now.getFullYear() - 14);
+
+    return dt >= hundredYearsAgo && dt <= fourteenYearsAgo;
 };
 
 const splitFio = (fio?: string) => {
@@ -129,7 +132,7 @@ const UserPersonalInfoCardController = (
         }
 
         if (!isBirthdayValid(next.birthday)) {
-            return { error: "Дата рождения должна соответствовать возрасту не старше 100 лет", invalidKey: "birthday" };
+            return { error: "Дата рождения должна соответствовать возрасту  от 14 до 100 лет", invalidKey: "birthday" };
         }
 
         if (adminMode) {

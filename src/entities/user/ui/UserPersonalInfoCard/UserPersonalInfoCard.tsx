@@ -88,7 +88,9 @@ const withAdminFields = (user: User): EditableUser => {
     const fioParts = splitFio(user.fio);
     return {
         ...user,
-        ...fioParts,
+        firstName: user.firstName ?? fioParts.firstName,
+        middleName: user.middleName ?? fioParts.middleName,
+        lastName: user.lastName ?? fioParts.lastName,
         hireDate: deriveHireDate(user.experience, user.hireDate),
     };
 };

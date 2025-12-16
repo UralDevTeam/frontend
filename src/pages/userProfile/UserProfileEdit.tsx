@@ -8,14 +8,13 @@ import "./profile.css"
 type Props = {
     initialUser?: User;
     viewPath?: string;
-    saveUserFn?: (user: User, originalUser?: User) => Promise<unknown>;
+    saveUserFn?: (user: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
     toSelf?: boolean;
 }
 
 function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, toSelf = true}: Props) {
     const user = initialUser ?? userStore.user;
-    const adminMode = Boolean(userStore.user?.isAdmin && !toSelf);
 
     if (!user) return <div>No user</div>;
 
@@ -32,7 +31,6 @@ function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, 
                     viewPath={viewPath}
                     saveUserFn={saveUserFn}
                     afterSave={afterSave}
-                    adminMode={adminMode}
                 />
             </div>
         </div>

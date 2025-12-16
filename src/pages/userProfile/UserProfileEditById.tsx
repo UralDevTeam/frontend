@@ -53,13 +53,13 @@ function UserProfileEditByIdInner() {
     };
 
     return (
-            <UserProfileEdit
-                initialUser={user}
-                viewPath={`/profile/view/${id}`}
-                saveUserFn={(updatedUser) => saveUserById(id, updatedUser, user)}
-                afterSave={handleAfterSave}
-                toSelf={isSelf}
-            />
+        <UserProfileEdit
+            initialUser={user}
+            viewPath={`/profile/view/${id}`}
+            saveUserFn={(updatedUser) => saveUserById(id, updatedUser)}
+            afterSave={handleAfterSave}
+            toSelf={isSelf}
+        />
     );
 }
 

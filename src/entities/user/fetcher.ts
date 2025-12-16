@@ -2,7 +2,7 @@ import {WorkerStatuses} from '../../shared/statuses/workerStatuses';
 import {UserDTO} from "./types/user";
 import {apiClient} from "../../shared/lib/api-client";
 
-export type BackendUserDTO = {
+type BackendUserDTO = {
   id: string;
   fio?: string;
   fullName?: string;
@@ -56,7 +56,7 @@ function parseDateSafe(d?: string | null): string | undefined {
   return Number.isNaN(dt.getTime()) ? undefined : dt.toISOString();
 }
 
-export function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
+function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   const fio = safeString(u.fio ?? u.fullName);
   const email = safeTrim(u.email ?? u.mail ?? u.contact) ?? '';
 
@@ -138,6 +138,5 @@ export async function fetchUserById(id: string): Promise<UserDTO> {
 }
 
 export const updateUser = async (userId: string, payload: Partial<UserDTO>): Promise<UserDTO> => {
-  const res = await apiClient.put<BackendUserDTO>(`/api/users/${encodeURIComponent(userId)}`, payload);
-  return adaptBackendUserToFrontend(res);
+  return await apiClient.put<UserDTO>(`/api/users/${encodeURIComponent(userId)}`, payload);
 };

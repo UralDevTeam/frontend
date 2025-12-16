@@ -38,19 +38,17 @@
 .user-main-properties {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: max-content;
 }
 
 .user-main-properties-line {
     display: flex;
     flex-direction: row;
     align-items: center;
-    column-gap: 18px;
-    row-gap: 8px;
+    gap: 18px;
     margin-top: 6px;
 
-    width: auto;
-    flex-wrap: wrap;
-    white-space: normal;
+    height: max-content;
+    width: max-content;
     font-size: 16px;
 }

@@ -113,7 +113,7 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled, 
 
     useEffect(() => {
         setEditedUser(adminMode ? withAdminFields(user) : user);
-    }, [user, adminMode]);
+    }, [user.id, isEdit, adminMode]);
 
     const update = (key: keyof EditableUser, value: any) => {
         if (disabled) return;

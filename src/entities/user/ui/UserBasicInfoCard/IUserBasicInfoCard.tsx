@@ -5,6 +5,7 @@ import {NavLink} from "react-router";
 import {User} from "../../index";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
 import CopyIcon from "../../../../shared/icons/copy-icon";
+import { buildContactLink } from "../../../../shared/contactLink/contactLink";
 
 type IUserBasicInfoCard = {
     user: User;
@@ -36,14 +37,21 @@ function formatExperience(value: number) {
 
 export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
     const email = (user as any).email || '-';
+    const emailLink = email !== '-' ? buildContactLink("email", email) : null;
+    const emailContent = emailLink ? (
+        <a className="contact-link" href={emailLink.href}>{emailLink.label}</a>
+    ) : (
+        email
+    );
 
     const rows: {
         key: string;
         label: string;
         content: React.ReactNode;
         copyValue?: string;
+        contactKey?: "email";
     }[] = [
-        {key: 'mail', label: 'почта', content: email, copyValue: email},
+        {key: 'email', label: 'почта', content: emailContent, copyValue: email, contactKey: "email"},
         {key: 'experience', label: 'стаж', content: formatExperience(user.experience || 0)},
         {
             key: 'boss',
@@ -71,7 +79,19 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
                     <RowInfo label={r.label}>
                         {r.copyValue && r.copyValue !== '-' ? (
                             <div className="row-copyable">
-                                <span className="row-copyable__text">{r.copyValue}</span>
+                                {(() => {
+                                    const contactLink = r.contactKey ? buildContactLink(r.contactKey, r.copyValue) : null;
+
+                                    return (
+                                        <span className="row-copyable__text">
+                                            {contactLink ? (
+                                                <a className="contact-link" href={contactLink.href}>{contactLink.label}</a>
+                                            ) : (
+                                                r.copyValue
+                                            )}
+                                        </span>
+                                    );
+                                })()}
                                 <div className="copy-controls">
                                     <button
                                         className="copy-button"

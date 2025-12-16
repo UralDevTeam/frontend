@@ -8,6 +8,7 @@ import CopyIcon from "../../../../shared/icons/copy-icon";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
 import EyeIcon from "../../../../shared/icons/eye-icon";
 import EyeCloseIcon from "../../../../shared/icons/yey-close-icon";
+import { buildContactLink } from "../../../../shared/contactLink/contactLink";
 
 type IUserPersonalInfoCard = {
     user: User;
@@ -234,11 +235,22 @@ export default function UserPersonalInfoCard({
 
                                 const value = String(rawValue ?? "-");
                                 const keyStr = String(r.key);
+                                const link =
+                                    value !== "-" && (r.key === "tg" || r.key === "mattermost")
+                                        ? buildContactLink(r.key, value)
+                                        : null;
+                                const content = link ? (
+                                    <a className="contact-link" href={link.href} target="_blank" rel="noreferrer">
+                                        {link.label}
+                                    </a>
+                                ) : (
+                                    value
+                                );
 
                                 if (copyableFields.has(r.key as keyof User) && value !== "-") {
                                     return (
                                         <div className="row-copyable">
-                                            <span className="row-copyable__text">{value}</span>
+                                            <span className="row-copyable__text">{content}</span>
                                             <div className="copy-controls">
                                                 <button
                                                     className="copy-button"
@@ -254,7 +266,7 @@ export default function UserPersonalInfoCard({
                                     );
                                 }
 
-                                return value;
+                                return content;
                             })()}
                         </RowInfo>
                         {idx !== viewRows.length - 1 && <hr />}

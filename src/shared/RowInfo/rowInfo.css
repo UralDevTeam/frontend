@@ -84,6 +84,11 @@
     transform: translateY(0);
 }
 
+.contact-link {
+    text-decoration: underline;
+    color: var(--color-primary-mint);
+}
+
 .mattermost-tooltip {
     display: flex;
     flex-direction: column;

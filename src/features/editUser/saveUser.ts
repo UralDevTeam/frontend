@@ -14,7 +14,39 @@ const normalizeTeam = (team?: string[]) => {
     return team.map(String).filter(Boolean);
 };
 
-const normalizeUserForPayload = (user: User) => ({
+const arraysEqual = (a?: string[], b?: string[]) => {
+    if (a === b) return true;
+    const left = Array.isArray(a) ? a : [];
+    const right = Array.isArray(b) ? b : [];
+    if (left.length !== right.length) return false;
+    return left.every((val, idx) => val === right[idx]);
+};
+
+const normalizeSelfPayload = (user: User) => ({
+    city: user.city ?? "",
+    phone: user.phone ?? "",
+    mattermost: user.mattermost ?? "",
+    tg: user.tg ?? "",
+    aboutMe: user.aboutMe ?? "",
+    birthDate: formatDateOnly(user.birthday),
+    isBirthyearVisible: user.isBirthyearVisible ?? true,
+    status: user.status,
+});
+
+const buildSelfPayload = (updatedUser: User, originalUser?: User) => {
+    const nextPayload = normalizeSelfPayload(updatedUser);
+    if (!originalUser) return nextPayload;
+
+    const prevPayload = normalizeSelfPayload(originalUser);
+
+    const diffEntries = (Object.keys(nextPayload) as Array<keyof typeof nextPayload>).filter((key) => {
+        return nextPayload[key] !== prevPayload[key];
+    }).map((key) => [key, nextPayload[key]]);
+
+    return Object.fromEntries(diffEntries);
+};
+
+const normalizeAdminPayload = (user: User) => ({
     city: user.city ?? "",
     phone: user.phone ?? "",
     mattermost: user.mattermost ?? "",
@@ -35,20 +67,12 @@ const normalizeUserForPayload = (user: User) => ({
     isAdmin: Boolean(user.isAdmin),
 });
 
-const arraysEqual = (a?: string[], b?: string[]) => {
-    if (a === b) return true;
-    const left = Array.isArray(a) ? a : [];
-    const right = Array.isArray(b) ? b : [];
-    if (left.length !== right.length) return false;
-    return left.every((val, idx) => val === right[idx]);
-};
-
-const buildUserPayload = (updatedUser: User, originalUser?: User) => {
-    const nextPayload = normalizeUserForPayload(updatedUser);
+const buildAdminPayload = (updatedUser: User, originalUser?: User) => {
+    const nextPayload = normalizeAdminPayload(updatedUser);
 
     if (!originalUser) return nextPayload;
 
-    const prevPayload = normalizeUserForPayload(originalUser);
+    const prevPayload = normalizeAdminPayload(originalUser);
     const diffEntries = (Object.keys(nextPayload) as Array<keyof typeof nextPayload>).filter((key) => {
         const nextVal = nextPayload[key];
         const prevVal = prevPayload[key];
@@ -63,11 +87,9 @@ const buildUserPayload = (updatedUser: User, originalUser?: User) => {
     return Object.fromEntries(diffEntries);
 };
 
-const saveUserWithUrl = async (url: string, updatedUser: User, originalUser?: User) => {
-    const payload = buildUserPayload(updatedUser, originalUser);
-
+const saveUserWithUrl = async (url: string, payload: Record<string, unknown>, fallbackUser: User) => {
     if (Object.keys(payload).length === 0) {
-        return updatedUser;
+        return fallbackUser;
     }
 
     const headers: Record<string, string> = {
@@ -92,13 +114,13 @@ const saveUserWithUrl = async (url: string, updatedUser: User, originalUser?: Us
 };
 
 export async function saveUser(updatedUser: User, originalUser?: User) {
-    const url = `/api/me`;
-    return await saveUserWithUrl(url, updatedUser, originalUser);
+    const payload = buildSelfPayload(updatedUser, originalUser);
+    return await saveUserWithUrl(`/api/me`, payload, updatedUser);
 }
 
 export async function saveUserById(userId: string, updatedUser: User, originalUser?: User) {
-    const url = `/api/users/${encodeURIComponent(userId)}`;
-    return await saveUserWithUrl(url, updatedUser, originalUser);
+    const payload = buildAdminPayload(updatedUser, originalUser);
+    return await saveUserWithUrl(`/api/users/${encodeURIComponent(userId)}`, payload, updatedUser);
 }
 
-export {buildUserPayload};
+export {buildAdminPayload as buildUserPayload};

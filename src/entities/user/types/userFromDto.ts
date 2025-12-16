@@ -12,10 +12,19 @@ const splitFio = (fio?: string) => {
 export const userFromDto: (userDTO: UserDTO) => User = (userDto) => {
     const fioParts = splitFio(userDto.fio);
 
+    const hireDateFromExperience = () => {
+        const days = Number(userDto.experience);
+        if (!Number.isFinite(days) || days <= 0) return undefined;
+
+        const dt = new Date();
+        dt.setDate(dt.getDate() - days);
+        return dt;
+    };
+
     return {
         aboutMe: userDto.aboutMe,
         birthday: userDto.birthday ? new Date(userDto.birthday) : undefined,
-        hireDate: userDto.hireDate ? new Date(userDto.hireDate) : undefined,
+        hireDate: hireDateFromExperience(),
         isBirthyearVisible: userDto.isBirthyearVisible,
         boss: userDto.boss,
         city: userDto.city,
@@ -23,9 +32,9 @@ export const userFromDto: (userDTO: UserDTO) => User = (userDto) => {
         email: userDto.email,
         experience: userDto.experience,
         fio: userDto.fio,
-        firstName: userDto.firstName || fioParts.firstName,
-        middleName: userDto.middleName || fioParts.middleName,
-        lastName: userDto.lastName || fioParts.lastName,
+        firstName: fioParts.firstName,
+        middleName: fioParts.middleName,
+        lastName: fioParts.lastName,
         formatTeam: userDto.team.join(' / '),
         id: userDto.id,
         isAdmin: userDto.isAdmin,

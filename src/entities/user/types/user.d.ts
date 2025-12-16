@@ -9,9 +9,6 @@ export type UserLinkDTO = {
 export type UserDTO = {
     id: string;
     fio: string;
-    firstName?: string;
-    middleName?: string;
-    lastName?: string;
     email: string;
     phone?: string;
     mattermost?: string;
@@ -19,7 +16,6 @@ export type UserDTO = {
     isAdmin: boolean;
 
     birthday?: string;
-    hireDate?: string;
     isBirthyearVisible: boolean;
     team: string[];
     legalEntity: string;

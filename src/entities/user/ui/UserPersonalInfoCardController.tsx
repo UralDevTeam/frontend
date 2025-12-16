@@ -15,6 +15,7 @@ type Props = {
     viewPath?: string;
     saveUserFn?: (user: User, originalUser?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
+    adminMode?: boolean;
 };
 
 const UserPersonalInfoCardController = (
@@ -26,6 +27,7 @@ const UserPersonalInfoCardController = (
         viewPath = "/me",
         saveUserFn,
         afterSave,
+        adminMode = false,
     }: Props) => {
     const navigate = useNavigate();
     const [draftUser, setDraftUser] = useState<User>(user);
@@ -77,6 +79,7 @@ const UserPersonalInfoCardController = (
                 isEdit={isEdit}
                 onChange={setDraftUser}
                 disabled={editingDisabled}
+                adminMode={adminMode}
             />
             {isEdit && <>
                 <p className="user-personal-info-controller__hint">нажмите `сохранить` чтобы данные изменились</p>

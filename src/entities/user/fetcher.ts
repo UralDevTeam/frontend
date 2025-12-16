@@ -5,9 +5,6 @@ import {apiClient} from "../../shared/lib/api-client";
 export type BackendUserDTO = {
   id: string;
   fio?: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
   fullName?: string;
   email?: string;
   mail?: string;
@@ -16,7 +13,6 @@ export type BackendUserDTO = {
   mattermost?: string | null;
   tg?: string | null;
   birthday?: string;
-  hireDate?: string;
   isBirthyearVisible: boolean;
   team?: string[];
   boss?: { id: string; fullName: string; shortName: string } | null;
@@ -75,7 +71,6 @@ export function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     : {id: '', fullName: '', shortName: ''};
 
   const birthdayIso = parseDateSafe(u.birthday ?? undefined);
-  const hireDateIso = parseDateSafe(u.hireDate ?? undefined);
 
   const isBirthyearVisible = Boolean(u.isBirthyearVisible);
 
@@ -86,9 +81,6 @@ export function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
   return {
     id: safeString(u.id),
     fio,
-    firstName: safeString(u.firstName),
-    middleName: safeString(u.middleName),
-    lastName: safeString(u.lastName),
     email,
     phone: safeTrim(u.phone ?? undefined),
     mattermost: safeTrim(u.mattermost ?? undefined),
@@ -96,7 +88,6 @@ export function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
     isAdmin,
 
     birthday: birthdayIso ?? undefined,
-    hireDate: hireDateIso ?? undefined,
     isBirthyearVisible,
     team,
     boss,

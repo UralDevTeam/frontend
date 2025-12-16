@@ -4,7 +4,7 @@ import {useParams} from 'react-router';
 import UserProfileEdit from './UserProfileEdit';
 import {fetchCurrentUser, fetchUserById} from '../../entities/user/fetcher';
 import {User, userFromDto, userStore} from '../../entities/user';
-import {saveUserById} from '../../features/editUser/saveUser';
+import {saveUserByIdAdmin} from '../../features/editUser/saveUser';
 
 function UserProfileEditById() {
     const {id} = useParams<{ id: string }>();
@@ -56,9 +56,13 @@ function UserProfileEditById() {
         <UserProfileEdit
             initialUser={user}
             viewPath={`/profile/view/${id}`}
-            saveUserFn={(updatedUser) => saveUserById(id, updatedUser)}
+            saveUserFn={(updatedUser, originalUser) => {
+                if (!originalUser) throw new Error("Original user is missing for admin update");
+                return saveUserByIdAdmin(id, originalUser, updatedUser);
+            }}
             afterSave={handleAfterSave}
             toSelf={isSelf}
+            adminMode={true}
         />
     );
 }

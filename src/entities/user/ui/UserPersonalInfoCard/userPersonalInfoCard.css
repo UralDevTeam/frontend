@@ -12,8 +12,15 @@
 
 .user-personal-info-card.user-personal-info-card--edit {
     gap: 18px;
-    padding-top: 40px;
-    margin-top: -100px;
+    margin-top: -120px;
+}
+
+.user-personal-info-card__section-title {
+    margin-top: 64px;
+
+    font-family: "Golos Text", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .label {

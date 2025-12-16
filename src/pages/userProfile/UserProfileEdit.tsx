@@ -8,12 +8,13 @@ import "./profile.css"
 type Props = {
     initialUser?: User;
     viewPath?: string;
-    saveUserFn?: (user: User) => Promise<unknown>;
+    saveUserFn?: (updated: User, original?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
     toSelf?: boolean;
+    adminMode?: boolean;
 }
 
-function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, toSelf = true}: Props) {
+function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, toSelf = true, adminMode = false}: Props) {
     const user = initialUser ?? userStore.user;
     const titleText = toSelf ? "Редактирование личных данных" : "Редактирование данных сотрудника";
 
@@ -25,6 +26,7 @@ function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, 
                 user={user}
                 toSelf={toSelf}
                 titleText={titleText}
+                adminMode={adminMode}
             />
             <div className={"user-profile-content"}>
                 <UserPersonalInfoCardController
@@ -33,6 +35,7 @@ function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, 
                     viewPath={viewPath}
                     saveUserFn={saveUserFn}
                     afterSave={afterSave}
+                    adminMode={adminMode}
                 />
             </div>
         </div>

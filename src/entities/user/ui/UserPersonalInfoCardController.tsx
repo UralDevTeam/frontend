@@ -13,8 +13,9 @@ type Props = {
     canEdit?: boolean;
     editPath?: string;
     viewPath?: string;
-    saveUserFn?: (user: User) => Promise<unknown>;
+    saveUserFn?: (updated: User, original?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
+    adminMode?: boolean;
 };
 
 const UserPersonalInfoCardController = (
@@ -26,13 +27,16 @@ const UserPersonalInfoCardController = (
         viewPath = "/me",
         saveUserFn,
         afterSave,
+        adminMode = false,
     }: Props) => {
     const navigate = useNavigate();
     const [draftUser, setDraftUser] = useState<User>(user);
+    const [originalUser, setOriginalUser] = useState<User>(user);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         setDraftUser(user);
+        setOriginalUser(user);
     }, [user]);
 
     const handleUndo = useCallback(() => {
@@ -41,7 +45,8 @@ const UserPersonalInfoCardController = (
     const handleSave = useCallback(async () => {
         setIsSaving(true);
         try {
-            await (saveUserFn ?? saveUser)(draftUser);
+            await (saveUserFn ?? ((u: User) => saveUser(u)))(draftUser, originalUser);
+
             if (afterSave) {
                 await afterSave();
             } else {
@@ -51,7 +56,7 @@ const UserPersonalInfoCardController = (
         } finally {
             setIsSaving(false);
         }
-    }, [draftUser, navigate, viewPath]);
+    }, [draftUser, originalUser, navigate, viewPath, saveUserFn, afterSave]);
 
     const editingDisabled = isSaving;
     const preventNavigationIfDisabled = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -77,6 +82,7 @@ const UserPersonalInfoCardController = (
                 isEdit={isEdit}
                 onChange={setDraftUser}
                 disabled={editingDisabled}
+                adminMode={adminMode}
             />
             {isEdit && <>
                 <p className="user-personal-info-controller__hint">нажмите `сохранить` чтобы данные изменились</p>

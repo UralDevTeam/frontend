@@ -35,7 +35,7 @@
 
     border-radius: 12px;
 
-    transition: transform 0.15s ease;
+    transition: transform 0.2s ease;
 }
 
 .user-personal-info-controller__undo-edit-button {
@@ -82,4 +82,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s ease;
 }

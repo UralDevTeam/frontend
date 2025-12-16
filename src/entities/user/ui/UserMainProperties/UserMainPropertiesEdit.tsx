@@ -6,9 +6,15 @@ type Props = {
     user: User,
     toSelf?: boolean,
     titleText?: string,
+    adminMode?: boolean,
 };
 
-export default function UserMainPropertiesEdit({user, toSelf = false, titleText = "Редактирование личных данных",}: Props) {
+export default function UserMainPropertiesEdit({
+                                                   user,
+                                                   toSelf = false,
+                                                   titleText = "Редактирование личных данных",
+                                                   adminMode = false
+                                               }: Props) {
     return (
         <div className="user-main-properties-container edit-mode">
             <div className="user-main-properties-avatar">
@@ -20,6 +26,7 @@ export default function UserMainPropertiesEdit({user, toSelf = false, titleText 
                     editable={true}
                     disableNavigation={true}
                     allowDelete={true}
+                    adminMode={adminMode}
                 />
                 <p className="user-main-properties-avatar__note">до 10МБ</p>
             </div>

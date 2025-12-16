@@ -19,6 +19,7 @@ type Props = {
     variant?: AvatarVariant,
     disableNavigation?: boolean,
     allowDelete?: boolean,
+    adminMode?: boolean,
 };
 
 const ProfileCircle = ({
@@ -31,6 +32,7 @@ const ProfileCircle = ({
                            disableNavigation = false,
                            addStar = false,
                            allowDelete = false,
+                           adminMode = false,
                        }: Props) => {
 
     const [avatarUrl, setAvatarUrl] = useState<string>("/defaultPhoto.png");
@@ -247,7 +249,12 @@ const ProfileCircle = ({
                     </button>
                     {isDeleteConfirmOpen && (
                         <div className="profile-circle__delete-confirm">
-                            <span className="profile-circle__delete-confirm-text">Вы точно хотите удалить фото?</span>
+                            <span className="profile-circle__delete-confirm-text">
+                                {adminMode
+                                    ? "Вы точно хотите удалить фото сотрудника?"
+                                    : "Вы точно хотите удалить фото?"
+                                }
+                            </span>
                             <div className="profile-circle__delete-confirm-actions">
                                 <button
                                     type="button"

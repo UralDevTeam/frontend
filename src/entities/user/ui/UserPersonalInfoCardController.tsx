@@ -4,6 +4,7 @@ import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 import {User, userStore} from "../index";
 import {fetchCurrentUser} from "../fetcher";
 import {saveUser} from "../../../features/editUser/saveUser";
+import {EditableUser, withAdminFields} from "./userEditable";
 import "./UserPersonalInfoCardController.css";
 
 
@@ -30,12 +31,16 @@ const UserPersonalInfoCardController = (
         adminMode = false,
     }: Props) => {
     const navigate = useNavigate();
-    const [draftUser, setDraftUser] = useState<User>(user);
+    const buildDraftUser = useCallback((baseUser: User): EditableUser => (
+        adminMode ? withAdminFields(baseUser) : baseUser
+    ), [adminMode]);
+
+    const [draftUser, setDraftUser] = useState<EditableUser>(() => buildDraftUser(user));
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        setDraftUser(user);
-    }, [user]);
+        setDraftUser(buildDraftUser(user));
+    }, [buildDraftUser, user]);
 
     const handleUndo = useCallback(() => {
     }, [draftUser]);
@@ -75,9 +80,9 @@ const UserPersonalInfoCardController = (
                 }
             </div>
             <UserPersonalInfoCard
-                user={isEdit ? draftUser : user}
+                user={isEdit ? draftUser : buildDraftUser(user)}
                 isEdit={isEdit}
-                onChange={setDraftUser}
+                onChange={(nextUser) => setDraftUser(nextUser)}
                 disabled={editingDisabled}
                 adminMode={adminMode}
             />

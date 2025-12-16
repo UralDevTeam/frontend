@@ -1,28 +1,21 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo} from "react";
 import WorkerStatusSelectorRowInfo from "../../../../shared/statuses/workerStatusSelectorRowInfo";
 import RowInfo from "../../../../shared/RowInfo/RowInfo";
 import {formatDateRussian} from "../../../../shared/date/formatDateRussian";
 import "./userPersonalInfoCard.css"
-import {User} from "../../index";
 import CopyIcon from "../../../../shared/icons/copy-icon";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
 import EyeIcon from "../../../../shared/icons/eye-icon";
 import EyeCloseIcon from "../../../../shared/icons/yey-close-icon";
+import {EditableUser} from "../userEditable";
 
 type IUserPersonalInfoCard = {
-    user: User,
+    user: EditableUser,
     isEdit: boolean,
-    onChange?: (user: User) => void,
+    onChange?: (user: EditableUser) => void,
     disabled?: boolean,
     adminMode?: boolean,
 }
-
-type EditableUser = User & {
-    firstName?: string;
-    middleName?: string;
-    lastName?: string;
-    hireDate?: Date;
-};
 
 function Field(props: {
     value: string;
@@ -65,38 +58,8 @@ type RowDefinition = {
     tooltipContent?: React.ReactNode,
 };
 
-const splitFio = (fio?: string) => {
-    const parts = (fio ?? "").trim().split(/\s+/).filter(Boolean);
-    return {
-        lastName: parts[0] ?? "",
-        firstName: parts[1] ?? "",
-        middleName: parts.slice(2).join(" ") ?? "",
-    };
-};
-
-const deriveHireDate = (experience?: number, existing?: Date) => {
-    if (existing) return existing;
-    const days = Number(experience);
-    if (!Number.isFinite(days) || days <= 0) return undefined;
-
-    const dt = new Date();
-    dt.setDate(dt.getDate() - days);
-    return dt;
-};
-
-const withAdminFields = (user: User): EditableUser => {
-    const fioParts = splitFio(user.fio);
-    return {
-        ...user,
-        firstName: user.firstName ?? fioParts.firstName,
-        middleName: user.middleName ?? fioParts.middleName,
-        lastName: user.lastName ?? fioParts.lastName,
-        hireDate: deriveHireDate(user.experience, user.hireDate),
-    };
-};
-
 export default function UserPersonalInfoCard({user, isEdit, onChange, disabled, adminMode = false}: IUserPersonalInfoCard) {
-    const [editedUser, setEditedUser] = useState<EditableUser>(() => adminMode ? withAdminFields(user) : user);
+    const editedUser = user as EditableUser;
 
     const mattermostTooltip = (
         <div className="mattermost-tooltip">
@@ -111,10 +74,6 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled, 
         </div>
     );
 
-    useEffect(() => {
-        setEditedUser(adminMode ? withAdminFields(user) : user);
-    }, [user.id, isEdit, adminMode]);
-
     const update = (key: keyof EditableUser, value: any) => {
         if (disabled) return;
 
@@ -124,7 +83,6 @@ export default function UserPersonalInfoCard({user, isEdit, onChange, disabled, 
         } else {
             newUser[key] = value;
         }
-        setEditedUser(newUser);
         if (onChange) onChange(newUser);
     };
 

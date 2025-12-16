@@ -5,9 +5,10 @@ import {User} from "../../index";
 type Props = {
     user: User,
     toSelf?: boolean,
+    titleText?: string,
 };
 
-export default function UserMainPropertiesEdit({user, toSelf = false}: Props) {
+export default function UserMainPropertiesEdit({user, toSelf = false, titleText = "Редактирование личных данных",}: Props) {
     return (
         <div className="user-main-properties-container edit-mode">
             <div className="user-main-properties-avatar">
@@ -24,7 +25,7 @@ export default function UserMainPropertiesEdit({user, toSelf = false}: Props) {
             </div>
             <div className={"user-main-properties"}>
                 <p className="user-main-properties-title-override">
-                    Редактирование личных данных
+                    {titleText}
                 </p>
             </div>
         </div>

@@ -15,6 +15,7 @@ type Props = {
 
 function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, toSelf = true}: Props) {
     const user = initialUser ?? userStore.user;
+    const titleText = toSelf ? "Редактирование личных данных" : "Редактирование данных сотрудника";
 
     if (!user) return <div>No user</div>;
 
@@ -23,6 +24,7 @@ function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, 
             <UserMainPropertiesEdit
                 user={user}
                 toSelf={toSelf}
+                titleText={titleText}
             />
             <div className={"user-profile-content"}>
                 <UserPersonalInfoCardController

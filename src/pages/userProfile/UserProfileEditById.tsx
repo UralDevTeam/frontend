@@ -6,7 +6,7 @@ import {fetchCurrentUser, fetchUserById} from '../../entities/user/fetcher';
 import {User, userFromDto, userStore} from '../../entities/user';
 import {saveUserById} from '../../features/editUser/saveUser';
 
-function UserProfileEditByIdInner() {
+function UserProfileEditById() {
     const {id} = useParams<{ id: string }>();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
@@ -63,6 +63,4 @@ function UserProfileEditByIdInner() {
     );
 }
 
-const UserProfileEditById = observer(UserProfileEditByIdInner);
-
-export default UserProfileEditById;
+export default observer(UserProfileEditById);

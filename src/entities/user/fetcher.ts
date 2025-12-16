@@ -1,30 +1,26 @@
 import {WorkerStatuses} from '../../shared/statuses/workerStatuses';
-import {UserDTO} from "./types/user";
+import {UserDTO, UserLinkDTO} from "./types/user";
 import {apiClient} from "../../shared/lib/api-client";
 
 type BackendUserDTO = {
-  id: string;
-  fio?: string;
-  fullName?: string;
-  email?: string;
-  mail?: string;
-  contact?: string;
-  phone?: string | null;
-  mattermost?: string | null;
-  tg?: string | null;
-  birthday?: string;
-  isBirthyearVisible: boolean;
-  team?: string[];
-  boss?: { id: string; fullName: string; shortName: string } | null;
-  position?: string;
-  grade?: string;
-  experience?: number;
-  status?: string;
-  city?: string;
-  aboutMe?: string;
-  isAdmin?: boolean;
-  legalEntity?: string;
-  department?: string;
+    id: string;
+    fio?: string;
+    email?: string;
+    phone?: string | null;
+    mattermost?: string | null;
+    tg?: string | null;
+    birthday?: string;
+    isBirthyearVisible: boolean;
+    team?: string[];
+    boss?: UserLinkDTO | null;
+    position?: string;
+    experience?: number;
+    status?: string;
+    city?: string;
+    aboutMe?: string;
+    isAdmin?: boolean;
+    legalEntity?: string;
+    department?: string;
 };
 
 function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
@@ -57,8 +53,8 @@ function parseDateSafe(d?: string | null): string | undefined {
 }
 
 function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
-  const fio = safeString(u.fio ?? u.fullName);
-  const email = safeTrim(u.email ?? u.mail ?? u.contact) ?? '';
+  const fio = safeString(u.fio);
+  const email = safeTrim(u.email) ?? '';
 
   const team = Array.isArray(u.team) ? u.team.filter(Boolean).map(String) : [];
 

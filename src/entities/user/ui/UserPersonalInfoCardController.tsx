@@ -234,7 +234,8 @@ const UserPersonalInfoCardController = (
             let friendlyInvalidKeys: InvalidFieldKey[] = ["domain", "legalEntity", "department", "group"];
 
             if (/Team '.+' not found/i.test(rawMessage)) {
-                friendlyMessage = "Такая команда не найдена. Проверьте домен, юр. лицо, отдел и направление: убедитесь, что названия верны или создавайте структуру по одному уровню за раз.";
+                friendlyMessage =
+                    "Не найдена указанная структура. Убедитесь, что названия домена, юр.лица, отдела и направления написаны без опечаток и существуют в системе.\n\nЕсли вы создаёте новую структуру, убедитесь, что создаёте только один уровень иерархии, который должен быть наименьшим.";
             }
 
             setValidationError(friendlyMessage);

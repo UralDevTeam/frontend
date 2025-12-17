@@ -17,8 +17,12 @@ export type Notification = {
 }
 
 
+const HISTORY_LIMIT = 50;
+
+
 class NotificationsStore {
   notifications: Notification[] = [];
+  history: Notification[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -35,6 +39,11 @@ class NotificationsStore {
     };
 
     this.notifications.push(newNotification);
+    this.history.unshift(newNotification);
+
+    if (this.history.length > HISTORY_LIMIT) {
+      this.history = this.history.slice(0, HISTORY_LIMIT);
+    }
 
     if (notification.duration) {
       setTimeout(() => {
@@ -53,6 +62,10 @@ class NotificationsStore {
 
   clearAll() {
     this.notifications = [];
+  }
+
+  clearHistory() {
+    this.history = [];
   }
 
   success(message: string, link?: NotificationLink, duration: number = 5000) {

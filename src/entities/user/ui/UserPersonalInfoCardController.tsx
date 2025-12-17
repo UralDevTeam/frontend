@@ -46,7 +46,7 @@ const isPhoneValid = (value?: string) => {
 const isAboutValid = (value?: string) => (value ?? "").length <= 1000;
 
 const isBirthdayValid = (date?: Date | string) => {
-    if (!date) return true;
+    if (!date) return false;
     const dt = date instanceof Date ? date : new Date(date);
     if (Number.isNaN(dt.getTime())) return false;
 
@@ -132,7 +132,7 @@ const UserPersonalInfoCardController = (
         }
 
         if (!isBirthdayValid(next.birthday)) {
-            return { error: "Дата рождения должна соответствовать возрасту  от 14 до 100 лет", invalidKey: "birthday" };
+            return { error: "Заполните дату рождения: возраст должен быть от 14 до 100 лет", invalidKey: "birthday" };
         }
 
         if (adminMode) {

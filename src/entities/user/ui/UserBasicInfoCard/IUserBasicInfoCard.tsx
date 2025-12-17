@@ -67,7 +67,10 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
         {key: 'role', label: 'роль', content: user.position || '-'},
         {key: 'legalEntity', label: 'юр.лицо', content: (user as any).legalEntity || '-'},
         {key: 'department', label: 'подразделение', content: (user as any).department || '-'},
-        {key: 'formatTeam', label: 'группа', content: (user as any).formatTeam || '-'},
+        {key: 'group', label: 'группа', content:
+                Array.isArray((user as any).formatTeam) && (user as any).formatTeam.length > 3
+                    ? (user as any).formatTeam[3]
+                    : '-'},
     ];
 
     const {copiedKey, copy} = useCopyStatus(500);

@@ -114,8 +114,8 @@ const stripAdminFields = (u: AdminEditedUser): User => {
     return rest as User;
 };
 
-const formatTeam = (value?: string[] | null) =>
-    Array.isArray(value) && value.length ? value.join(" / ") : "";
+const group = (value?: string[] | null) =>
+    value?.[3] ?? "";
 
 const parseTeam = (value: string): string[] =>
     value
@@ -233,10 +233,18 @@ export default function UserPersonalInfoCard({
         { key: "aboutMe", label: "обо мне", textarea: true },
     ];
 
+    const optionalViewKeys = new Set<(typeof viewRows)[number]["key"]>(["city", "mattermost", "aboutMe", "tg", "phone"]);
+    const rowsToRender = viewRows.filter((row) => {
+        if (!optionalViewKeys.has(row.key)) return true;
+
+        const value = (user as any)[row.key];
+        return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
+    });
+
     if (!isEdit) {
         return (
             <div className="user-personal-info-card user-personal-info-card--view">
-                {viewRows.map((r, idx) => (
+                {rowsToRender.map((r, idx) => (
                     <React.Fragment key={String(r.key)}>
                         <RowInfo
                             label={r.label}
@@ -255,8 +263,7 @@ export default function UserPersonalInfoCard({
                                 }
 
                                 if (r.key === "team") {
-                                    const formatted = formatTeam(rawValue as string[] | null | undefined);
-                                    return formatted || "-";
+                                    return group();
                                 }
 
                                 const value = String(rawValue ?? "-");
@@ -295,7 +302,7 @@ export default function UserPersonalInfoCard({
                                 return content;
                             })()}
                         </RowInfo>
-                        {idx !== viewRows.length - 1 && <hr />}
+                        {idx !== rowsToRender.length - 1 && <hr />}
                     </React.Fragment>
                 ))}
             </div>
@@ -313,7 +320,7 @@ export default function UserPersonalInfoCard({
                 return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : "";
             }
 
-            if (r.key === "team") return formatTeam(val);
+            if (r.key === "team") return group(val);
 
             return String(val ?? "");
         })();

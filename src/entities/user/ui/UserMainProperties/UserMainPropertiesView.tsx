@@ -9,6 +9,8 @@ type Prop = {
 };
 
 export default function UserMainPropertiesView({user, toSelf = false}: Prop) {
+    const formattedTeam = user.team.length ? user.team.join(" / ") : "-";
+
     return (
         <div className="user-main-properties-container">
             <ProfileCircle
@@ -25,7 +27,7 @@ export default function UserMainPropertiesView({user, toSelf = false}: Prop) {
                 <div className="user-main-properties-line">
                     {user.position}
                     <img src={"/icons/dot.svg"} alt={"dot icon"}/>
-                    {user.team.join(" / ")}
+                    {formattedTeam}
                     <img src={"/icons/dot.svg"} alt={"dot icon"}/>
                     <WorkerStatus status={user.status}/>
                 </div>

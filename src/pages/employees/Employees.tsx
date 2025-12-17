@@ -8,7 +8,17 @@ import {userStore} from "../../entities/user";
 import onUpdateAD from "../../shared/AD/updateAD" ;
 
 function EmployeesComponent() {
-  const {filters, options,  sortedData, sortConfig, handleSort} = useEmployees();
+  const {
+    filters,
+    options,
+    sortedData,
+    sortConfig,
+    handleSort,
+    fullTextFilter,
+    loading,
+    error,
+    reload,
+  } = useEmployees();
 
   const {
     onlyAdmin,
@@ -35,6 +45,43 @@ function EmployeesComponent() {
     setPositionFilter('');
     setStatusFilter('');
     setDepartmentFilter('');
+  };
+
+  const renderState = () => {
+    if (loading) {
+      return <div className="employees-state">Загрузка сотрудников…</div>;
+    }
+
+    if (error) {
+      return (
+        <div className="employees-state employees-state--error">
+          <p>Не удалось загрузить список сотрудников.</p>
+          <p className="employees-state__details">{error}</p>
+          <button className="employees-retry-button" onClick={reload}>
+            Попробовать снова
+          </button>
+        </div>
+      );
+    }
+
+    if (!sortedData.length) {
+      const hasQuery = fullTextFilter.trim().length > 0;
+      return (
+        <div className="employees-state">
+          {hasQuery
+            ? 'По вашему запросу ничего не найдено. Измените параметры поиска и попробуйте снова.'
+            : 'Нет сотрудников, соответствующих выбранным фильтрам.'}
+        </div>
+      );
+    }
+
+    return (
+      <EmployeesTable
+        data={sortedData}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+      />
+    );
   };
 
   return (
@@ -68,14 +115,7 @@ function EmployeesComponent() {
         onResetFilters={resetFilters}
       />
 
-      <EmployeesTable
-        data={sortedData}
-        // addMode={addMode}
-        // newUser={newUser}
-        // setNewUser={setNewUser}
-        sortConfig={sortConfig}
-        onSort={handleSort}
-      />
+      {renderState()}
     </main>
   )
 }

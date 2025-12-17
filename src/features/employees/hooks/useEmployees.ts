@@ -39,6 +39,8 @@ export function useEmployees() {
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
+  const reload = () => usersStore.loadFromApi();
+
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
       usersStore.loadFromApi();
@@ -175,6 +177,10 @@ export function useEmployees() {
     sortedData: sortedAndFilteredData,
     sortConfig,
     handleSort,
+
+    loading: usersStore.loading,
+    error: usersStore.error,
+    reload,
 
     filters,
     options,

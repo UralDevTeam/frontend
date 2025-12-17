@@ -414,6 +414,10 @@ export function useTeams() {
         }
     }, [searchTerm, flatList]);
 
+    const reload = useCallback(() => {
+        usersStore.loadFromApi();
+    }, []);
+
     const getNodesAtDepthFromFlat = useCallback((depth: number): TeamNode[] => {
         const folderItems = flatList.filter(
             item => item.type === 'folder' && item.depth === depth
@@ -490,6 +494,8 @@ export function useTeams() {
     return {
         teams,
         loading: usersStore.loading,
+        error: usersStore.error,
+        reload,
         flatList,
         aggregates,
         expanded,

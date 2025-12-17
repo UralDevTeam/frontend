@@ -14,7 +14,6 @@ function EmployeesComponent() {
     sortedData,
     sortConfig,
     handleSort,
-    fullTextFilter,
     loading,
     error,
     reload,

@@ -23,7 +23,7 @@ type IUserPersonalInfoCard = {
     onChange?: (user: User) => void;
     disabled?: boolean;
     adminMode?: boolean;
-    invalidFieldKey?: keyof AdminEditedUser;
+    invalidFieldKeys?: (keyof AdminEditedUser)[];
 };
 
 type RowDefinition = {
@@ -163,7 +163,7 @@ export default function UserPersonalInfoCard({
                                                  onChange,
                                                  disabled,
                                                  adminMode = false,
-                                                 invalidFieldKey,
+                                                 invalidFieldKeys,
                                              }: IUserPersonalInfoCard) {
     const [editedUser, setEditedUser] = useState<AdminEditedUser>(() =>
         adminMode ? withAdminFields(user) : { ...user }
@@ -323,6 +323,8 @@ export default function UserPersonalInfoCard({
     const renderField = (r: RowDefinition) => {
         const prefix = (prefixedInputs as Partial<Record<keyof AdminEditedUser, string>>)[r.key];
 
+        const invalidKeys = invalidFieldKeys ?? [];
+
         const baseValue = (() => {
             // ✅ если это team-ключ — читаем из editedUser.team
             if (isTeamKey(r.key)) {
@@ -345,7 +347,7 @@ export default function UserPersonalInfoCard({
         const inputClassNames = [
             isPlaceholderOnly ? "user-personal-info-card-item__placeholder-value" : "",
             r.key === "birthday" && !editedUser.isBirthyearVisible ? "birthday-field__input-control--hidden-year" : "",
-            invalidFieldKey === r.key ? "user-personal-info-card-item__input--invalid" : "",
+            invalidKeys.includes(r.key) ? "user-personal-info-card-item__input--invalid" : "",
         ]
             .filter(Boolean)
             .join(" ");

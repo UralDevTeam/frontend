@@ -59,6 +59,9 @@ const normalizeOptStr = (v: unknown) => String(v ?? "");
 
 const sameString = (a: unknown, b: unknown) => normalizeStr(a) === normalizeStr(b);
 
+const normalizeTeam = (team?: string[]) =>
+    Array.isArray(team) ? team.map((v) => String(v ?? "").trim()).filter(Boolean) : [];
+
 const sameArray = (a?: string[], b?: string[]) => {
     const aa = Array.isArray(a) ? a : [];
     const bb = Array.isArray(b) ? b : [];
@@ -66,6 +69,8 @@ const sameArray = (a?: string[], b?: string[]) => {
     for (let i = 0; i < aa.length; i++) if (aa[i] !== bb[i]) return false;
     return true;
 };
+
+const sameTeam = (a?: string[], b?: string[]) => sameArray(normalizeTeam(a), normalizeTeam(b));
 
 // --------- 1) СВОЙ ПРОФИЛЬ (/api/me) ---------
 export const buildUserPayload = (updatedUser: User): UserMeUpdatePayload => {
@@ -134,7 +139,9 @@ export const buildAdminUserUpdatePayloadDiff = (
     if (!sameString(originalUser.email, updatedUser.email)) payload.email = updatedUser.email;
     if (!sameString(originalUser.position, updatedUser.position)) payload.position = updatedUser.position;
 
-    if (!sameArray(originalUser.team, updatedUser.team)) payload.team = updatedUser.team ?? [];
+    const normalizedOrigTeam = normalizeTeam(originalUser.team);
+    const normalizedNextTeam = normalizeTeam(updatedUser.team);
+    if (!sameTeam(normalizedOrigTeam, normalizedNextTeam)) payload.team = normalizedNextTeam;
 
     if (originalUser.isAdmin !== updatedUser.isAdmin) payload.isAdmin = updatedUser.isAdmin;
 

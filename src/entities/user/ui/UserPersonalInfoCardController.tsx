@@ -68,6 +68,9 @@ const splitFio = (fio?: string) => {
     };
 };
 
+const normalizeTeam = (team?: string[]) =>
+    Array.isArray(team) ? team.map((v) => String(v ?? "").trim()).filter(Boolean) : [];
+
 type InvalidFieldKey = keyof User | "firstName" | "middleName" | "lastName";
 
 
@@ -98,7 +101,7 @@ const UserPersonalInfoCardController = (
     const [originalUser, setOriginalUser] = useState<User>(user);
     const [isSaving, setIsSaving] = useState(false);
     const [validationError, setValidationError] = useState<string | null>(null);
-    const [invalidFieldKey, setInvalidFieldKey] = useState<InvalidFieldKey | null>(null);
+    const [invalidFieldKeys, setInvalidFieldKeys] = useState<InvalidFieldKey[]>([]);
 
     useEffect(() => {
         setDraftUser(user);
@@ -107,12 +110,12 @@ const UserPersonalInfoCardController = (
 
     useEffect(() => {
         setValidationError(null);
-        setInvalidFieldKey(null);
+        setInvalidFieldKeys([]);
     }, [draftUser]);
 
     const handleUndo = useCallback(() => {
     }, [draftUser]);
-    const prepareUserForSave = useCallback((userToNormalize: User): { user?: User; error?: string; invalidKey?: InvalidFieldKey } => {
+    const prepareUserForSave = useCallback((userToNormalize: User): { user?: User; error?: string; invalidKeys?: InvalidFieldKey[] } => {
         const next: User = { ...userToNormalize };
         next.city = capitalizeCity(next.city);
         next.mattermost = (next.mattermost ?? "").trim();
@@ -120,43 +123,92 @@ const UserPersonalInfoCardController = (
         next.aboutMe = next.aboutMe ?? "";
 
         if (!isMattermostValid(next.mattermost)) {
-            return { error: "Ссылка на mattermost должна начинаться с https://most.udv.group/udv/messages/@", invalidKey: "mattermost" };
+            return { error: "Ссылка на mattermost должна начинаться с https://most.udv.group/udv/messages/@", invalidKeys: ["mattermost"] };
         }
 
         if (next.phone && !isPhoneValid(next.phone)) {
-            return { error: "Телефон должен содержать 11 цифр и начинаться с +7", invalidKey: "phone" };
+            return { error: "Телефон должен содержать 11 цифр и начинаться с +7", invalidKeys: ["phone"] };
         }
 
         if (!isAboutValid(next.aboutMe)) {
-            return { error: "Поле \"Обо мне\" должно содержать не более 1000 символов", invalidKey: "aboutMe" };
+            return { error: "Поле \"Обо мне\" должно содержать не более 1000 символов", invalidKeys: ["aboutMe"] };
         }
 
         if (!isBirthdayValid(next.birthday)) {
-            return { error: "Заполните дату рождения: возраст должен быть от 14 до 100 лет", invalidKey: "birthday" };
+            return { error: "Заполните дату рождения: возраст должен быть от 14 до 100 лет", invalidKeys: ["birthday"] };
         }
 
         if (adminMode) {
+            const [domain, legalEntity, department, group] = [0, 1, 2, 3].map(
+                (idx) => (Array.isArray(next.team) ? String(next.team[idx] ?? "").trim() : "")
+            );
+
+            if (!domain) {
+                return {
+                    error: "Поле \"домен\" обязательно для заполнения",
+                    invalidKeys: ["domain"],
+                };
+            }
+
+            if (legalEntity && !domain) {
+                return {
+                    error: "Чтобы добавить юр. лицо, сначала укажите домен",
+                    invalidKeys: ["domain"],
+                };
+            }
+
+            if (department && (!domain || !legalEntity)) {
+                return {
+                    error: "Для отдела должны быть заполнены домен и юр. лицо",
+                    invalidKeys: !domain ? ["domain"] : ["legalEntity"],
+                };
+            }
+
+            if (group && (!domain || !legalEntity || !department)) {
+                return {
+                    error: "Для направления заполните домен, юр. лицо и отдел",
+                    invalidKeys: !domain ? ["domain"] : !legalEntity ? ["legalEntity"] : ["department"],
+                };
+            }
+
+            const sanitizedTeam = normalizeTeam(next.team);
+            const originalTeam = normalizeTeam(originalUser.team);
+            const addedSegmentsCount = sanitizedTeam.filter((_, idx) => idx >= originalTeam.length).length;
+
+            if (addedSegmentsCount > 1) {
+                return {
+                    error: "За один раз можно добавить только один новый уровень структуры. Добавляйте части команды поэтапно",
+                    invalidKeys: ["domain", "legalEntity", "department", "group"],
+                };
+            }
+
+            next.team = sanitizedTeam;
+            next.domain = sanitizedTeam[0] ?? "";
+            next.legalEntity = sanitizedTeam[1] ?? "";
+            next.department = sanitizedTeam[2] ?? "";
+            next.group = sanitizedTeam[3] ?? "";
+
             const fioParts = splitFio(next.fio);
             if (!fioParts.lastName || !fioParts.firstName) {
                 return {
                     error: "Для сотрудника обязательны фамилия и имя",
-                    invalidKey: !fioParts.lastName ? "lastName" : "firstName",
+                    invalidKeys: !fioParts.lastName ? ["lastName"] : ["firstName"],
                 };
             }
 
             if (!next.position?.trim()) {
-                return { error: "Поле \"роль\" обязательно для заполнения", invalidKey: "position" };
+                return { error: "Поле \"роль\" обязательно для заполнения", invalidKeys: ["position"] };
             }
         }
 
         return { user: next };
-    }, [adminMode]);
+    }, [adminMode, originalUser]);
 
     const handleSave = useCallback(async () => {
         const normalized = prepareUserForSave(draftUser);
         if (normalized.error) {
             setValidationError(normalized.error);
-            setInvalidFieldKey(normalized.invalidKey ?? null);
+            setInvalidFieldKeys(normalized.invalidKeys ?? []);
             return;
         }
 
@@ -165,7 +217,7 @@ const UserPersonalInfoCardController = (
         }
 
         setValidationError(null);
-        setInvalidFieldKey(null);
+        setInvalidFieldKeys([]);
         setIsSaving(true);
         try {
             await (saveUserFn ?? ((u: User) => saveUser(u)))(normalized.user ?? draftUser, originalUser);
@@ -176,6 +228,18 @@ const UserPersonalInfoCardController = (
                 await userStore.loadUserFromApi(fetchCurrentUser);
             }
             navigate(viewPath);
+        } catch (err) {
+            const rawMessage = (err as Error)?.message ?? String(err);
+            let friendlyMessage = "Не удалось сохранить изменения. Проверьте, что домен, юр. лицо, отдел и направление существуют и указаны без опечаток. За раз можно создать только одну новую структуру.";
+            let friendlyInvalidKeys: InvalidFieldKey[] = ["domain", "legalEntity", "department", "group"];
+
+            if (/Team '.+' not found/i.test(rawMessage)) {
+                friendlyMessage = "Такая команда не найдена. Проверьте домен, юр. лицо, отдел и направление: убедитесь, что названия верны или создавайте структуру по одному уровню за раз.";
+            }
+
+            setValidationError(friendlyMessage);
+            setInvalidFieldKeys(friendlyInvalidKeys);
+            return;
         } finally {
             setIsSaving(false);
         }
@@ -206,7 +270,7 @@ const UserPersonalInfoCardController = (
                 onChange={setDraftUser}
                 disabled={editingDisabled}
                 adminMode={adminMode}
-                invalidFieldKey={invalidFieldKey ?? undefined}
+                invalidFieldKeys={invalidFieldKeys}
             />
             {isEdit && <>
                 {validationError && <p className="user-personal-info-controller__error">{validationError}</p>}

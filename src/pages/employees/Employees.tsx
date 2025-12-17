@@ -14,7 +14,6 @@ function EmployeesComponent() {
         sortedData,
         sortConfig,
         handleSort,
-        fullTextFilter,
         loading,
         error,
         reload,
@@ -127,14 +126,7 @@ function EmployeesComponent() {
                 onResetFilters={resetFilters}
             />
 
-            <EmployeesTable
-                data={sortedData}
-                // addMode={addMode}
-                // newUser={newUser}
-                // setNewUser={setNewUser}
-                sortConfig={sortConfig}
-                onSort={handleSort}
-            />
+            {renderState()}
         </main>
     )
 }

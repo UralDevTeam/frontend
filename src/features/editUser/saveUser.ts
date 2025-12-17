@@ -7,7 +7,7 @@ type UserMeUpdatePayload = {
     mattermost: string;
     tg: string;
     aboutMe: string;
-    birthDate: string; // YYYY-MM-DD or ""
+    birthDate: string; // YYYY-MM-DD
     isBirthyearVisible: boolean;
     status: User["status"];
 };
@@ -26,8 +26,6 @@ type AdminUserUpdatePayload = Partial<{
     lastName: string;
     hireDate: string; // YYYY-MM-DD
     email: string;
-    legalEntity: string;
-    department: string;
     position: string;
     team: string[];
     isAdmin: boolean;
@@ -57,7 +55,7 @@ const deriveHireDateYmdFromExperience = (experienceDays?: number): string => {
 };
 
 const normalizeStr = (v: unknown) => String(v ?? "");
-const normalizeOptStr = (v: unknown) => String(v ?? ""); // для phone/tg/... пустая строка тоже ок
+const normalizeOptStr = (v: unknown) => String(v ?? "");
 
 const sameString = (a: unknown, b: unknown) => normalizeStr(a) === normalizeStr(b);
 
@@ -90,7 +88,6 @@ export const buildAdminUserUpdatePayloadDiff = (
 ): AdminUserUpdatePayload => {
     const payload: AdminUserUpdatePayload = {};
 
-    // общие поля
     if (!sameString(originalUser.city ?? "", updatedUser.city ?? "")) {
         payload.city = normalizeOptStr(updatedUser.city);
     }
@@ -115,14 +112,12 @@ export const buildAdminUserUpdatePayloadDiff = (
         payload.isBirthyearVisible = updatedUser.isBirthyearVisible ?? true;
     }
 
-    // birthDate
     const origBirth = originalUser.birthday ? toYmd(originalUser.birthday) : "";
     const nextBirth = updatedUser.birthday ? toYmd(updatedUser.birthday) : "";
     if (origBirth !== nextBirth) {
         payload.birthDate = nextBirth;
     }
 
-    // first/middle/last берём из fio
     const origFio = splitFio(originalUser.fio);
     const nextFio = splitFio(updatedUser.fio);
 
@@ -130,17 +125,13 @@ export const buildAdminUserUpdatePayloadDiff = (
     if (origFio.middleName !== nextFio.middleName) payload.middleName = nextFio.middleName;
     if (origFio.lastName !== nextFio.lastName) payload.lastName = nextFio.lastName;
 
-    // hireDate считаем из experience (дни)
     const origHire = deriveHireDateYmdFromExperience(originalUser.experience);
     const nextHire = deriveHireDateYmdFromExperience(updatedUser.experience);
     if (origHire !== nextHire) {
         payload.hireDate = nextHire;
     }
 
-    // админские "рабочие" поля
     if (!sameString(originalUser.email, updatedUser.email)) payload.email = updatedUser.email;
-    if (!sameString(originalUser.legalEntity, updatedUser.legalEntity)) payload.legalEntity = updatedUser.legalEntity;
-    if (!sameString(originalUser.department, updatedUser.department)) payload.department = updatedUser.department;
     if (!sameString(originalUser.position, updatedUser.position)) payload.position = updatedUser.position;
 
     if (!sameArray(originalUser.team, updatedUser.team)) payload.team = updatedUser.team ?? [];
@@ -171,19 +162,15 @@ const putJson = async (url: string, body: unknown) => {
     return await res.json();
 };
 
-// self
 export async function saveUser(updatedUser: User) {
     return await putJson("/api/me", buildUserPayload(updatedUser));
 }
 
-// admin (diff)
 export async function saveUserByIdAdmin(userId: string, originalUser: User, updatedUser: User) {
     const url = `/api/users/${encodeURIComponent(userId)}`;
     const diff = buildAdminUserUpdatePayloadDiff(originalUser, updatedUser);
 
-    // Если ничего не изменилось — можно не дергать API.
     if (Object.keys(diff).length === 0) {
-        // Возвращаем updatedUser "как есть", чтобы UI не падал.
         return updatedUser;
     }
 

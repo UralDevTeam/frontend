@@ -8,7 +8,7 @@ import {userStore} from "../../entities/user";
 import onUpdateAD from "../../shared/AD/updateAD" ;
 
 function EmployeesComponent() {
-  const {filters, options, add, newUserState, sortedData, sortConfig, handleSort} = useEmployees();
+  const {filters, options,  sortedData, sortConfig, handleSort} = useEmployees();
 
   const {
     onlyAdmin,
@@ -25,9 +25,7 @@ function EmployeesComponent() {
 
   const {statuses: statusOptions, positions: positionOptions, departments: departmentOptions} = options;
 
-  const {addMode, startAdd, cancelAdd, saveNewUser, isSavingNew} = add;
-
-  const {newUser, setNewUser} = newUserState;
+  // const {addMode, startAdd, cancelAdd, saveNewUser, isSavingNew} = add;
 
   const adminMode = userStore.user?.isAdmin;
 
@@ -49,21 +47,6 @@ function EmployeesComponent() {
             <button className="AD-sync-button" onClick={onUpdateAD}>
               AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
             </button>
-            {/*{!addMode && (*/}
-            {/*  <button className="edit-mode-button" onClick={startAdd} title="Добавить пользователя">*/}
-            {/*    <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon"/>*/}
-            {/*  </button>*/}
-            {/*)}*/}
-            {/*{addMode && (*/}
-            {/*  <>*/}
-            {/*    <button className="edit-mode-button" onClick={saveNewUser} disabled={isSavingNew}>*/}
-            {/*      сохранить*/}
-            {/*    </button>*/}
-            {/*    <button className="undo-edit-button" onClick={cancelAdd} disabled={isSavingNew}>*/}
-            {/*      отменить*/}
-            {/*    </button>*/}
-            {/*  </>*/}
-            {/*)}*/}
           </div>
         )}
       </div>
@@ -87,9 +70,9 @@ function EmployeesComponent() {
 
       <EmployeesTable
         data={sortedData}
-        addMode={addMode}
-        newUser={newUser}
-        setNewUser={setNewUser}
+        // addMode={addMode}
+        // newUser={newUser}
+        // setNewUser={setNewUser}
         sortConfig={sortConfig}
         onSort={handleSort}
       />

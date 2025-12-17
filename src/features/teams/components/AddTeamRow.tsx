@@ -15,8 +15,8 @@ const Step2 = ({onSelect}: { onSelect: (depth: number) => void }) => {
   const levels = [
     {label: 'Домен', depth: 0, id: "domen"},
     {label: 'Юр. лицо', depth: 1, id: "your face"},
-    {label: 'Отдел/подразделение', depth: 2, id: "otdel"},
-    {label: 'Группа', depth: 3, id: "group"},
+    {label: 'Отдел', depth: 2, id: "otdel"},
+    {label: 'Направление', depth: 3, id: "group"},
   ];
 
   return (
@@ -80,7 +80,6 @@ const AddTeamRow = ({getNodesAtDepthFromFlat, createFolder, onFinish}: {
     setStep(3);
   }, [folderName, folderType]);
 
-  // Получаем возможные родительские папки для выбранного типа
   const possibleParents = folderType !== null ? getNodesAtDepthFromFlat(folderType) : [];
 
   return (

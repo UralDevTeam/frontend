@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import ProfileCircle from '../../../shared/profileCircle/profileCircle';
 import WorkerStatus from '../../../shared/statuses/workerStatus';
 import {EmployeeTableInfo, SortConfig} from '../hooks/useEmployees';
+import { parseTeam } from '../../../entities/user/lib/teamParts';
 
 type Props = {
   data: EmployeeTableInfo[];
@@ -13,95 +14,15 @@ type Props = {
   onSort?: (key: SortConfig['key']) => void;
 };
 
-type NewUserInputProps = {
-  newUser: Partial<EmployeeTableInfo & { mail?: string }>;
-  setNewUser: (user: Partial<EmployeeTableInfo & { mail?: string }>) => void;
-};
-
-
-const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => {
-  const handleInputChange = (field: keyof typeof newUser, value: string) => {
-    setNewUser({...newUser, [field]: value});
-  };
-
-  const inputFields = [
-    {
-      field: 'name' as const,
-      type: 'text',
-      placeholder: 'имя'
-    },
-    {
-      field: 'position' as const,
-      type: 'text',
-      placeholder: 'роль'
-    },
-    {
-      field: 'status' as const,
-      type: 'select',
-      placeholder: 'статус'
-    },
-    {
-      field: 'department' as const,
-      type: 'text',
-      placeholder: 'подразделение'
-    },
-    {
-      field: 'legalEntity' as const,
-      type: 'text',
-      placeholder: 'юр. лицо'
-    },
-    {
-      field: 'mail' as const,
-      type: 'email',
-      placeholder: 'почта'
-    }
-  ];
-
-  return (
-    <tr className="employees-table-row add-row">
-      <td></td>
-      {/*isAdmin column*/}
-      {inputFields.map(({field, type, placeholder}) => {
-        if (type === 'select') {
-          return (
-            <td key={field}>
-              <WorkerStatus status={"active"}/>
-            </td>
-          );
-        }
-
-        return (
-          <td key={field}>
-            <input
-              type={type}
-              value={newUser[field] ?? ''}
-              onChange={(e) => handleInputChange(field, e.target.value)}
-              placeholder={placeholder}
-              className="employees-table-input"
-            />
-          </td>
-        );
-      })}
-    </tr>
-  );
-};
-
 type EmployeeRowProps = {
   employee: EmployeeTableInfo;
 };
 
 const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
+  const parts = parseTeam(employee.team);
   const getDisplayName = (fullName: string): string => {
     const parts = fullName.split(' ');
     return parts.length >= 2 ? `${parts[0]} ${parts[1]}` : fullName;
-  };
-
-  const getDepartmentDisplay = (employee: EmployeeTableInfo): string => {
-    return employee.department || employee.team || '—';
-  };
-
-  const getLegalEntityDisplay = (employee: EmployeeTableInfo): string => {
-    return employee.legalEntity || '—';
   };
 
   return (
@@ -123,8 +44,8 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
       <td>
         <WorkerStatus status={employee.status}/>
       </td>
-      <td>{getDepartmentDisplay(employee)}</td>
-      <td>{getLegalEntityDisplay(employee)}</td>
+      <td>{parts.department || '—'}</td>
+      <td>{parts.legalEntity || '—'}</td>
       <td>{employee.mail}</td>
     </tr>
   );
@@ -136,12 +57,12 @@ const TableHeader = ({sortConfig, onSort}: {
 }) => {
   const getSortIcon = (key: SortConfig['key']) => {
     if (!sortConfig || sortConfig.key !== key) {
-      return <img src={"icons/column-sorting.svg"}/>;
+      return <img src={"icons/column-sorting.svg"} alt={'column-sorting-icon'}/>;
     }
     if (sortConfig.direction === 'asc') {
-      return <img src={"icons/column-sorting-down.svg"}/>
+      return <img src={"icons/column-sorting-down.svg"} alt={'column-sorting-down-icon'}/>
     }
-    return <img src={"icons/column-sorting-up.svg"}/>
+    return <img src={"icons/column-sorting-up.svg"} alt={'column-sorting-up-icon'}/>
   };
   return (
     <thead className="employees-table-head">
@@ -157,7 +78,7 @@ const TableHeader = ({sortConfig, onSort}: {
         <div><p>Статус</p> {getSortIcon("status")}</div>
       </th>
       <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("department")}>
-        <div><p>Подразделение</p> {getSortIcon("department")}</div>
+        <div><p>Отдел</p> {getSortIcon("department")}</div>
       </th>
       <th className={"employees-table-head__column_label"} onClick={() => onSort && onSort("legalEntity")}>
         <div><p>Юр. лицо</p> {getSortIcon("legalEntity")}</div>
@@ -173,9 +94,6 @@ const TableHeader = ({sortConfig, onSort}: {
 export default function EmployeesTable(
   {
     data,
-    addMode = false,
-    newUser = {},
-    setNewUser,
     sortConfig,
     onSort
   }: Props) {
@@ -184,9 +102,6 @@ export default function EmployeesTable(
       <table className="employees-table">
         <TableHeader sortConfig={sortConfig} onSort={onSort}/>
         <tbody>
-        {addMode && setNewUser && (
-          <NewUserInputRow newUser={newUser} setNewUser={setNewUser}/>
-        )}
         {data.map((employee) => (
           <EmployeeRow key={employee.id} employee={employee}/>
         ))}

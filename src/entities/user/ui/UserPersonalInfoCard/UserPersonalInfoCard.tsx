@@ -10,6 +10,13 @@ import EyeIcon from "../../../../shared/icons/eye-icon";
 import EyeCloseIcon from "../../../../shared/icons/yey-close-icon";
 import { buildContactLink } from "../../../../shared/contactLink/contactLink";
 
+type AdminEditedUser = User & {
+    firstName?: string;
+    middleName?: string;
+    lastName?: string;
+    hireDate?: Date;
+};
+
 type IUserPersonalInfoCard = {
     user: User;
     isEdit: boolean;
@@ -17,13 +24,6 @@ type IUserPersonalInfoCard = {
     disabled?: boolean;
     adminMode?: boolean;
     invalidFieldKey?: keyof AdminEditedUser;
-};
-
-type AdminEditedUser = User & {
-    firstName?: string;
-    middleName?: string;
-    lastName?: string;
-    hireDate?: Date;
 };
 
 type RowDefinition = {
@@ -114,15 +114,6 @@ const stripAdminFields = (u: AdminEditedUser): User => {
     return rest as User;
 };
 
-const group = (value?: string[] | null) =>
-    value?.[3] ?? "";
-
-const parseTeam = (value: string): string[] =>
-    value
-        .split("/")
-        .map((s) => s.trim())
-        .filter(Boolean);
-
 const formatPhoneNumber = (value: string): string => {
     const digitsOnly = value.replace(/\D/g, "");
     if (!digitsOnly) return "";
@@ -145,6 +136,27 @@ const formatPhoneNumber = (value: string): string => {
     return formatted.trim();
 };
 
+export function getTeamPart(team: string[] | undefined, index: number): string {
+    const arr = Array.isArray(team) ? team.map(String) : [];
+    return (arr[index] ?? "").trim();
+}
+
+const setTeamAt = (team: string[] | undefined, index: number, value: string) => {
+    const arr = Array.isArray(team) ? [...team] : [];
+    while (arr.length <= index) arr.push("");
+    arr[index] = value;
+    return arr;
+};
+
+// 🔧 ВАЖНО: эти “поля” живут в user.team[], а не как свойства объекта
+const TEAM_INDEX: Record<string, number> = {
+    domain: 0,
+    legalEntity: 1,
+    department: 2,
+    group: 3,
+};
+const isTeamKey = (k: keyof AdminEditedUser) => Object.prototype.hasOwnProperty.call(TEAM_INDEX, String(k));
+
 export default function UserPersonalInfoCard({
                                                  user,
                                                  isEdit,
@@ -159,9 +171,9 @@ export default function UserPersonalInfoCard({
 
     const mattermostTooltip = (
         <div className="mattermost-tooltip">
-      <span className="mattermost-tooltip__title">
-        Добавь ссылку, чтобы коллеги могли тебе написать в mattermost
-      </span>
+            <span className="mattermost-tooltip__title">
+                Добавь ссылку, чтобы коллеги могли тебе написать в mattermost
+            </span>
             <ol className="mattermost-tooltip__list">
                 <li>Открываешь диалог с собой</li>
                 <li>Копируешь ссылку из поисковой строки</li>
@@ -199,12 +211,14 @@ export default function UserPersonalInfoCard({
 
         const next: AdminEditedUser = { ...editedUser };
 
-        if (key === "phone") {
+        // ✅ team-ключи кладём в next.team[..]
+        if (isTeamKey(key)) {
+            const idx = TEAM_INDEX[String(key)];
+            next.team = setTeamAt(next.team, idx, String(value ?? "").trim());
+        } else if (key === "phone") {
             (next as any)[key] = formatPhoneNumber(String(value ?? ""));
         } else if (key === "birthday" || key === "hireDate") {
             (next as any)[key] = value ? new Date(value) : undefined;
-        } else if (key === "team") {
-            (next as any)[key] = parseTeam(String(value ?? ""));
         } else {
             (next as any)[key] = value;
         }
@@ -236,7 +250,6 @@ export default function UserPersonalInfoCard({
     const optionalViewKeys = new Set<(typeof viewRows)[number]["key"]>(["city", "mattermost", "aboutMe", "tg", "phone"]);
     const rowsToRender = viewRows.filter((row) => {
         if (!optionalViewKeys.has(row.key)) return true;
-
         const value = (user as any)[row.key];
         return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
     });
@@ -262,16 +275,13 @@ export default function UserPersonalInfoCard({
                                     return formatted || "-";
                                 }
 
-                                if (r.key === "team") {
-                                    return group();
-                                }
-
                                 const value = String(rawValue ?? "-");
                                 const keyStr = String(r.key);
                                 const link =
                                     value !== "-" && (r.key === "tg" || r.key === "mattermost")
                                         ? buildContactLink(r.key, value)
                                         : null;
+
                                 const content = link ? (
                                     <a className="contact-link" href={link.href} target="_blank" rel="noreferrer">
                                         {link.label}
@@ -314,13 +324,17 @@ export default function UserPersonalInfoCard({
         const prefix = (prefixedInputs as Partial<Record<keyof AdminEditedUser, string>>)[r.key];
 
         const baseValue = (() => {
+            // ✅ если это team-ключ — читаем из editedUser.team
+            if (isTeamKey(r.key)) {
+                const idx = TEAM_INDEX[String(r.key)];
+                return getTeamPart(editedUser.team, idx);
+            }
+
             const val = (editedUser as any)[r.key];
 
             if (r.key === "birthday" || r.key === "hireDate") {
                 return val ? (val instanceof Date ? val.toISOString().slice(0, 10) : String(val)) : "";
             }
-
-            if (r.key === "team") return group(val);
 
             return String(val ?? "");
         })();
@@ -361,9 +375,15 @@ export default function UserPersonalInfoCard({
                         <div className="birthday-field">
                             {field}
                             {editedUser.isBirthyearVisible ? (
-                                <EyeIcon className="birthday-field__icon" onClick={() => update("isBirthyearVisible", false)} />
+                                <EyeIcon
+                                    className="birthday-field__icon"
+                                    onClick={() => update("isBirthyearVisible", false)}
+                                />
                             ) : (
-                                <EyeCloseIcon className="birthday-field__icon eye-closed" onClick={() => update("isBirthyearVisible", true)} />
+                                <EyeCloseIcon
+                                    className="birthday-field__icon eye-closed"
+                                    onClick={() => update("isBirthyearVisible", true)}
+                                />
                             )}
                         </div>
                     </RowInfo>
@@ -411,9 +431,10 @@ export default function UserPersonalInfoCard({
 
     const adminWorkRows: RowDefinition[] = [
         { key: "position", label: "роль" },
+        { key: "domain", label: "домен" },
         { key: "legalEntity", label: "юр. лицо" },
         { key: "department", label: "отдел" },
-        { key: "team", label: "группа" },
+        { key: "group", label: "направление" },
         { key: "hireDate", label: "работает с", inputType: "date" },
     ];
 

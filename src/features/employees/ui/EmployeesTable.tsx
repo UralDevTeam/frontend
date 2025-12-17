@@ -6,11 +6,14 @@ import {EmployeeTableInfo, SortConfig} from '../hooks/useEmployees';
 
 type Props = {
   data: EmployeeTableInfo[];
+  adminMode?: boolean;
   addMode?: boolean;
   newUser?: Partial<EmployeeTableInfo & { mail?: string }>;
   setNewUser?: (user: Partial<EmployeeTableInfo & { mail?: string }>) => void;
   sortConfig?: SortConfig | null;
   onSort?: (key: SortConfig['key']) => void;
+  selectedIds?: string[];
+  onToggleSelect?: (id: string, checked: boolean) => void;
 };
 
 type NewUserInputProps = {
@@ -88,9 +91,12 @@ const NewUserInputRow: React.FC<NewUserInputProps> = ({newUser, setNewUser}) => 
 
 type EmployeeRowProps = {
   employee: EmployeeTableInfo;
+  adminMode: boolean;
+  selected?: boolean;
+  onToggleSelect?: (id: string, checked: boolean) => void;
 };
 
-const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
+const EmployeeRow: React.FC<EmployeeRowProps> = ({employee, adminMode, selected = false, onToggleSelect}) => {
   const getDisplayName = (fullName: string): string => {
     const parts = fullName.split(' ');
     return parts.length >= 2 ? `${parts[0]} ${parts[1]}` : fullName;
@@ -107,9 +113,18 @@ const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
   return (
     <tr key={employee.id} className="employees-table-row">
       <td>
-        <img style={{display: employee.isAdmin ? "block" : "none"}}
-             src={"/icons/Star.svg"} width={20} height={20} alt={"is admin"}
-        />
+        {adminMode ? (
+          <input
+            type="checkbox"
+            aria-label="select admin"
+            checked={selected}
+            onChange={(e) => onToggleSelect && onToggleSelect(employee.id, e.target.checked)}
+          />
+        ) : (
+          <img style={{display: employee.isAdmin ? "block" : "none"}}
+               src={"/icons/Star.svg"} width={20} height={20} alt={"is admin"}
+          />
+        )}
       </td>
       <td>
         <Link to={`/profile/view/${employee.id}`} className="employees-table-link">
@@ -174,10 +189,13 @@ export default function EmployeesTable(
   {
     data,
     addMode = false,
+    adminMode = false,
     newUser = {},
     setNewUser,
     sortConfig,
-    onSort
+    onSort,
+    selectedIds = [],
+    onToggleSelect
   }: Props) {
   return (
     <div className="" style={{marginTop: 16}}>
@@ -188,7 +206,13 @@ export default function EmployeesTable(
           <NewUserInputRow newUser={newUser} setNewUser={setNewUser}/>
         )}
         {data.map((employee) => (
-          <EmployeeRow key={employee.id} employee={employee}/>
+          <EmployeeRow
+            key={employee.id}
+            employee={employee}
+            adminMode={adminMode}
+            selected={selectedIds.includes(employee.id)}
+            onToggleSelect={onToggleSelect}
+          />
         ))}
         </tbody>
       </table>

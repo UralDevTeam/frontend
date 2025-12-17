@@ -8,7 +8,7 @@ import {userStore} from "../../entities/user";
 import onUpdateAD from "../../shared/AD/updateAD" ;
 
 function EmployeesComponent() {
-  const {filters, options, add, newUserState, sortedData, sortConfig, handleSort} = useEmployees();
+  const {filters, options, add, newUserState, sortedData, sortConfig, handleSort, selectedIds, toggleSelect, clearSelection} = useEmployees();
 
   const {
     onlyAdmin,
@@ -49,21 +49,33 @@ function EmployeesComponent() {
             <button className="AD-sync-button" onClick={onUpdateAD}>
               AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
             </button>
-            {/*{!addMode && (*/}
-            {/*  <button className="edit-mode-button" onClick={startAdd} title="Добавить пользователя">*/}
-            {/*    <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon"/>*/}
-            {/*  </button>*/}
-            {/*)}*/}
-            {/*{addMode && (*/}
-            {/*  <>*/}
-            {/*    <button className="edit-mode-button" onClick={saveNewUser} disabled={isSavingNew}>*/}
-            {/*      сохранить*/}
-            {/*    </button>*/}
-            {/*    <button className="undo-edit-button" onClick={cancelAdd} disabled={isSavingNew}>*/}
-            {/*      отменить*/}
-            {/*    </button>*/}
-            {/*  </>*/}
-            {/*)}*/}
+            {selectedIds.length > 0 && (
+              <button
+                className="delete-users-button"
+                onClick={() => {
+                  console.log('Удаление выбранных сотрудников:', selectedIds);
+                  clearSelection();
+                }}
+                title="Удалить выбранных"
+              >
+                <img src="/icons/TrashCan.svg" alt="TrashCan icon"/>
+              </button>
+            )}
+            {!addMode && (
+              <button className="edit-mode-button" onClick={startAdd} title="Добавить пользователя">
+                <img src="/icons/PlusInCircle.svg" alt="PlusInCircle icon"/>
+              </button>
+            )}
+            {addMode && (
+              <>
+                <button className="edit-mode-button" onClick={saveNewUser} disabled={isSavingNew}>
+                  сохранить
+                </button>
+                <button className="undo-edit-new-user-button" onClick={cancelAdd} disabled={isSavingNew}>
+                  отменить
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -88,10 +100,13 @@ function EmployeesComponent() {
       <EmployeesTable
         data={sortedData}
         addMode={addMode}
+        adminMode={adminMode}
         newUser={newUser}
         setNewUser={setNewUser}
         sortConfig={sortConfig}
         onSort={handleSort}
+        selectedIds={selectedIds}
+        onToggleSelect={toggleSelect}
       />
     </main>
   )

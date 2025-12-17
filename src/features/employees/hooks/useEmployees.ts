@@ -29,6 +29,7 @@ export function useEmployees() {
   const [isSavingNew, setIsSavingNew] = useState(false);
   const [newUser, setNewUser] = useState<Partial<EmployeeTableInfo & { email?: string, phone?: string }>>({});
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
@@ -113,6 +114,17 @@ export function useEmployees() {
     return result;
 
   }, [onlyAdminFilter, fullTextFilter, positionFilter, statusFilter, departmentFilter, tableData, sortConfig]);
+
+  const toggleSelect = (id: string, checked: boolean) => {
+    setSelectedIds(prev => {
+      const exists = prev.includes(id);
+      if (checked && !exists) return [...prev, id];
+      if (!checked && exists) return prev.filter(x => x !== id);
+      return prev;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds([]);
 
   const startAdd = () => {
     setNewUser({name: '', position: '', status: WorkerStatuses.active, department: '', mail: ''});
@@ -205,6 +217,11 @@ export function useEmployees() {
     sortedData: sortedAndFilteredData,
     sortConfig,
     handleSort,
+
+    // selection
+    selectedIds,
+    toggleSelect,
+    clearSelection,
 
     // сгруппированные объекты
     filters,

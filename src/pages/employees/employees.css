@@ -176,14 +176,34 @@ main {
     padding: 0 10px;
 }
 
+.reset-filters-button,
+.undo-edit-new-user-button,
+.delete-users-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 40px;
+    width: max-content;
+    padding: 0 18px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Golos Text', sans-serif;
+
+    border-radius: 12px;
+
+    transition: transform 0.15s ease;
+}
+
 .reset-filters-button {
     height: 39px;
     width: 165px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0;
 
-    border: 2px solid  var(--color-secondary-dark-blue);
+    border: 2px solid var(--color-secondary-dark-blue);
     border-radius: 12px;
     background: var(--color-primary-white);
     cursor: pointer;
@@ -191,10 +211,28 @@ main {
     color: var(--color-secondary-dark-blue);
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Golos Text', sans-serif;
-    transition: transform 0.15s ease;
 }
 
-.reset-filters-button:hover {
+.undo-edit-new-user-button {
+    justify-content: space-between;
+
+    border: none;
+    outline: #CED9DC solid 2px;
+
+    color: var(--color-primary-graphite);
+    background-color: #F8F9FA;
+}
+
+.delete-users-button:hover,
+.reset-filters-button:hover,
+.undo-edit-new-user-button:hover {
     transform: scale(1.05);
+}
+
+.delete-users-button{
+    border: none;
+    outline: #CED9DC solid 2px;
+
+    color: var(--color-primary-graphite);
+    background-color: #F8F9FA;
 }

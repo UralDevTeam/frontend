@@ -14,7 +14,7 @@ const capitalizeCity = (city?: string) => {
 
 const isMattermostValid = (value?: string) => {
     if (!value) return true;
-    return /^(https?:\/\/)/.test(value.trim());
+    return /^https:\/\/most\.udv\.group\/udv\/messages\/@.+/.test(value.trim());
 };
 
 const formatPhoneNumber = (value?: string) => {
@@ -120,7 +120,7 @@ const UserPersonalInfoCardController = (
         next.aboutMe = next.aboutMe ?? "";
 
         if (!isMattermostValid(next.mattermost)) {
-            return { error: "Ссылка на mattermost должна начинаться с http:// или https://", invalidKey: "mattermost" };
+            return { error: "Ссылка на mattermost должна начинаться с https://most.udv.group/udv/messages/@", invalidKey: "mattermost" };
         }
 
         if (next.phone && !isPhoneValid(next.phone)) {

@@ -161,3 +161,45 @@
     justify-content: start;
 
 }
+
+.teams-state {
+    margin-top: 24px;
+    padding: 24px;
+    border: 2px solid #CED9DC;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+    color: var(--color-primary-graphite);
+    line-height: 150%;
+}
+
+.teams-state--error {
+    border-color: #f3b1b1;
+    background: #fff7f7;
+}
+
+.teams-state__details {
+    margin: 8px 0 16px;
+    color: #7a7a7a;
+    word-break: break-word;
+}
+
+.teams-retry-button {
+    height: 39px;
+    padding: 0 18px;
+    border: 2px solid var(--color-secondary-dark-blue);
+    border-radius: 12px;
+    background: var(--color-primary-white);
+    cursor: pointer;
+
+    color: var(--color-secondary-dark-blue);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Golos Text', sans-serif;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.teams-retry-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 59, 76, 0.15);
+}

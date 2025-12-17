@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./teams.css";
-import {useTeams} from "../../features/teams/hooks/useTeams";
+import {UDV_ROOT_ID, useTeams} from "../../features/teams/hooks/useTeams";
 import TeamRow from "../../features/teams/components/TeamRow";
 import UserLine from "../../features/teams/components/UserLine";
 import {useDebounce} from "../../shared/helper/debounce";
@@ -14,6 +14,7 @@ import onUpdateAD from "../../shared/AD/updateAD";
 export default function Teams() {
   const {
     loading,
+    error,
     flatList,
     aggregates,
     expanded,
@@ -24,7 +25,8 @@ export default function Teams() {
     getNodesAtDepthFromFlat,
     createFolder,
     moveUser,
-    nodesById
+    nodesById,
+    reload
   } = useTeams();
 
   const [searchInput, setSearchInput] = useState("");
@@ -81,42 +83,42 @@ export default function Teams() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const hasSearchTerm = debouncedSearchTerm.trim().length > 0;
+  const hasMatches = Object.keys(matchedIds).length > 0;
+  const hasStructure = flatList.some(
+    (item) => item.type === "user" || (item.type === "folder" && item.id !== UDV_ROOT_ID)
+  );
 
-  return (
-    <main className="main teams-page">
-      <h2 className="teams-title">Все сотрудники</h2>
+  const renderContent = () => {
+    if (loading) {
+      return <div className="teams-state">Загрузка оргструктуры…</div>;
+    }
 
-      <div className="teams-table-settings">
-        <div className="teams-search">
-          <input
-            className="teams-search-input"
-            placeholder="Поиск по имени или роли"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
+    if (error) {
+      return (
+        <div className="teams-state teams-state--error">
+          <p>Не удалось загрузить оргструктуру.</p>
+          <p className="teams-state__details">{error}</p>
+          <button className="teams-retry-button" onClick={reload}>
+            Попробовать снова
+          </button>
         </div>
-        {userStore.user?.isAdmin &&
-          <div className={"teams-table-settings_buttons"}>
-            <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16}}>
-              <button className="AD-sync-button" onClick={onUpdateAD}>
-                AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
-              </button>
-              {!addMode && (
-                <button className="edit-mode-button" onClick={onStartAdd}>
-                  <img src={"/icons/PlusInCircle.svg"} alt={"toggle add team mode"}/>
-                </button>
-              )}
-              {addMode && (
-                <>
-                  <button className="edit-mode-button" onClick={onCancelAdd}>отменить</button>
-                </>
-              )}
-            </div>
-          </div>
-        }
-      </div>
+      );
+    }
 
+    if (hasSearchTerm && !hasMatches) {
+      return (
+        <div className="teams-state">
+          По вашему запросу ничего не найдено. Измените параметры поиска и попробуйте снова.
+        </div>
+      );
+    }
+
+    if (!hasStructure) {
+      return <div className="teams-state">Нет данных об оргструктуре.</div>;
+    }
+
+    return (
       <div className="teams-layout">
         <div className="teams-tree-card">
           <div className="teams-list">
@@ -199,6 +201,44 @@ export default function Teams() {
           </div>
         </div>
       </div>
+    );
+  };
+
+  return (
+    <main className="main teams-page">
+      <h2 className="teams-title">Все сотрудники</h2>
+
+      <div className="teams-table-settings">
+        <div className="teams-search">
+          <input
+            className="teams-search-input"
+            placeholder="Поиск по имени или роли"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+        {userStore.user?.isAdmin &&
+          <div className={"teams-table-settings_buttons"}>
+            <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16}}>
+              <button className="AD-sync-button" onClick={onUpdateAD}>
+                AD выгрузка <img src="/icons/dowland.svg" alt="dowland icon"/>
+              </button>
+              {!addMode && (
+                <button className="edit-mode-button" onClick={onStartAdd}>
+                  <img src={"/icons/PlusInCircle.svg"} alt={"toggle add team mode"}/>
+                </button>
+              )}
+              {addMode && (
+                <>
+                  <button className="edit-mode-button" onClick={onCancelAdd}>отменить</button>
+                </>
+              )}
+            </div>
+          </div>
+        }
+      </div>
+
+      {renderContent()}
     </main>
   );
 }

@@ -7,6 +7,8 @@ import App from "./App";
 import {userStore} from './entities/user';
 import {fetchCurrentUser} from './entities/user/fetcher';
 import UserLoader from './entities/user/UserLoader';
+import {NotificationsContainer} from "./features/notifications/ui/NotificationsContainer";
+import {NotificationsProvider} from "./features/notifications/NotificationsProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -28,8 +30,12 @@ async function bootstrap() {
     <React.StrictMode>
       <BrowserRouter>
         {/* компонент, который будет динамически подгружать пользователя при навигации */}
-        <UserLoader />
-        <App/>
+        <UserLoader/>
+
+        <NotificationsProvider>
+          <NotificationsContainer/>
+          <App/>
+        </NotificationsProvider>
       </BrowserRouter>
     </React.StrictMode>
   );

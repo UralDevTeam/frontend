@@ -165,7 +165,7 @@ export default function UserPersonalInfoCard({
             <ol className="mattermost-tooltip__list">
                 <li>Открываешь диалог с собой</li>
                 <li>Копируешь ссылку из поисковой строки</li>
-                <li>Вставь ссылку в это поле</li>
+                <li>Вставляешь ссылку в это поле</li>
             </ol>
         </div>
     );
@@ -414,7 +414,7 @@ export default function UserPersonalInfoCard({
         { key: "legalEntity", label: "юр. лицо" },
         { key: "department", label: "отдел" },
         { key: "team", label: "группа" },
-        { key: "hireDate", label: "дата приёма", inputType: "date" },
+        { key: "hireDate", label: "работает с", inputType: "date" },
     ];
 
     const adminContactRows: RowDefinition[] = [

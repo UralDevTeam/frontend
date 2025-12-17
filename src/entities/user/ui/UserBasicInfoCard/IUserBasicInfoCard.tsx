@@ -6,6 +6,7 @@ import {User} from "../../index";
 import useCopyStatus from "../../../../shared/hooks/use-copy-status";
 import CopyIcon from "../../../../shared/icons/copy-icon";
 import { buildContactLink } from "../../../../shared/contactLink/contactLink";
+import { parseTeam } from "../../lib/teamParts";
 
 type IUserBasicInfoCard = {
     user: User;
@@ -36,6 +37,7 @@ function formatExperience(value: number) {
 }
 
 export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
+    const parts = parseTeam(user.team);
     const email = (user as any).email || '-';
     const emailLink = email !== '-' ? buildContactLink("email", email) : null;
     const emailContent = emailLink ? (
@@ -56,7 +58,7 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
         {
             key: 'boss',
             label: 'руководитель',
-            content: user.boss ? (
+            content: user.boss?.id && user.boss?.shortName ? (
                 <NavLink
                     className="user-basic-info-card__boss-link"
                     to={`/profile/view/${user.boss.id}`}>
@@ -65,12 +67,10 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
             ) : '-'
         },
         {key: 'role', label: 'роль', content: user.position || '-'},
-        {key: 'legalEntity', label: 'юр.лицо', content: (user as any).legalEntity || '-'},
-        {key: 'department', label: 'подразделение', content: (user as any).department || '-'},
-        {key: 'group', label: 'группа', content:
-                Array.isArray((user as any).formatTeam) && (user as any).formatTeam.length > 3
-                    ? (user as any).formatTeam[3]
-                    : '-'},
+        { key: "domain", label: "домен", content: parts.domain || "-" },
+        { key: "legalEntity", label: "юр.лицо", content: parts.legalEntity || "-" },
+        { key: "department", label: "отдел", content: parts.department || "-" },
+        { key: "group", label: "направление", content: parts.group || "-" },
     ];
 
     const {copiedKey, copy} = useCopyStatus(500);

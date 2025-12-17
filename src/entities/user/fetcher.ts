@@ -19,8 +19,6 @@ type BackendUserDTO = {
     city?: string;
     aboutMe?: string;
     isAdmin?: boolean;
-    legalEntity?: string;
-    department?: string;
 };
 
 function mapStatusToWorkerStatus(s?: string): keyof typeof WorkerStatuses {
@@ -93,8 +91,6 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
 
     city: safeString(u.city),
     aboutMe: safeString(u.aboutMe),
-    legalEntity: safeString(u.legalEntity),
-    department: safeString(u.department),
   } as UserDTO;
 }
 

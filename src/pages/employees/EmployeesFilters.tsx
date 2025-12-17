@@ -81,10 +81,10 @@ export default function EmployeesFilters(
                     </select>
                 </div>
                 <div className="filter-column">
-                    <label htmlFor="search-department">Подразделение</label>
+                    <label htmlFor="search-department">Отдел</label>
                     <select id="search-department" value={department}
                             onChange={e => onDepartmentChange(e.target.value)}>
-                        <option value="">Все подразделения</option>
+                        <option value="">Все отделы</option>
                         {departments.map(d => (
                             <option key={d} value={d}>{d}</option>
                         ))}

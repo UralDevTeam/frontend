@@ -3,14 +3,12 @@ import { Locator, Page } from '@playwright/test';
 export class ProfilePage {
   readonly page: Page;
 
-  // Основные элементы
   readonly profileCard: Locator;
   readonly userName: Locator;
   readonly editButton: Locator;
 
   readonly status: Locator;
 
-  // Базовая информация
   readonly email: Locator;
   readonly experience: Locator;
   readonly manager: Locator;
@@ -19,7 +17,6 @@ export class ProfilePage {
   readonly department: Locator;
   readonly team: Locator;
 
-  // Личная информация
   readonly personalInfoSection: Locator;
   readonly city: Locator;
   readonly birthDate: Locator;
@@ -28,27 +25,23 @@ export class ProfilePage {
   readonly telegram: Locator;
   readonly aboutMe: Locator;
 
-  // Методы для поиска полей по label
   constructor(page: Page) {
     this.page = page;
 
-    // Основные элементы
     this.profileCard = page.locator('.user-profile-card');
     this.userName = page.locator('.user-main-properties-name');
     this.editButton = page.locator('button:has-text("редактировать")');
 
     this.status = page.locator('.worker-status p');
 
-    // Базовая информация
     this.email = this.getRowByLabel('почта');
     this.experience = this.getRowByLabel('стаж');
     this.manager = this.getRowByLabel('руководитель');
     this.position = this.getRowByLabel('роль');
     this.legalEntity = this.getRowByLabel('юр.лицо');
-    this.department = this.getRowByLabel('подразделение');
-    this.team = this.getRowByLabel('группа');
+    this.department = this.getRowByLabel('отдел');
+    this.team = this.getRowByLabel('направление');
 
-    // Личная информация
     this.personalInfoSection = page.locator('text=Личное');
     this.city = this.getRowByLabel('город');
     this.birthDate = this.getRowByLabel('дата рождения');
@@ -58,12 +51,10 @@ export class ProfilePage {
     this.aboutMe = this.getRowByLabel('обо мне');
   }
 
-  // Вспомогательный метод для поиска строк по label
   private getRowByLabel(label: string): Locator {
     return this.page.locator(`.row-info:has-text("${label}") .value`);
   }
 
-  // Методы для получения значений
   async getAboutMeText(): Promise<string | null> {
     return await this.aboutMe.textContent();
   }
@@ -76,7 +67,6 @@ export class ProfilePage {
     return await this.userName.textContent();
   }
 
-  // Методы для действий
   async navigate(): Promise<void> {
     await this.page.goto('/me');
     await this.waitForLoad();
@@ -91,7 +81,6 @@ export class ProfilePage {
     await this.editButton.click();
   }
 
-  // Методы для проверок
   async isProfileLoaded(): Promise<boolean> {
     try {
       await this.waitForLoad();

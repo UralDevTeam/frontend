@@ -18,8 +18,6 @@ export type UserDTO = {
     birthday?: string;
     isBirthyearVisible: boolean;
     team: string[];
-    legalEntity: string;
-    department: string;
     boss: UserLinkDTO;
     position: string;
     experience: number; // days
@@ -41,8 +39,10 @@ export type User = {
     birthday?: Date;
     isBirthyearVisible: boolean;
     team: string[];
+    domain: string;
     legalEntity: string;
     department: string;
+    group: string;
     boss: UserLinkDTO;
     position: string;
     experience: number; // days

@@ -49,10 +49,14 @@ function EmployeesComponent() {
     setDepartmentFilter('');
   };
 
+  const getEmployeeNamesByIds = (ids: string[]) =>
+      ids.map((id) => sortedData.find((employee) => employee.id === id)?.name ?? id);
+
   const deleteEmployees = (ids: string[]) => {
     Promise.all(ids.map(id => deleteUser(id)))
-      .catch((e)=>{
-        notificationsStore.error(e.toString())
+        .catch(() => {
+          const names = getEmployeeNamesByIds(ids).join(', ');
+          notificationsStore.error(`Не удалось удалить сотрудника(ов): ${names}, потому что в дочерних командах еще есть сотрудники`);
       })
       .finally(reload);
   }

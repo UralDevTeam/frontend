@@ -30,6 +30,7 @@ export default function Teams() {
     reload
   } = useTeams();
 
+  const isAdmin = Boolean(userStore.user?.isAdmin);
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 300);
   const [addMode, setAddMode] = useState(false);
@@ -81,6 +82,7 @@ export default function Teams() {
   };
 
   const handleFolderDrop = (folderId: string, folderName: string) => {
+    if (!isAdmin) return;
     if (dragState.userId && dragState.userId !== folderId) {
       const folder = nodesById.get(folderId);
       if (folder) {
@@ -169,7 +171,7 @@ export default function Teams() {
                     folderId={item.id}
                     folderName={item.name}
                     onDrop={handleFolderDrop}
-                    disabled={dragState.userId === item.id} // Нельзя перемещать в себя
+                    disabled={!isAdmin || dragState.userId === item.id} // Нельзя перемещать в себя
                   >
                     <TeamRow
                       item={item}
@@ -182,9 +184,9 @@ export default function Teams() {
                 );
               }
 
-              // Для пользователей
               const node = nodesById.get(item.ancestors[item.ancestors.length - 1]);
               const isInLocalFolder = node?.isLocal;
+              const isDragDisabled = !isAdmin || Boolean(isInLocalFolder);
 
               return (
                 <DraggableUserWrapper
@@ -194,7 +196,7 @@ export default function Teams() {
                   userRole={item.position}
                   onDragStart={handleUserDragStart}
                   onDragEnd={handleUserDragEnd}
-                  disabled={isInLocalFolder} // Нельзя перемещать из локальных папок
+                  disabled={isDragDisabled}
                 >
                   <UserLine
                     id={item.id}

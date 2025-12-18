@@ -91,7 +91,7 @@ export default function Register() {
     }
 
     return (
-        <main className="main">
+        < >
             <img
                 src="/icons/Light.svg"
                 width={130}
@@ -173,6 +173,6 @@ export default function Register() {
             <Link to="/login" className="login-form__link">
                 Войти →
             </Link>
-        </main>
+        </>
     );
 }

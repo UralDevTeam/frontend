@@ -205,7 +205,7 @@ export default function Teams() {
   };
 
   return (
-    <main className="main teams-page">
+    <>
       <h2 className="teams-title">Все сотрудники</h2>
 
       <div className="teams-table-settings">
@@ -239,6 +239,6 @@ export default function Teams() {
       </div>
 
       {renderContent()}
-    </main>
+    </>
   );
 }

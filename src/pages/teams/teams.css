@@ -4,6 +4,8 @@
     font-size: 40px;
     line-height: 48px;
     color: var(--color-primary-graphite);
+
+    margin-top: 20px;
 }
 
 .teams-layout {

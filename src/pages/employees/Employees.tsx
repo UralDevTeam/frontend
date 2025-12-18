@@ -98,7 +98,7 @@ function EmployeesComponent() {
   };
 
   return (
-    <main className={"main"}>
+    <>
       <div className="employees-header">
         <h2 className="employees-title">Все сотрудники</h2>
 
@@ -141,7 +141,7 @@ function EmployeesComponent() {
       />
 
       {renderState()}
-    </main>
+    </>
   )
 }
 

@@ -68,7 +68,7 @@ export const Login: React.FC = observer(() => {
     };
 
     return (
-        <main className="main">
+        <>
             <img
                 src="/icons/Light.svg"
                 width={130}
@@ -132,7 +132,7 @@ export const Login: React.FC = observer(() => {
             <Link to="/register" className="login-form__link">
                 Зарегистрироваться →
             </Link>
-        </main>
+        </>
     );
 });
 

@@ -10,6 +10,7 @@ import {DraggableUserWrapper} from "../../features/teams/components/DraggableUse
 import {DroppableFolderWrapper} from "../../features/teams/components/DroppableFolderWrapper";
 import {userStore} from "../../entities/user";
 import onUpdateAD from "../../shared/AD/updateAD";
+import {notificationsStore} from "../../features/notifications";
 
 export default function Teams() {
   const {
@@ -51,6 +52,14 @@ export default function Teams() {
   useEffect(() => {
     if (!usersStore.users || usersStore.users.length === 0) {
       usersStore.loadFromApi();
+    }
+    const notificationsIds = [
+      notificationsStore.info("Для изменения оргструктуры используйте перетаскивание сотрудников в папки."),
+      notificationsStore.info("Папка удалиться сама только если в ней нет сотрудников и вложенных папок.")
+    ];
+
+    return () => {
+      notificationsIds.forEach(id => notificationsStore.removeNotification(id));
     }
   }, []);
 

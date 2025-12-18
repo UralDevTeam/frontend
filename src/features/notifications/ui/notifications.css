@@ -34,6 +34,10 @@
     border: 1px solid red;
 }
 
+.notification.info{
+    border: 1px solid #2563eb;
+}
+
 .notification__content {
     flex: 1;
     min-width: 0;

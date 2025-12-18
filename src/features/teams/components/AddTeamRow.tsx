@@ -65,7 +65,6 @@ const AddTeamRow = ({getNodesAtDepthFromFlat, createFolder, onFinish}: {
     const trimmedName = folderName.trim();
     if (!trimmedName) return;
 
-    console.log("Creating folder:", trimmedName, "in:", parentFolder);
     createFolder(trimmedName, parentFolder);
     onFinish();
   }

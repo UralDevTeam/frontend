@@ -414,6 +414,19 @@ export function useTeams() {
             .filter((node): node is TeamNode => node !== undefined);
     }, [flatList, nodesById]);
 
+    const resolveFolderPathNames = useCallback((folder: TeamNode): string[] => {
+        const folderItem = flatList.find(
+            item => item.type === 'folder' && item.id === folder.id
+        ) as FlatFolder | undefined;
+
+        const ancestorNames = (folderItem?.ancestors || [])
+            .filter(id => id !== UDV_ROOT_ID)
+            .map(id => nodesById.get(id)?.name)
+            .filter((name): name is string => Boolean(name));
+
+        return [...ancestorNames, folder.name];
+    }, [flatList, nodesById]);
+
     const createFolder = useCallback((name: string, parentFolder?: TeamNode) => {
         const trimmedName = name.trim()
         const timestamp = Date.now();
@@ -453,10 +466,12 @@ export function useTeams() {
         const user = usersStore.users?.find(u => u.id === userId);
         if (!user) return;
 
-        userMoves[userId] = targetFolder.id;
+        const folderPathNames = resolveFolderPathNames(targetFolder);
+
+        userMoves[userId] = folderPathNames.join('/');
 
         try {
-            await updateUser(userId, { team: targetFolder.id.split('/') });
+            await updateUser(userId, { team: folderPathNames });
         } catch (error) {
             console.error("Failed to update user team", error);
             throw error;
@@ -465,7 +480,7 @@ export function useTeams() {
         setUsersVersion(v => v + 1);
 
         setExpanded(prev => ({ ...prev, [targetFolder.id]: true }));
-    }, []);
+    }, [resolveFolderPathNames]);
 
 
     return {

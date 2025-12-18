@@ -1,7 +1,8 @@
 import {makeAutoObservable, reaction, runInAction} from 'mobx';
 import {AuthResponse, AuthState, LoginCredentials} from './types';
 import {AUTH_STATE_KEY, AUTH_STORAGE_KEY, LocalStorage} from "../../../shared/lib/storage/local-storage";
-import {API_BASE} from "../../../shared/apiConfig";
+import {apiClient} from "../../../shared/lib/api-client";
+import {HttpError} from "../../../shared/lib/auth-interceptor";
 
 export class AuthStore implements AuthState {
     token: string | null = null;
@@ -71,45 +72,25 @@ export class AuthStore implements AuthState {
         });
 
         try {
-            const res = await fetch(API_BASE + `/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(credentials),
-            });
-            status = res.status;
-
-            if (!res.ok) {
-                // Пробуем получить текст ошибки из ответа
-                let errorMessage = res.status === 401
-                    ? 'Неверный пароль'
-                    : `Ошибка авторизации: ${res.status}`;
-                try {
-                    const errorData = await res.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch {
-                    // Если не JSON, пробуем текст
-                    try {
-                        const text = await res.text();
-                        if (text) errorMessage = text;
-                    } catch {
-                        // Игнорируем ошибку парсинга
-                    }
-                }
-                throw new Error(errorMessage);
-            }
-
-            const data: AuthResponse = await res.json();
+            const data = await apiClient.post<AuthResponse>(
+                '/api/auth/login',
+                credentials,
+                undefined,
+                true
+            );
 
             runInAction(() => {
                 this.setToken(data.accessToken);
                 this.setTokenType(data.tokenType);
                 this.isLoading = false;
             });
+
             return { success: true };
         } catch (error) {
+            if (error instanceof HttpError) {
+                status = error.status;
+            }
+
             runInAction(() => {
                 this.error = error instanceof Error ? error.message : 'Неизвестная ошибка';
                 this.isLoading = false;

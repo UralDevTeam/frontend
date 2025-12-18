@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { routes } from '../../shared/routes';
-import { API_BASE } from '../../shared/apiConfig';
+import { apiClient } from '../../shared/lib/api-client';
 import './Login.css';
 import { useAuthForm } from '../../shared/hooks/use-auth-form';
 import { FormField } from '../../shared/form-field/formField';
@@ -45,47 +45,27 @@ export default function Register() {
         setLoading(true);
 
         try {
-            const res = await fetch(`${API_BASE}/api/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                }),
-            });
+            await apiClient.post(
+                '/api/auth/register',
+                { email, password },
+                undefined,
+                true
+            );
 
-            if (res.status === 201) {
-                navigate(routes.login(), { replace: true });
-                return;
-            }
-
-            let message = `Ошибка: ${res.status}`;
-            try {
-                const data = await res.json();
-                if (data?.detail) {
-                    message = String(data.detail);
-                }
-            } catch {
-                const text = await res.text().catch(() => '');
-                if (text) {
-                    message = `Ошибка: ${res.status} ${text}`;
-                }
-            }
-
+            navigate(routes.login(), { replace: true });
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Ошибка сети. Попробуйте ещё раз';
             const lower = message.toLowerCase();
 
             if (lower.includes('mail') || lower.includes('почт')) {
                 setEmailError('Проверьте адрес');
             } else if (lower.includes('password') || lower.includes('парол')) {
                 setPasswordError('Проверьте пароль');
+            } else if (lower.includes('сеть')) {
+                setGeneralError('Ошибка сети. Попробуйте ещё раз');
             } else {
                 setGeneralError('Что-то пошло не так, попробуйте ещё раз');
             }
-        } catch {
-            setGeneralError('Ошибка сети. Попробуйте ещё раз');
         } finally {
             setLoading(false);
         }

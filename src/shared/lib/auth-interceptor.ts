@@ -24,7 +24,6 @@ class AuthInterceptor {
 
     const headers = new Headers(fetchOptions.headers || {});
 
-    // Добавляем токен если требуется авторизация
     if (!skipAuth && authStore.isAuthenticated) {
       headers.set('Authorization', authStore.authorizationHeader);
     }
@@ -42,7 +41,6 @@ class AuthInterceptor {
       });
 
       if (response.status === 401 && !skipAuth && authStore.isAuthenticated) {
-        // Если у нас есть токен, но он невалидный - разлогиниваем
         authStore.logout();
         window.location.href = routes.login();
         throw new Error('Сессия истекла. Пожалуйста, войдите снова.');

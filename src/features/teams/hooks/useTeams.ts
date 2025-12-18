@@ -437,7 +437,9 @@ export function useTeams() {
 
         let fullId: string;
 
-        if (parentFolder) {
+        const isRootParent = parentFolder?.id === UDV_ROOT_ID;
+
+        if (parentFolder && !isRootParent) {
             fullId = `${parentFolder.id}/${folderId}`;
         } else {
             fullId = folderId;

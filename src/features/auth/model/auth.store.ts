@@ -3,6 +3,7 @@ import {AuthResponse, AuthState, LoginCredentials} from './types';
 import {AUTH_STATE_KEY, AUTH_STORAGE_KEY, LocalStorage} from "../../../shared/lib/storage/local-storage";
 import {apiClient} from "../../../shared/lib/api-client";
 import {HttpError} from "../../../shared/lib/auth-interceptor";
+import {userStore} from "../../../entities/user";
 
 export class AuthStore implements AuthState {
     token: string | null = null;
@@ -14,7 +15,6 @@ export class AuthStore implements AuthState {
         makeAutoObservable(this);
         this.loadFromStorage();
 
-        // Автоматически сохраняем изменения в localStorage
         reaction(
             () => ({
                 token: this.token,
@@ -85,6 +85,8 @@ export class AuthStore implements AuthState {
                 this.isLoading = false;
             });
 
+            userStore.clear();
+
             return { success: true };
         } catch (error) {
             if (error instanceof HttpError) {
@@ -106,6 +108,8 @@ export class AuthStore implements AuthState {
             this.error = null;
             LocalStorage.clear();
         });
+
+        userStore.clear();
     }
 }
 

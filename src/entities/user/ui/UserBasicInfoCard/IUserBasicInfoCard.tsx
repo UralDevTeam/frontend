@@ -10,6 +10,8 @@ import { parseTeam } from "../../lib/teamParts";
 
 type IUserBasicInfoCard = {
     user: User;
+    editPath?: string;
+    showEditButton?: boolean;
 }
 
 function getPluralForm(value: number, forms: [string, string, string]) {
@@ -36,7 +38,7 @@ function formatExperience(value: number) {
     return `${years} ${yearsLabel} ${months} ${monthsLabel}`;
 }
 
-export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
+export default function UserBasicInfoCard({user, editPath, showEditButton = false}: IUserBasicInfoCard) {
     const parts = parseTeam(user.team);
     const email = (user as any).email || '-';
     const emailLink = email !== '-' ? buildContactLink("email", email) : null;
@@ -75,45 +77,63 @@ export default function UserBasicInfoCard({user}: IUserBasicInfoCard) {
 
     const {copiedKey, copy} = useCopyStatus(500);
 
-    return (
-        <div className="user-basic-info-card">
-            {rows.map((r, idx) => (
-                <React.Fragment key={r.key}>
-                    <RowInfo label={r.label}>
-                        {r.copyValue && r.copyValue !== '-' ? (
-                            <div className="row-copyable">
-                                {(() => {
-                                    const contactLink = r.contactKey ? buildContactLink(r.contactKey, r.copyValue) : null;
+    const renderRow = (r: typeof rows[number], isLast: boolean) => (
+        <React.Fragment key={r.key}>
+            <RowInfo label={r.label}>
+                {r.copyValue && r.copyValue !== '-' ? (
+                    <div className="row-copyable">
+                        {(() => {
+                            const contactLink = r.contactKey ? buildContactLink(r.contactKey, r.copyValue) : null;
 
-                                    return (
-                                        <span className="row-copyable__text">
+                            return (
+                                <span className="row-copyable__text">
                                             {contactLink ? (
                                                 <a className="contact-link" href={contactLink.href}>{contactLink.label}</a>
                                             ) : (
                                                 r.copyValue
                                             )}
                                         </span>
-                                    );
-                                })()}
-                                <div className="copy-controls">
-                                    <button
-                                        className="copy-button"
-                                        onClick={() => copy(r.copyValue!, r.key)}
-                                        aria-label={`Скопировать ${r.label}`}
-                                        title={`Скопировать ${r.label}`}
-                                    >
-                                        <CopyIcon className="copy-button-icon"/>
-                                    </button>
-                                    {copiedKey === r.key && (
-                                        <span className="copy-status">скопировано</span>
-                                    )}
-                                </div>
-                            </div>
-                        ) : r.content}
-                    </RowInfo>
-                    {idx !== rows.length - 1 && <hr/>}
-                </React.Fragment>
-            ))}
+                            );
+                        })()}
+                        <div className="copy-controls">
+                            <button
+                                className="copy-button"
+                                onClick={() => copy(r.copyValue!, r.key)}
+                                aria-label={`Скопировать ${r.label}`}
+                                title={`Скопировать ${r.label}`}
+                            >
+                                <CopyIcon className="copy-button-icon"/>
+                            </button>
+                            {copiedKey === r.key && (
+                                <span className="copy-status">скопировано</span>
+                            )}
+                        </div>
+                    </div>
+                ) : r.content}
+            </RowInfo>
+            {!isLast && <hr/>}
+        </React.Fragment>
+    );
+
+    const headerRows = rows.slice(0, 2);
+    const remainingRows = rows.slice(2);
+    const showButton = Boolean(showEditButton && editPath);
+
+    return (
+        <div className="user-basic-info-card">
+            <div className="user-basic-info-card__top">
+                <div className="user-basic-info-card__top-rows">
+                    {headerRows.map((r, idx) => renderRow(r, remainingRows.length === 0 && idx === headerRows.length - 1))}
+                </div>
+                {showButton && (
+                    <NavLink to={editPath!} className="user-basic-info-card__edit-link">
+                        <button className="user-basic-info-card__edit-button">
+                            редактировать
+                        </button>
+                    </NavLink>
+                )}
+            </div>
+            {remainingRows.map((r, idx) => renderRow(r, idx === remainingRows.length - 1))}
         </div>
     )
 }

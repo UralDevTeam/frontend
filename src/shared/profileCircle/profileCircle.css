@@ -1,10 +1,15 @@
 .profile-circle {
     position: relative;
     overflow: hidden;
-    cursor: pointer;
+    cursor: default;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.profile-circle--editable,
+.profile-circle--link {
+    cursor: pointer;
 }
 
 .camera-icon {

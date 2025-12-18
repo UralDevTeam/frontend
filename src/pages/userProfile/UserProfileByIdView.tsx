@@ -17,6 +17,7 @@ export default function UserProfileByIdView() {
   const currentUser = userStore.user;
   const isMe = useMemo(() => Boolean(user && currentUser?.id === user.id), [user?.id, currentUser?.id]);
   const canEdit = Boolean(currentUser?.isAdmin || isMe);
+  const isAdminViewingOtherProfile = Boolean(currentUser?.isAdmin && !isMe);
 
   useEffect(() => {
 
@@ -47,13 +48,18 @@ export default function UserProfileByIdView() {
     <div className="user-profile-card">
       <UserMainPropertiesView user={user}/>
       <div className={"user-profile-content"}>
-        <UserBasicInfoCard user={user}/>
+        <UserBasicInfoCard
+          user={user}
+          editPath={routes.profileEdit(user.id)}
+          showEditButton={isAdminViewingOtherProfile}
+        />
         <UserPersonalInfoCardController
           user={user}
           isEdit={false}
           canEdit={canEdit}
           editPath={routes.profileEdit(user.id)}
           viewPath={routes.profileView(user.id)}
+          showEditButton={!isAdminViewingOtherProfile}
         />
       </div>
     </div>

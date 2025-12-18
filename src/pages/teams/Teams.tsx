@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import "./teams.css";
 import {UDV_ROOT_ID, useTeams} from "../../features/teams/hooks/useTeams";
 import TeamRow from "../../features/teams/components/TeamRow";
@@ -34,6 +34,7 @@ export default function Teams() {
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 300);
   const [addMode, setAddMode] = useState(false);
+  const teamsListRef = useRef<HTMLDivElement | null>(null);
   const [dragState, setDragState] = useState<{
     isDragging: boolean;
     userId?: string;
@@ -79,6 +80,23 @@ export default function Teams() {
 
   const handleUserDragEnd = () => {
     setDragState({isDragging: false});
+  };
+
+  const handleListDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!dragState.isDragging) return;
+
+    const container = teamsListRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const offset = 60;
+    const scrollStep = 20;
+
+    if (event.clientY - rect.top < offset) {
+      container.scrollBy({top: -scrollStep, behavior: "smooth"});
+    } else if (rect.bottom - event.clientY < offset) {
+      container.scrollBy({top: scrollStep, behavior: "smooth"});
+    }
   };
 
   const handleFolderDrop = (folderId: string, folderName: string) => {
@@ -171,6 +189,13 @@ export default function Teams() {
                     folderId={item.id}
                     folderName={item.name}
                     onDrop={handleFolderDrop}
+                    isExpanded={Boolean(expanded[item.id])}
+                    onExpand={(folderId) => {
+                      if (!expanded[folderId]) {
+                        toggle(folderId);
+                      }
+                    }}
+                    isDragActive={dragState.isDragging}
                     disabled={!isAdmin || dragState.userId === item.id} // Нельзя перемещать в себя
                   >
                     <TeamRow
@@ -249,7 +274,13 @@ export default function Teams() {
         }
       </div>
 
-      {renderContent()}
+      <div
+        className="teams-scroll-wrapper"
+        onDragOverCapture={handleListDragOver}
+        ref={teamsListRef}
+      >
+        {renderContent()}
+      </div>
     </>
   );
 }

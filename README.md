@@ -1,46 +1,52 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# UralDevTeam — Frontend
 
-## Available Scripts
+Клиентская часть веб-приложения UralDevTeam. Реализована на React (Create React App) и содержит UI для управления пользователями, командами и сотрудниками.
 
-In the project directory, you can run:
+**Project**
+- **Stack**: React, TypeScript, Playwright (e2e), Jest (unit).  
+- **Repo purpose**: интерфейс для внутренней панели управления компании.
 
-### `npm start`
+**Quick Start**
+- **Install**: `npm ci` — устанавливает зависимости.  
+- **Run (dev)**: `npm start` — запускает dev-сервер (обычно http://localhost:3000).  
+- **Build**: `npm run build` — production-сборка.  
+- **Unit tests**: `npm test` — запускает тесты в режиме watch/jest.  
+- **E2E tests**: `npx playwright test` — запускает Playwright тесты, отчёты в `playwright-report`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Примеры команд:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```
+npm ci
+npm start
+npm run build
+npm test
+npx playwright test
+```
 
-### `npm test`
+**Project Structure**
+- **Source**: [src](src) — основная логика и компоненты.  
+- **Public**: [public](public) — статические файлы и точка входа.  
+- **Playwright**: [playwright](playwright) и конфигурация [playwright.config.ts](playwright.config.ts) — e2e тесты и отчёты.  
+- **Tests**: [tests](tests) — интеграционные/скриншот‑тесты.  
+- **Package**: [package.json](package.json) — скрипты и зависимости.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Development notes**
+- Для разработки используйте `npm start`. Компоненты находятся в папке [src](src).  
+- Структура фич/модулей разделена по доменам: `features/*`, `pages/*`, `shared/*`.  
+- Если добавляете новые зависимости, предпочтительнее фиксировать версии и обновлять `package.json` аккуратно.
 
-### `npm run build`
+**Testing**
+- Unit: `npm test` (Jest).  
+- E2E: `npx playwright test` — тесты расположены в [playwright](playwright) и в `tests`. Отчёты генерируются в `playwright-report`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Formatting & lint**
+- В репозитории могут быть настройки ESLint/Prettier (проверьте `package.json`). Запустите локально перед PR.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Contribution**
+- Fork → feature branch → Pull Request.  
+- Описание PR: что сделано, как тестировать, какие изменения видимы в UI.  
+- Добавляйте тесты для новых фич и исправлений.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Deploy**
+- Сборка `npm run build` создаёт папку `build`, готовую для деплоя на статический хостинг.

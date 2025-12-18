@@ -16,25 +16,23 @@ export default function App() {
 
     return (
         <Routes>
-            {/* Main application routes (with header) */}
             <Route element={<ProtectedRoute/>}>
                 <Route element={<MainLayout/>}>
-                    <Route path={routes.root()} element={(<Navigate to={routes.me()} replace={true}/>)}/> 
+                    <Route path={routes.root()} element={(<Navigate to={routes.me()} replace={true}/>)}/>
 
-                    <Route path={routes.me()} element={<UserProfileView/>}/> 
-                    <Route path={routes.meEdit()} element={<UserProfileEdit/>}/> 
-                    <Route path={routes.employees()} element={<Employees/>}/> 
-                    <Route path={routes.teams()} element={<Teams/>}/> 
-                    <Route path={routes.about()} element={<About/>}/> 
-                    <Route path={routes.profileView()} element={<UserProfileByIdView/>}/> 
-                    <Route path={routes.profileEdit()} element={<UserProfileEditById/>}/> 
+                    <Route path={routes.me()} element={<UserProfileView/>}/>
+                    <Route path={routes.meEdit()} element={<UserProfileEdit/>}/>
+                    <Route path={routes.employees()} element={<Employees/>}/>
+                    <Route path={routes.teams()} element={<Teams/>}/>
+                    <Route path={routes.about()} element={<About/>}/>
+                    <Route path={routes.profileView()} element={<UserProfileByIdView/>}/>
+                    <Route path={routes.profileEdit()} element={<UserProfileEditById/>}/>
                 </Route>
             </Route>
 
-            {/* Auth routes (no header) */}
             <Route element={<AuthLayout/>}>
                 <Route path={routes.login()} element={<Login/>}/>
-                <Route path={routes.register()} element={<Register/>}/> 
+                <Route path={routes.register()} element={<Register/>}/>
             </Route>
         </Routes>
     )

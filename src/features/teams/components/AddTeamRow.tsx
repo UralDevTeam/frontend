@@ -62,8 +62,11 @@ const AddTeamRow = ({getNodesAtDepthFromFlat, createFolder, onFinish}: {
   const [folderType, setFolderType] = useState<number | null>(null);
 
   const createTeam = (parentFolder: TeamNode) => {
-    console.log("Creating folder:", folderName, "in:", parentFolder);
-    createFolder(folderName, parentFolder);
+    const trimmedName = folderName.trim();
+    if (!trimmedName) return;
+
+    console.log("Creating folder:", trimmedName, "in:", parentFolder);
+    createFolder(trimmedName, parentFolder);
     onFinish();
   }
 
@@ -128,11 +131,11 @@ const AddTeamRow = ({getNodesAtDepthFromFlat, createFolder, onFinish}: {
       </div>
 
       <div className="teams-row-right">
-        <span className="teams-metric">{0} сотрудника</span>
-        <span className="teams-metric">{0} групп</span>
-        <span className="teams-metric">{0} отдела</span>
-        <span className="teams-metric">{0} юр. лиц</span>
-        <span className="teams-metric">{0} домен</span>
+        <span className="teams-metric">{0}</span>
+        <span className="teams-metric">{0}</span>
+        <span className="teams-metric">{0}</span>
+        <span className="teams-metric">{0}</span>
+        <span className="teams-metric">{0}</span>
       </div>
     </div>
   );

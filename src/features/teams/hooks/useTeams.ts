@@ -39,10 +39,8 @@ type FlatUser = {
 
 export type FlatItem = FlatFolder | FlatUser;
 
-// Локальное хранилище для папок
 let localFolders: TeamNode[] = [];
 
-// Локальное хранилище для перемещений пользователей
 let userMoves: Record<string, string> = {};
 
 function buildTreeFromUsers(users: Array<any>): TeamNode[] {
@@ -62,12 +60,9 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
         return map.get(key)!;
     }
 
-    // Сначала добавляем все локальные папки
     function addLocalFolders() {
         for (const folder of localFolders) {
-            // Для локальных папок сохраняем информацию о родителе
             if (folder.id.includes('/')) {
-                // Это вложенная папка
                 const parts = folder.id.split('/');
                 const parentKey = parts.slice(0, -1).join('/');
                 const key = folder.id;
@@ -83,7 +78,6 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
                     });
                 }
             } else {
-                // Это корневая папка
                 if (!map.has(folder.id)) {
                     map.set(folder.id, {
                         id: folder.id,
@@ -102,10 +96,8 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
     for (const u of users || []) {
         const teamPath = Array.isArray(u.team) ? u.team : [];
 
-        // Проверяем, перемещен ли пользователь в другую папку
         const userMove = userMoves[u.id];
         if (userMove) {
-            // Если пользователь перемещен, добавляем его в новую папку
             const movePath = userMove.split('/');
             let pathKeyParts: string[] = [];
 
@@ -115,7 +107,6 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
                 const key = pathKeyParts.join('/');
                 const parentKey = pathKeyParts.length > 1 ? pathKeyParts.slice(0, -1).join('/') : undefined;
 
-                // Создаем папку, если ее еще нет
                 if (!map.has(key)) {
                     map.set(key, {
                         id: key,
@@ -182,7 +173,6 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
         }
     }
 
-    // Строим иерархию
     map.forEach((node) => {
         if (node.parentKey) {
             const parent = map.get(node.parentKey);
@@ -195,7 +185,6 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
         }
     });
 
-    // Собираем корневые элементы
     const roots: TeamNode[] = [];
     map.forEach((node) => {
         if (!node.parentKey) {
@@ -220,12 +209,9 @@ function buildTreeFromUsers(users: Array<any>): TeamNode[] {
         }
     });
 
-    // Сортируем: сначала существующие команды, затем локальные папки
     roots.sort((a, b) => {
-        // Сначала нелокальные элементы
         if (!a.isLocal && b.isLocal) return -1;
         if (a.isLocal && !b.isLocal) return 1;
-        // Затем по имени
         return a.name.localeCompare(b.name);
     });
 
@@ -428,38 +414,34 @@ export function useTeams() {
             .filter((node): node is TeamNode => node !== undefined);
     }, [flatList, nodesById]);
 
-    // Метод для создания папки
     const createFolder = useCallback((name: string, parentFolder?: TeamNode) => {
+        const trimmedName = name.trim()
         const timestamp = Date.now();
         const random = Math.random().toString(36).substr(2, 9);
-        const folderId = `folder-${timestamp}-${random}`;
+        const fallbackId = `folder-${timestamp}-${random}`;
+        const folderId = trimmedName ? trimmedName.replace(/\//g, "-") : fallbackId;
+        const displayName = trimmedName || folderId;
 
         let fullId: string;
 
         if (parentFolder) {
-            // Создаем вложенную папку
             fullId = `${parentFolder.id}/${folderId}`;
         } else {
-            // Создаем корневую папку
             fullId = folderId;
         }
 
-        // Создаем новую папку
         const newFolder: TeamNode = {
             id: fullId,
-            name,
+            name: displayName,
             users: [],
             children: [],
             isLocal: true
         };
 
-        // Добавляем в локальное хранилище
         localFolders.push(newFolder);
 
-        // Обновляем версию для перестроения дерева
         setFoldersVersion(v => v + 1);
 
-        // Автоматически раскрываем родительскую папку
         if (parentFolder) {
             setExpanded(prev => ({...prev, [parentFolder.id]: true}));
         }
@@ -467,13 +449,10 @@ export function useTeams() {
         return fullId;
     }, []);
 
-    // Метод для перемещения пользователя
     const moveUser = useCallback(async (userId: string, targetFolder: TeamNode) => {
-        // Находим пользователя в исходных данных
         const user = usersStore.users?.find(u => u.id === userId);
         if (!user) return;
 
-        // Сохраняем перемещение в локальное хранилище
         userMoves[userId] = targetFolder.id;
 
         try {
@@ -483,10 +462,8 @@ export function useTeams() {
             throw error;
         }
 
-        // Обновляем версию для перестроения дерева
         setUsersVersion(v => v + 1);
 
-        // Раскрываем целевую папку, чтобы показать перемещенного пользователя
         setExpanded(prev => ({ ...prev, [targetFolder.id]: true }));
     }, []);
 

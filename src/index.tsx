@@ -30,7 +30,6 @@ async function bootstrap() {
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        {/* компонент, который будет динамически подгружать пользователя при навигации */}
         <UserLoader/>
 
         <NotificationsProvider>

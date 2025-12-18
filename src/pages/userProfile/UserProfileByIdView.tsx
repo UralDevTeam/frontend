@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {useParams} from 'react-router';
+import {NavLink, useParams} from 'react-router';
 import {fetchUserById} from '../../entities/user/fetcher';
 import UserPersonalInfoCardController from '../../entities/user/ui/UserPersonalInfoCardController';
 import UserMainPropertiesView from '../../entities/user/ui/UserMainProperties/UserMainPropertiesView';
@@ -48,11 +48,14 @@ export default function UserProfileByIdView() {
     <div className="user-profile-card">
       <UserMainPropertiesView user={user}/>
       <div className={"user-profile-content"}>
-        <UserBasicInfoCard
-          user={user}
-          editPath={routes.profileEdit(user.id)}
-          showEditButton={isAdminViewingOtherProfile}
-        />
+        <div className="user-profile-basic-wrapper">
+          <UserBasicInfoCard user={user}/>
+          {isAdminViewingOtherProfile && (
+            <NavLink to={routes.profileEdit(user.id)} className="user-profile-basic-edit-link">
+              <button className="user-profile-basic-edit-button">редактировать</button>
+            </NavLink>
+          )}
+        </div>
         <UserPersonalInfoCardController
           user={user}
           isEdit={false}

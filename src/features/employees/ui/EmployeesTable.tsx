@@ -24,7 +24,7 @@ type EmployeeRowProps = {
     onToggleSelect?: (id: string, checked: boolean) => void;
 };
 
-const EmployeeRow: React.FC<EmployeeRowProps> = ({employee}) => {
+const EmployeeRow: React.FC<EmployeeRowProps> = ({employee, adminMode, selected = false, onToggleSelect}) => {
     const parts = parseTeam(employee.team);
     const getDisplayName = (fullName: string): string => {
         const parts = fullName.split(' ');
@@ -107,29 +107,27 @@ const TableHeader = ({sortConfig, onSort}: {
     );
 };
 
-export default function EmployeesTable(
-    {
-        data,
-        addMode = false,
-        adminMode = false,
-        sortConfig,
-    onSort,
-    selectedIds = [],
-    onToggleSelect
-    }: Props) {
+export default function EmployeesTable({
+                                           data,
+                                           adminMode = false,
+                                           sortConfig,
+                                           onSort,
+                                           selectedIds = [],
+                                           onToggleSelect,
+                                       }: Props) {
     return (
         <div className="" style={{marginTop: 16}}>
             <table className="employees-table">
                 <TableHeader sortConfig={sortConfig} onSort={onSort}/>
                 <tbody>
                 {data.map((employee) => (
-          <EmployeeRow
-            key={employee.id}
-            employee={employee}
-            adminMode={adminMode}
-            selected={selectedIds.includes(employee.id)}
-            onToggleSelect={onToggleSelect}
-          />
+                    <EmployeeRow
+                        key={employee.id}
+                        employee={employee}
+                        adminMode={adminMode}
+                        selected={selectedIds.includes(employee.id)}
+                        onToggleSelect={onToggleSelect}
+                    />
                 ))}
                 </tbody>
             </table>

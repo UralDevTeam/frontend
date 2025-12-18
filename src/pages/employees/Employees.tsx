@@ -17,6 +17,9 @@ function EmployeesComponent() {
         loading,
         error,
         reload,
+        selectedIds,
+        toggleSelect,
+        clearSelection,
     } = useEmployees();
 
     const {
@@ -75,6 +78,7 @@ function EmployeesComponent() {
         return (
             <EmployeesTable
                 data={sortedData}
+                adminMode={!!adminMode}
                 sortConfig={sortConfig}
                 onSort={handleSort}
                 selectedIds={selectedIds}

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {useParams} from 'react-router';
+import {NavLink, useParams} from 'react-router';
 import {fetchUserById} from '../../entities/user/fetcher';
 import UserPersonalInfoCardController from '../../entities/user/ui/UserPersonalInfoCardController';
 import UserMainPropertiesView from '../../entities/user/ui/UserMainProperties/UserMainPropertiesView';
@@ -17,6 +17,7 @@ export default function UserProfileByIdView() {
   const currentUser = userStore.user;
   const isMe = useMemo(() => Boolean(user && currentUser?.id === user.id), [user?.id, currentUser?.id]);
   const canEdit = Boolean(currentUser?.isAdmin || isMe);
+  const isAdminViewingOtherProfile = Boolean(currentUser?.isAdmin && !isMe);
 
   useEffect(() => {
 
@@ -44,19 +45,26 @@ export default function UserProfileByIdView() {
   if (!user) return <div>No user</div>;
 
   return (
-    <div className="user-profile-card">
-      <UserMainPropertiesView user={user}/>
-      <div className={"user-profile-content"}>
-        <UserBasicInfoCard user={user}/>
-        <UserPersonalInfoCardController
-          user={user}
-          isEdit={false}
-          canEdit={canEdit}
-          editPath={routes.profileEdit(user.id)}
-          viewPath={routes.profileView(user.id)}
-        />
+      <div className="user-profile-card">
+        <UserMainPropertiesView user={user}/>
+        <div className={"user-profile-content"}>
+          <div className="user-profile-basic-wrapper">
+            <UserBasicInfoCard user={user}/>
+            {isAdminViewingOtherProfile && (
+                <NavLink to={routes.profileEdit(user.id)} className="user-profile-basic-edit-link">
+                  <button className="user-profile-basic-edit-button">редактировать</button>
+                </NavLink>
+            )}
+          </div>
+          <UserPersonalInfoCardController
+              user={user}
+              isEdit={false}
+              canEdit={canEdit}
+              editPath={routes.profileEdit(user.id)}
+              viewPath={routes.profileView(user.id)}
+              showEditButton={!isAdminViewingOtherProfile}
+          />
+        </div>
       </div>
-    </div>
   );
 }
-

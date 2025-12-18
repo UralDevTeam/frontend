@@ -19,6 +19,7 @@ export default function UserMainPropertiesView({user, toSelf = false}: Prop) {
                 toSelf={toSelf}
                 isAdmin={user.isAdmin}
                 addStar={true}
+                disableNavigation
             />
             <div className={"user-main-properties"}>
                 <p className="user-main-properties-name">

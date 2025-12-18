@@ -192,10 +192,11 @@ const ProfileCircle = ({
         }
     };
 
+    const isLinkEnabled = !editable && !disableNavigation;
+
     const content = (
         <div
-            className={`profile-circle${editable ? " profile-circle--editable" : ""}`}
-            style={{width: size, height: size}}
+            className={`profile-circle${editable ? " profile-circle--editable" : ""}${isLinkEnabled ? " profile-circle--link" : ""}`}
             onClick={triggerFileSelect}
         >
             {isAdmin && !editable && addStar && (

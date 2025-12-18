@@ -84,6 +84,7 @@ type Props = {
     saveUserFn?: (updated: User, original?: User) => Promise<unknown>;
     afterSave?: () => Promise<unknown> | void;
     adminMode?: boolean;
+    showEditButton?: boolean;
 };
 
 const UserPersonalInfoCardController = (
@@ -96,6 +97,7 @@ const UserPersonalInfoCardController = (
         saveUserFn,
         afterSave,
         adminMode = false,
+        showEditButton = true,
     }: Props) => {
     const navigate = useNavigate();
     const [draftUser, setDraftUser] = useState<User>(user);
@@ -259,7 +261,7 @@ const UserPersonalInfoCardController = (
         <div className="user-personal-info-controller">
             <div className="user-personal-info-controller__header">
                 {!isEdit && <p className="user-profile-section-title">Личное</p>}
-                {!isEdit && canEdit && <NavLink to={editPath}>
+                {!isEdit && canEdit && showEditButton && <NavLink to={editPath}>
                     <button className="user-personal-info-controller__edit-mode-button">
                         редактировать
                     </button>

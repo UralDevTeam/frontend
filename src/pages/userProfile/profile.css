@@ -13,6 +13,44 @@
     padding-bottom: 50px;
 }
 
+.user-profile-basic-wrapper {
+    position: relative;
+    width: max-content;
+}
+
+.user-profile-basic-edit-link {
+    position: absolute;
+    top: 30px;
+    left: calc(100% + 170px);
+    text-decoration: none;
+}
+
+.user-profile-basic-edit-button {
+    height: 39px;
+    width: 156px;
+    border: 2px solid var(--color-primary-graphite);
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+
+    color: var(--color-secondary-dark-blue);
+
+    font-family: 'Golos Text', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.user-profile-basic-edit-button:hover {
+    transform: scale(1.05);
+}
+
 .user-profile-section {
     display: flex;
     flex-direction: column;

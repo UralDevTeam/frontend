@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import './Login.css';
 import { authStore, LoginCredentials } from '../../features/auth/model';
 import { Link, useNavigate } from 'react-router';
+import { routes } from '../../shared/routes';
 import { useAuthForm } from '../../shared/hooks/use-auth-form';
 import { FormField } from '../../shared/form-field/formField';
 
@@ -27,13 +28,13 @@ export const Login: React.FC = observer(() => {
 
     useEffect(() => {
         if (authStore.isAuthenticated) {
-            navigate('/', { replace: true });
+            navigate(routes.me(), { replace: true });
         }
     }, [authStore.isAuthenticated, navigate]);
 
     useEffect(() => {
         if (authStore.isAuthenticated && !authStore.isLoading && !authStore.error) {
-            navigate('/', { replace: true });
+            navigate(routes.me(), { replace: true });
         }
     }, [authStore.isAuthenticated, authStore.isLoading, authStore.error, navigate]);
 
@@ -129,7 +130,7 @@ export const Login: React.FC = observer(() => {
                 </button>
             </form>
 
-            <Link to="/register" className="login-form__link">
+            <Link to={routes.register()} className="login-form__link">
                 Зарегистрироваться →
             </Link>
         </>

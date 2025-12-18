@@ -4,6 +4,7 @@ import UserMainPropertiesView from "../../entities/user/ui/UserMainProperties/Us
 import UserBasicInfoCard from "../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard";
 import {observer} from 'mobx-react-lite';
 import {User, userStore} from '../../entities/user';
+import {routes} from "../../shared/routes";
 import "./profile.css"
 import {notificationsStore} from "../../features/notifications";
 
@@ -18,15 +19,15 @@ function UserProfileViewInner(props: Props) {
   const user = props.user ?? userStore.user;
 
   const canEdit = props.canEdit ?? true;
-  const editPath = props.editPath ?? "/me/edit";
-  const viewPath = props.viewPath ?? "/me";
+  const editPath = props.editPath ?? routes.meEdit();
+  const viewPath = props.viewPath ?? routes.me();
 
   useEffect(() => {
     const notificationId = notificationsStore.success(`
 Заполните свой профиль 
 до конца. так коллеги узнают 
 о тебе больше!
-`, {text: "Профиль", href: "/me"})
+`, {text: "Профиль", href: routes.me()})
     return () => {
       notificationsStore.removeNotification(notificationId);
     }

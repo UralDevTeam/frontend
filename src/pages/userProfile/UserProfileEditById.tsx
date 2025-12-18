@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {observer} from 'mobx-react-lite';
 import {useParams} from 'react-router';
+import {routes} from '../../shared/routes';
 import UserProfileEdit from './UserProfileEdit';
 import {fetchCurrentUser, fetchUserById} from '../../entities/user/fetcher';
 import {User, userFromDto, userStore} from '../../entities/user';
@@ -55,7 +56,7 @@ function UserProfileEditById() {
     return (
         <UserProfileEdit
             initialUser={user}
-            viewPath={`/profile/view/${id}`}
+            viewPath={routes.profileView(id)}
             saveUserFn={(updatedUser, originalUser) => {
                 if (!originalUser) throw new Error("Original user is missing for admin update");
                 return saveUserByIdAdmin(id, originalUser, updatedUser);

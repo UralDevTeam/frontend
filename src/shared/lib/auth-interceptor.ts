@@ -1,4 +1,5 @@
 import {authStore} from "../../features/auth/model";
+import {routes} from '../routes';
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
@@ -36,7 +37,7 @@ class AuthInterceptor {
       if (response.status === 401 && !skipAuth && authStore.isAuthenticated) {
         // Если у нас есть токен, но он невалидный - разлогиниваем
         authStore.logout();
-        window.location.href = '/login';
+        window.location.href = routes.login();
         throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
       }
 

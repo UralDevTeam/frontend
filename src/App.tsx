@@ -1,4 +1,5 @@
 import {Navigate, Route, Routes} from 'react-router';
+import {routes} from './shared/routes';
 import UserProfileView from './pages/userProfile/UserProfileView';
 import UserProfileEdit from './pages/userProfile/UserProfileEdit';
 import UserProfileByIdView from './pages/userProfile/UserProfileByIdView';
@@ -16,21 +17,21 @@ export default function App() {
         <Routes>
             {/* Main application routes (with header) */}
             <Route element={<MainLayout/>}>
-                <Route path="/" element={(<Navigate to="/me" replace={true}/>)}/>
+                <Route path={routes.root()} element={(<Navigate to={routes.me()} replace={true}/>)}/> 
 
-                <Route path="/me" element={<UserProfileView/>}/>
-                <Route path="/me/edit" element={<UserProfileEdit/>}/>
-                <Route path="/employees" element={<Employees/>}/>
-                <Route path="/teams" element={<Teams/>}/>
-                <Route path="/about" element={<About/>}/>
-                <Route path="/profile/view/:id" element={<UserProfileByIdView/>}/>
-                <Route path="/profile/edit/:id" element={<UserProfileEditById/>}/>
+                <Route path={routes.me()} element={<UserProfileView/>}/> 
+                <Route path={routes.meEdit()} element={<UserProfileEdit/>}/> 
+                <Route path={routes.employees()} element={<Employees/>}/> 
+                <Route path={routes.teams()} element={<Teams/>}/> 
+                <Route path={routes.about()} element={<About/>}/> 
+                <Route path={routes.profileView()} element={<UserProfileByIdView/>}/> 
+                <Route path={routes.profileEdit()} element={<UserProfileEditById/>}/> 
             </Route>
 
             {/* Auth routes (no header) */}
             <Route element={<AuthLayout/>}>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/register" element={<Register/>}/>
+                <Route path={routes.login()} element={<Login/>}/>
+                <Route path={routes.register()} element={<Register/>}/> 
             </Route>
         </Routes>
     )

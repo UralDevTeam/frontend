@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router";
+import {routes} from './shared/routes';
 import App from "./App";
 import {userStore} from './entities/user';
 import {fetchCurrentUser} from './entities/user/fetcher';
@@ -17,7 +18,7 @@ const root = ReactDOM.createRoot(
 async function bootstrap() {
   try {
     const path = typeof window !== 'undefined' && window.location && window.location.pathname ? window.location.pathname : '';
-    const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+    const onAuthPage = path.startsWith(routes.login()) || path.startsWith(routes.register()) || path.startsWith(routes.auth());
 
     if (!onAuthPage) {
       await userStore.loadUserFromApi(fetchCurrentUser);

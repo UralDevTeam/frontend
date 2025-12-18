@@ -4,6 +4,7 @@ import {fetchUserById} from '../../entities/user/fetcher';
 import UserPersonalInfoCardController from '../../entities/user/ui/UserPersonalInfoCardController';
 import UserMainPropertiesView from '../../entities/user/ui/UserMainProperties/UserMainPropertiesView';
 import UserBasicInfoCard from '../../entities/user/ui/UserBasicInfoCard/IUserBasicInfoCard';
+import {routes} from '../../shared/routes';
 import './profile.css';
 import {User, userFromDto, userStore} from "../../entities/user";
 
@@ -51,8 +52,8 @@ export default function UserProfileByIdView() {
           user={user}
           isEdit={false}
           canEdit={canEdit}
-          editPath={`/profile/edit/${user.id}`}
-          viewPath={`/profile/view/${user.id}`}
+          editPath={routes.profileEdit(user.id)}
+          viewPath={routes.profileView(user.id)}
         />
       </div>
     </div>

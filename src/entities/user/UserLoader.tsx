@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 import { userStore } from './index';
+import {routes} from '../../shared/routes';
 import { fetchCurrentUser } from './fetcher';
 
 export default function UserLoader(): null {
@@ -12,7 +13,7 @@ export default function UserLoader(): null {
       ? window.location.pathname
       : location.pathname ?? '';
 
-    const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+    const onAuthPage = path.startsWith(routes.login()) || path.startsWith(routes.register()) || path.startsWith(routes.auth());
 
     if (onAuthPage) return;
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { routes } from '../../shared/routes';
 import { API_BASE } from '../../shared/apiConfig';
 import './Login.css';
 import { useAuthForm } from '../../shared/hooks/use-auth-form';
@@ -57,7 +58,7 @@ export default function Register() {
             });
 
             if (res.status === 201) {
-                navigate('/login', { replace: true });
+                navigate(routes.login(), { replace: true });
                 return;
             }
 
@@ -170,7 +171,7 @@ export default function Register() {
                 </button>
             </form>
 
-            <Link to="/login" className="login-form__link">
+            <Link to={routes.login()} className="login-form__link">
                 Войти →
             </Link>
         </>

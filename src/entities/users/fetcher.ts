@@ -1,5 +1,6 @@
 import {UserDTO} from "../user";
 import {apiClient} from "../../shared/lib/api-client";
+import {routes} from '../../shared/routes';
 
 
 export async function fetchUsers(): Promise<UserDTO[]> {
@@ -11,7 +12,7 @@ export async function fetchUsers(): Promise<UserDTO[]> {
 
     if (res.status === 401 || res.status === 403) {
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        window.location.href = routes.login();
       }
       throw new Error('Unauthorized');
     }

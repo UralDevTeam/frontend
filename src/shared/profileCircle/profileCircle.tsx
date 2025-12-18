@@ -1,6 +1,7 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {NavLink} from "react-router";
+import {routes} from '../routes';
 import {userStore} from "../../entities/user";
 import {apiClient} from "../lib/api-client";
 import "./profileCircle.css";
@@ -280,7 +281,7 @@ const ProfileCircle = ({
         );
     }
 
-    const profileHref = toSelf ? "/me" : resolvedUserId ? `/profile/view/${resolvedUserId}` : "/profile/view";
+    const profileHref = toSelf ? routes.me() : resolvedUserId ? routes.profileView(resolvedUserId) : routes.profileView();
 
     return (
         <NavLink to={profileHref}>

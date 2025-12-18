@@ -1,4 +1,5 @@
 import {Link, NavLink, useNavigate} from "react-router";
+import {routes} from "../../../shared/routes";
 import {useEffect, useRef, useState} from "react";
 import {observer} from "mobx-react-lite";
 import LightLogo from "../../../shared/logo/Light";
@@ -8,9 +9,9 @@ import {useNotifications} from "../../../features/notifications";
 import "./Header.css"
 
 const navItems = [
-    {to: "/teams", label: "оргструктура"},
-    {to: "/employees", label: "сотрудники"},
-    {to: "/about", label: "о\u00A0системе"},
+    {to: routes.teams(), label: "оргструктура"},
+    {to: routes.employees(), label: "сотрудники"},
+    {to: routes.about(), label: "о\u00A0системе"},
 ];
 
 
@@ -32,7 +33,7 @@ const Header = observer(function Header() {
     const handleConfirmLogout = () => {
         authStore.logout();
         setIsLogoutConfirmOpen(false);
-        navigate('/login', {replace: true});
+        navigate(routes.login(), {replace: true});
     };
 
     const handleCancelLogout = () => setIsLogoutConfirmOpen(false);
@@ -128,7 +129,7 @@ const Header = observer(function Header() {
                         </div>
                     )}
                 </div>
-                <NavLink to={"/me"}>
+                <NavLink to={routes.me()}>
                     <ProfileCircle size={43} toSelf={true}/>
                 </NavLink>
                 <div className="logout" ref={logoutRef}>

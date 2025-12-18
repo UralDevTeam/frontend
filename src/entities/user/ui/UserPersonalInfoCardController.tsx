@@ -1,4 +1,5 @@
 import {NavLink, useNavigate} from "react-router";
+import {routes} from "../../../shared/routes";
 import React, {useCallback, useEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 import {User, userStore} from "../index";
@@ -90,8 +91,8 @@ const UserPersonalInfoCardController = (
         user,
         isEdit,
         canEdit = false,
-        editPath = "/me/edit",
-        viewPath = "/me",
+        editPath = routes.meEdit(),
+        viewPath = routes.me(),
         saveUserFn,
         afterSave,
         adminMode = false,

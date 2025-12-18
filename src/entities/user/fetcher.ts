@@ -1,4 +1,5 @@
 import {WorkerStatuses} from '../../shared/statuses/workerStatuses';
+import {routes} from '../../shared/routes';
 import {UserDTO, UserLinkDTO} from "./types/user";
 import {apiClient} from "../../shared/lib/api-client";
 
@@ -97,7 +98,7 @@ function adaptBackendUserToFrontend(u: BackendUserDTO): UserDTO {
 export async function fetchCurrentUser(): Promise<UserDTO> {
   if (typeof window !== 'undefined') {
     const path = window.location && window.location.pathname ? window.location.pathname : '';
-    const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+    const onAuthPage = path.startsWith(routes.login()) || path.startsWith(routes.register()) || path.startsWith(routes.auth());
     if (onAuthPage) {
       throw new Error('Cannot fetch current user while on authentication page');
     }
@@ -110,9 +111,9 @@ export async function fetchCurrentUser(): Promise<UserDTO> {
   } catch (error) {
     if (typeof window !== 'undefined') {
       const path = window.location && window.location.pathname ? window.location.pathname : '';
-      const onAuthPage = path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/auth');
+      const onAuthPage = path.startsWith(routes.login()) || path.startsWith(routes.register()) || path.startsWith(routes.auth());
       if (!onAuthPage) {
-        window.location.href = '/login';
+        window.location.href = routes.login();
       }
     }
     throw new Error('Unauthorized');

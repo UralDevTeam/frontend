@@ -3,6 +3,7 @@ import UserMainPropertiesEdit from "../../entities/user/ui/UserMainProperties/Us
 import {User, userStore} from "../../entities/user";
 import React from "react";
 import {observer} from "mobx-react-lite";
+import {routes} from "../../shared/routes";
 import "./profile.css"
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
     adminMode?: boolean;
 }
 
-function UserProfileEdit({initialUser, viewPath = "/me", saveUserFn, afterSave, toSelf = true, adminMode = false}: Props) {
+function UserProfileEdit({initialUser, viewPath = routes.me(), saveUserFn, afterSave, toSelf = true, adminMode = false}: Props) {
     const user = initialUser ?? userStore.user;
     const titleText = toSelf ? "Редактирование личных данных" : "Редактирование данных сотрудника";
 

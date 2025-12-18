@@ -132,3 +132,8 @@ export async function fetchUserById(id: string): Promise<UserDTO> {
 export const updateUser = async (userId: string, payload: Partial<UserDTO>): Promise<UserDTO> => {
   return await apiClient.put<UserDTO>(`/api/users/${encodeURIComponent(userId)}`, payload);
 };
+
+
+export const deleteUser = async (userId: string): Promise<void> => {
+  return await apiClient.delete(`/api/user/${encodeURIComponent(userId)}`)
+}

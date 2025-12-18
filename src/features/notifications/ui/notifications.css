@@ -26,9 +26,12 @@
     border-radius: 14px;
 }
 
-.notification .success{
-    background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
-    border-left: 4px solid #52c41a;
+.notification.success{
+    border: 1px solid #52c41a;
+}
+
+.notification.error{
+    border: 1px solid red;
 }
 
 .notification__content {

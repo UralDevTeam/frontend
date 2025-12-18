@@ -59,7 +59,7 @@ class AuthInterceptor {
       let errorMessage = `HTTP error! status: ${response.status}`;
       try {
         const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
+        errorMessage = errorData.detail || errorMessage;
       } catch {
         // Если не JSON, пробуем текст
         try {

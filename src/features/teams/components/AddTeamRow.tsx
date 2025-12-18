@@ -13,10 +13,10 @@ const Step1 = () => {
 
 const Step2 = ({onSelect}: { onSelect: (depth: number) => void }) => {
   const levels = [
-    {label: 'Домен', depth: 0, id: "domen"},
-    {label: 'Юр. лицо', depth: 1, id: "your face"},
-    {label: 'Отдел', depth: 2, id: "otdel"},
-    {label: 'Направление', depth: 3, id: "group"},
+    {label: 'Домен', depth: 1, id: "domen"},
+    {label: 'Юр. лицо', depth: 2, id: "your face"},
+    {label: 'Отдел', depth: 3, id: "otdel"},
+    {label: 'Направление', depth: 4, id: "group"},
   ];
 
   return (

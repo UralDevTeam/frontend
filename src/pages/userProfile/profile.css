@@ -126,4 +126,7 @@
 
     color: var(--color-primary-graphite);
     background-color: #F8F9FA;
+    box-shadow: 0 4px 16px rgba(0, 59, 76, 0.1);
+
+    border-radius: 15px;
 }

@@ -64,6 +64,9 @@ main {
 
 .employees-table-row td {
     height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Golos Text', sans-serif;
 }
 
 .employees-table-row td:first-child,
@@ -297,4 +300,68 @@ input[type="checkbox"] {
     color: white;
     width: 18px;
     height: 18px;
+}
+
+
+.delete-confirm {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    min-width: 260px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+    border: #E53130 solid 2px;
+}
+
+.delete-confirm__text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: black;
+}
+
+.delete-confirm__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: start;
+}
+
+.delete-confirm__button {
+    width: 56px;
+    height: 39px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: var(--color-secondary-dark-blue);
+    background-color: #F8F9FA;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: 'Golos Text', sans-serif;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.15s ease;
+    box-sizing: border-box;
+}
+
+.delete-confirm__button:first-child {
+    border: var(--color-secondary-dark-blue) solid 2px;
+}
+
+.delete-confirm__button:hover,
+.delete-confirm__button--secondary:hover {
+    transform: scale(1.05);
+}
+
+.delete-confirm__button--secondary {
+    border: none;
+    background-color: var(--color-secondary-dark-blue);
+    color: var(--color-primary-white);
+    width: 63px;
 }

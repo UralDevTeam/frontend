@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {observer} from 'mobx-react-lite';
 import "./employees.css";
 import EmployeesFilters from "./EmployeesFilters";
@@ -49,6 +49,25 @@ function EmployeesComponent() {
     setDepartmentFilter('');
   };
 
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const deleteConfirmRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOpenDeleteConfirm = () => setIsDeleteConfirmOpen(true);
+
+  const handleCloseDeleteConfirm = () => setIsDeleteConfirmOpen(false);
+
+  const getEmployeesCountText = (count: number) => {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+
+    if (mod10 === 1 && mod100 !== 11) {
+      return 'сотрудника';
+    }
+
+    return 'сотрудников';
+  };
+
+
   const getEmployeeNamesByIds = (ids: string[]) =>
       ids.map((id) => sortedData.find((employee) => employee.id === id)?.name ?? id);
 
@@ -60,6 +79,39 @@ function EmployeesComponent() {
       })
       .finally(reload);
   }
+  const handleConfirmDelete = () => {
+    deleteEmployees(selectedIds);
+    clearSelection();
+    handleCloseDeleteConfirm();
+  };
+
+  useEffect(() => {
+    if (selectedIds.length === 0) {
+      handleCloseDeleteConfirm();
+    }
+  }, [selectedIds]);
+
+  useEffect(() => {
+    if (!isDeleteConfirmOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!deleteConfirmRef.current) {
+        return;
+      }
+
+      if (!deleteConfirmRef.current.contains(event.target as Node)) {
+        handleCloseDeleteConfirm();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDeleteConfirmOpen]);
 
   const renderState = () => {
     if (loading) {
@@ -114,14 +166,31 @@ function EmployeesComponent() {
             {selectedIds.length > 0 && (
               <button
                 className="delete-users-button"
-                onClick={() => {
-                  deleteEmployees(selectedIds);
-                  clearSelection();
-                }}
+                onClick={handleOpenDeleteConfirm}
                 title="Удалить выбранных"
               >
                 <img src="/icons/TrashCan.svg" alt="TrashCan icon"/>
               </button>
+            )}
+
+            {isDeleteConfirmOpen && (
+                <div className="delete-confirm" ref={deleteConfirmRef}>
+                  <p className="delete-confirm__text">
+                    Вы хотите сейчас удалить {selectedIds.length} {getEmployeesCountText(selectedIds.length)}?
+                  </p>
+                  <div className="delete-confirm__actions">
+                    <button type="button" className="delete-confirm__button" onClick={handleConfirmDelete}>
+                      да
+                    </button>
+                    <button
+                        type="button"
+                        className="delete-confirm__button delete-confirm__button--secondary"
+                        onClick={handleCloseDeleteConfirm}
+                    >
+                      нет
+                    </button>
+                  </div>
+                </div>
             )}
           </div>
         )}

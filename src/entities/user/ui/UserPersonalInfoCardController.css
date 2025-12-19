@@ -17,6 +17,12 @@
     height: 48px;
 }
 
+.user-personal-info-controller__actions--floating {
+    position: fixed;
+    top: 125px;
+    z-index: 5;
+}
+
 .user-personal-info-controller__undo-edit-button,
 .user-personal-info-controller__save-mode-button {
     display: flex;

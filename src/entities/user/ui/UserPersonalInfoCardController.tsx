@@ -1,6 +1,6 @@
 import {NavLink, useNavigate} from "react-router";
 import {routes} from "../../../shared/routes";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useLayoutEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 import {User, userStore} from "../index";
 import {fetchCurrentUser} from "../fetcher";
@@ -105,6 +105,7 @@ const UserPersonalInfoCardController = (
     const [isSaving, setIsSaving] = useState(false);
     const [validationError, setValidationError] = useState<string | null>(null);
     const [invalidFieldKeys, setInvalidFieldKeys] = useState<InvalidFieldKey[]>([]);
+    const [actionsLeft, setActionsLeft] = useState<number | null>(null);
 
     useEffect(() => {
         setDraftUser(user);
@@ -115,6 +116,23 @@ const UserPersonalInfoCardController = (
         setValidationError(null);
         setInvalidFieldKeys([]);
     }, [draftUser]);
+
+    useLayoutEffect(() => {
+        const titleNode = document.getElementById("user-profile-edit-title");
+        if (!titleNode) return;
+
+        const updateActionsLeft = () => {
+            const rect = titleNode.getBoundingClientRect();
+            setActionsLeft(rect.right + 182);
+        };
+
+        updateActionsLeft();
+        window.addEventListener("resize", updateActionsLeft);
+
+        return () => {
+            window.removeEventListener("resize", updateActionsLeft);
+        };
+    }, []);
 
     const handleUndo = useCallback(() => {
     }, [draftUser]);
@@ -257,6 +275,24 @@ const UserPersonalInfoCardController = (
         }
     }, [editingDisabled]);
 
+    const actions = (
+        <div
+            className={`user-personal-info-controller__actions ${actionsLeft !== null ? "user-personal-info-controller__actions--floating" : ""}`}
+            style={actionsLeft !== null ? { left: `${actionsLeft}px` } : undefined}
+        >
+            <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
+                <button className="user-personal-info-controller__undo-edit-button" onClick={handleUndo}
+                        disabled={editingDisabled}>
+                    отменить
+                </button>
+            </NavLink>
+            <button className="user-personal-info-controller__save-mode-button" onClick={handleSave}
+                    disabled={editingDisabled}>
+                сохранить
+            </button>
+        </div>
+    );
+
     return (
         <div className="user-personal-info-controller">
             <div className="user-personal-info-controller__header">
@@ -279,18 +315,7 @@ const UserPersonalInfoCardController = (
             {isEdit && <>
                 {validationError && <p className="user-personal-info-controller__error">{validationError}</p>}
                 <p className="user-personal-info-controller__hint">нажмите `сохранить` чтобы данные изменились</p>
-                <div className="user-personal-info-controller__actions">
-                    <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
-                        <button className="user-personal-info-controller__undo-edit-button" onClick={handleUndo}
-                                disabled={editingDisabled}>
-                            отменить
-                        </button>
-                    </NavLink>
-                    <button className="user-personal-info-controller__save-mode-button" onClick={handleSave}
-                            disabled={editingDisabled}>
-                        сохранить
-                    </button>
-                </div>
+                {actions}
             </>
             }
 

@@ -41,6 +41,12 @@
     width: 100%;
 }
 
+.user-main-properties__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+
 .user-main-properties-line {
     display: flex;
     flex-direction: row;

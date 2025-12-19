@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { routes } from '../../shared/routes';
 import { apiClient } from '../../shared/lib/api-client';
+import { HttpError } from '../../shared/lib/auth-interceptor';
 import './Login.css';
 import { useAuthForm } from '../../shared/hooks/use-auth-form';
 import { FormField } from '../../shared/form-field/formField';
@@ -54,6 +55,19 @@ export default function Register() {
 
             navigate(routes.login(), { replace: true });
         } catch (error) {
+            if (error instanceof HttpError) {
+                const detail = typeof error.payload === 'object' && error.payload && 'detail' in error.payload
+                    ? (error.payload as any).detail
+                    : error.message;
+
+                const detailMessage = typeof detail === 'string' ? detail.trim() : '';
+
+                if (detailMessage.toLowerCase().includes('employee not found')) {
+                    setEmailError('Такой корпоративной почты не существует');
+                    return;
+                }
+            }
+
             const message = error instanceof Error ? error.message : 'Ошибка сети. Попробуйте ещё раз';
             const lower = message.toLowerCase();
 

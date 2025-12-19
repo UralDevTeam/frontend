@@ -71,16 +71,24 @@ function EmployeesComponent() {
   const getEmployeeNamesByIds = (ids: string[]) =>
       ids.map((id) => sortedData.find((employee) => employee.id === id)?.name ?? id);
 
-  const deleteEmployees = (ids: string[]) => {
-    Promise.all(ids.map(id => deleteUser(id)))
-        .catch(() => {
-          const names = getEmployeeNamesByIds(ids).join(', ');
-          notificationsStore.error(`Не удалось удалить сотрудника(ов): ${names}, потому что в дочерних командах еще есть сотрудники`);
-      })
-      .finally(reload);
-  }
-  const handleConfirmDelete = () => {
-    deleteEmployees(selectedIds);
+  const deleteEmployees = async (ids: string[]) => {
+    const results = await Promise.allSettled(ids.map(id => deleteUser(id)));
+    const failedIds = results.reduce<string[]>((acc, result, index) => {
+      if (result.status === 'rejected') {
+        acc.push(ids[index]);
+      }
+      return acc;
+    }, []);
+
+    if (failedIds.length) {
+      const names = getEmployeeNamesByIds(failedIds).join(', ');
+      notificationsStore.error(`Не удалось удалить сотрудника(ов): ${names}, потому что в дочерних командах еще есть сотрудники`);
+    }
+
+    await reload();
+  };
+  const handleConfirmDelete = async () => {
+    await deleteEmployees(selectedIds);
     clearSelection();
     handleCloseDeleteConfirm();
   };

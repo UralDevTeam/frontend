@@ -35,6 +35,7 @@ export default function Teams() {
   const debouncedSearchTerm = useDebounce(searchInput, 300);
   const [addMode, setAddMode] = useState(false);
   const teamsListRef = useRef<HTMLDivElement | null>(null);
+  const notificationIdRef = useRef<string | null>(null);
   const [dragState, setDragState] = useState<{
     isDragging: boolean;
     userId?: string;
@@ -55,14 +56,32 @@ export default function Teams() {
     if (!usersStore.users || usersStore.users.length === 0) {
       usersStore.loadFromApi();
     }
-    const notificationsIds = [
-      notificationsStore.info("Для изменения оргструктуры используйте перетаскивание сотрудников в папки.")
-    ];
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      if (notificationIdRef.current) {
+        notificationsStore.removeNotification(notificationIdRef.current);
+        notificationIdRef.current = null;
+      }
+      return;
+    }
+
+    if (notificationIdRef.current) {
+      return;
+    }
+
+    notificationIdRef.current = notificationsStore.info(
+        "Для изменения оргструктуры используйте перетаскивание сотрудников в папки."
+    );
 
     return () => {
-      notificationsIds.forEach(id => notificationsStore.removeNotification(id));
+      if (notificationIdRef.current) {
+        notificationsStore.removeNotification(notificationIdRef.current);
+        notificationIdRef.current = null;
+      }
     }
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     setSearchTerm(debouncedSearchTerm);

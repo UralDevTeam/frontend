@@ -241,7 +241,7 @@ export default function Teams() {
 
   return (
     <>
-      <h2 className="teams-title">Все сотрудники</h2>
+      <h2 className="teams-title">Оргструктура</h2>
 
       <div className="teams-table-settings">
         <div className="teams-search">

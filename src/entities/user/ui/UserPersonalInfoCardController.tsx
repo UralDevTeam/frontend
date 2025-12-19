@@ -1,7 +1,6 @@
 import {NavLink, useNavigate} from "react-router";
 import {routes} from "../../../shared/routes";
-import React, {useCallback, useEffect, useState} from "react";
-import {createPortal} from "react-dom";
+import React, {useCallback, useEffect, useLayoutEffect, useState} from "react";
 import UserPersonalInfoCard from "./UserPersonalInfoCard/UserPersonalInfoCard";
 import {User, userStore} from "../index";
 import {fetchCurrentUser} from "../fetcher";
@@ -106,7 +105,7 @@ const UserPersonalInfoCardController = (
     const [isSaving, setIsSaving] = useState(false);
     const [validationError, setValidationError] = useState<string | null>(null);
     const [invalidFieldKeys, setInvalidFieldKeys] = useState<InvalidFieldKey[]>([]);
-    const [actionsHost, setActionsHost] = useState<HTMLElement | null>(null);
+    const [actionsLeft, setActionsLeft] = useState<number | null>(null);
 
     useEffect(() => {
         setDraftUser(user);
@@ -118,9 +117,21 @@ const UserPersonalInfoCardController = (
         setInvalidFieldKeys([]);
     }, [draftUser]);
 
-    useEffect(() => {
-        const host = document.getElementById("user-profile-edit-actions-anchor");
-        setActionsHost(host);
+    useLayoutEffect(() => {
+        const titleNode = document.getElementById("user-profile-edit-title");
+        if (!titleNode) return;
+
+        const updateActionsLeft = () => {
+            const rect = titleNode.getBoundingClientRect();
+            setActionsLeft(rect.right + 182);
+        };
+
+        updateActionsLeft();
+        window.addEventListener("resize", updateActionsLeft);
+
+        return () => {
+            window.removeEventListener("resize", updateActionsLeft);
+        };
     }, []);
 
     const handleUndo = useCallback(() => {
@@ -265,7 +276,10 @@ const UserPersonalInfoCardController = (
     }, [editingDisabled]);
 
     const actions = (
-        <div className={`user-personal-info-controller__actions ${actionsHost ? "user-personal-info-controller__actions--floating" : ""}`}>
+        <div
+            className={`user-personal-info-controller__actions ${actionsLeft !== null ? "user-personal-info-controller__actions--floating" : ""}`}
+            style={actionsLeft !== null ? { left: `${actionsLeft}px` } : undefined}
+        >
             <NavLink to={viewPath} onClick={preventNavigationIfDisabled}>
                 <button className="user-personal-info-controller__undo-edit-button" onClick={handleUndo}
                         disabled={editingDisabled}>
@@ -301,7 +315,7 @@ const UserPersonalInfoCardController = (
             {isEdit && <>
                 {validationError && <p className="user-personal-info-controller__error">{validationError}</p>}
                 <p className="user-personal-info-controller__hint">нажмите `сохранить` чтобы данные изменились</p>
-                {actionsHost ? createPortal(actions, actionsHost) : actions}
+                {actions}
             </>
             }
 

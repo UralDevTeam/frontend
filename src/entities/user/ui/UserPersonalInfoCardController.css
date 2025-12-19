@@ -18,7 +18,7 @@
 }
 
 .user-personal-info-controller__actions--floating {
-    position: sticky;
+    position: fixed;
     top: 125px;
     z-index: 5;
 }

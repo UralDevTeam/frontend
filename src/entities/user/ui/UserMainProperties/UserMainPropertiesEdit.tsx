@@ -32,10 +32,9 @@ export default function UserMainPropertiesEdit({
             </div>
             <div className={"user-main-properties"}>
                 <div className="user-main-properties__header">
-                    <p className="user-main-properties-title-override">
+                    <p id="user-profile-edit-title" className="user-main-properties-title-override">
                         {titleText}
                     </p>
-                    <div id="user-profile-edit-actions-anchor" className="user-profile-edit-actions-anchor" />
                 </div>
             </div>
         </div>

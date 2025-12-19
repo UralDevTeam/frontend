@@ -23,15 +23,37 @@ function UserProfileViewInner(props: Props) {
   const viewPath = props.viewPath ?? routes.me();
 
   useEffect(() => {
-    const notificationId = notificationsStore.success(`
-Заполните свой профиль 
-до конца. так коллеги узнают 
+    if (!user) return;
+
+      const sessionStorageKey = "profileCompletionNotificationDismissed";
+      const isDismissed = sessionStorage.getItem(sessionStorageKey) === "true";
+
+      const isFieldEmpty = (value?: string) => !value || value.trim().length === 0;
+
+      const hasProfileGaps = isFieldEmpty(user.city)
+          || isFieldEmpty(user.tg)
+          || isFieldEmpty(user.phone)
+          || isFieldEmpty(user.mattermost)
+          || isFieldEmpty(user.aboutMe)
+          || !user.birthday;
+
+      if (isDismissed || !hasProfileGaps) {
+          return;
+      }
+
+      const notificationId = notificationsStore.info(
+          `
+Заполните свой профиль
+до конца. так коллеги узнают
 о тебе больше!
-`, {text: "Профиль", href: routes.me()})
-    return () => {
-      notificationsStore.removeNotification(notificationId);
+`,
+      {text: "Профиль →", href: viewPath},
+      0,
+      () => sessionStorage.setItem(sessionStorageKey, "true")
+    );    return () => {
+      notificationsStore.removeNotification(notificationId)
     }
-  }, []);
+  }, [user, viewPath]);
 
   if (!user) return <div>No user</div>;
 

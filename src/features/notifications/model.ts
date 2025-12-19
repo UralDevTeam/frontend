@@ -12,6 +12,7 @@ export type Notification = {
   type: NotificationType;
   message: string;
   link?: NotificationLink | undefined;
+  onClose?: (() => void) | undefined;
   duration: number;
   createdAt: number;
 }
@@ -25,7 +26,7 @@ class NotificationsStore {
   history: Notification[] = [];
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, {autoBind: true});
   }
 
   addNotification(notification: Omit<Notification, 'id' | 'createdAt'>) {
@@ -68,20 +69,20 @@ class NotificationsStore {
     this.history = [];
   }
 
-  success(message: string, link?: NotificationLink, duration: number = 5000) {
-    return this.addNotification({type: 'success', message, link, duration});
+  success(message: string, link?: NotificationLink, duration: number = 5000, onClose?: () => void) {
+    return this.addNotification({type: 'success', message, link, duration, onClose});
   }
 
-  error(message: string, link?: NotificationLink, duration: number = 5000) {
-    return this.addNotification({type: 'error', message, link, duration});
+  error(message: string, link?: NotificationLink, duration: number = 5000, onClose?: () => void) {
+    return this.addNotification({type: 'error', message, link, duration, onClose});
   }
 
-  warning(message: string, link?: NotificationLink, duration: number = 5000) {
-    return this.addNotification({type: 'warning', message, link, duration});
+  warning(message: string, link?: NotificationLink, duration: number = 5000, onClose?: () => void) {
+    return this.addNotification({type: 'warning', message, link, duration, onClose});
   }
 
-  info(message: string, link?: NotificationLink, duration: number = 5000) {
-    return this.addNotification({type: 'info', message, link, duration});
+  info(message: string, link?: NotificationLink, duration: number = 5000, onClose?: () => void) {
+    return this.addNotification({type: 'info', message, link, duration, onClose});
   }
 }
 

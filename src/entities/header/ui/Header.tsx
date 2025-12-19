@@ -97,7 +97,7 @@ const Header = observer(function Header() {
             <div className={"right_part"}>
                 <div className="notifications" ref={historyRef}>
                     <button type="button" className="notifications__button" onClick={handleHistoryToggle}>
-                        <img src={"/icons/notification-on.svg"} alt="Уведомления"/>
+                        <img src={"/icons/notification-off.svg"} alt="Уведомления"/>
                         {notifications.length > 0 && <span className="notifications__badge">{notifications.length}</span>}
                     </button>
                     {isHistoryOpen && (

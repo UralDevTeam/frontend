@@ -56,8 +56,7 @@ export default function Teams() {
       usersStore.loadFromApi();
     }
     const notificationsIds = [
-      notificationsStore.info("Для изменения оргструктуры используйте перетаскивание сотрудников в папки."),
-      notificationsStore.info("Папка удалиться сама только если в ней нет сотрудников и вложенных папок.")
+      notificationsStore.info("Для изменения оргструктуры используйте перетаскивание сотрудников в папки.")
     ];
 
     return () => {

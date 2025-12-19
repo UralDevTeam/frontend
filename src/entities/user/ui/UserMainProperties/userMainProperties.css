@@ -41,6 +41,18 @@
     width: 100%;
 }
 
+.user-main-properties__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 182px;
+}
+
+.user-profile-edit-actions-anchor {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 .user-main-properties-line {
     display: flex;
     flex-direction: row;

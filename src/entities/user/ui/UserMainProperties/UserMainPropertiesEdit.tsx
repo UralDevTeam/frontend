@@ -31,9 +31,12 @@ export default function UserMainPropertiesEdit({
                 <p className="user-main-properties-avatar__note">до 10МБ</p>
             </div>
             <div className={"user-main-properties"}>
-                <p className="user-main-properties-title-override">
-                    {titleText}
-                </p>
+                <div className="user-main-properties__header">
+                    <p className="user-main-properties-title-override">
+                        {titleText}
+                    </p>
+                    <div id="user-profile-edit-actions-anchor" className="user-profile-edit-actions-anchor" />
+                </div>
             </div>
         </div>
     );
